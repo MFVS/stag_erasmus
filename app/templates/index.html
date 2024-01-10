@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@6.5.95/css/materialdesignicons.min.css" />
+    <script src="https://unpkg.com/htmx.org/dist/htmx.js"></script>
+    <script src="https://unpkg.com/hyperscript.org@0.9.11"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/app/static/main.css">
+    <title>STAG • Erasmus</title>
+
+    <style>
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 5rem;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .section {
+            min-height: 800px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 75%;
+        }
+
+        .checkbox input[type="checkbox"] {
+            transform: scale(1.5);
+            /* Adjust the scale factor as needed */
+        }
+
+        /* Center the checkboxes both horizontally and vertically */
+        .checkbox {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding-top: 10px;
+        }
+    </style>
+
+    <nav class="navbar is-primary is-fixed-top">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="https://prf.ujep.cz/cs/">
+                <img src="/static/prf_logo.svg" height="100">
+            </a>
+            <a role="button" class="navbar-burger p-3">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div class="navbar-menu">
+            <div class="navbar-start">
+            </div>
+        </div>
+    </nav>
+</head>
+
+<body>
+
+    <section class="hero is-primary p-5">
+        <div class="hero-body">
+            <div class="container" sty>
+                <h1 class="title is-1 has-text-centered">
+                    Erasmus
+                </h1>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <form id="form" hx-post="/ws/filter" hx-indicator="#progress" hx-target="#table">
+            <input type="hidden" name="df" value="{{ df_predmety_str }}">
+            <table class="table is-hoverable mx-auto">
+                <thead>
+                    <tr>
+                        {% for column in df_predmety.columns %}
+                        <th class="has-text-centered">
+                            {{ column }}
+                        </th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <thead>
+                    <tr>
+                        <th>
+                            <div class="select is-primary is-rounded mx-auto">
+                                <select name="Department" hx-post="/ws/filter" hx-trigger="change" hx-target="#table"
+                                    hx-swap="innerHTML">
+                                    <option>All</option>
+                                    {% for value in df_predmety["Department"].unique() %}
+                                    <option>{{ value }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="field">
+                                <p class="control has-icons-left">
+                                    <input class="input is-primary is-rounded" type="text" name="Code" value=""
+                                        hx-post="/ws/filter" hx-trigger="change" hx-target="#table" hx-swap="innerHTML">
+                                    <span class="icon is-medium is-left">
+                                        <i class="mdi mdi-magnify"></i>
+                                    </span>
+                                </p>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="field">
+                                <p class="control has-icons-left">
+                                    <input class="input is-primary is-rounded" type="text" name="Name" value=""
+                                        hx-post="/ws/filter" hx-trigger="change" hx-target="#table" hx-swap="innerHTML">
+                                    <span class="icon is-medium is-left">
+                                        <i class="mdi mdi-magnify"></i>
+                                    </span>
+                                </p>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="field">
+                                <div class="control">
+                                    <label class="checkbox">
+                                        <input type="checkbox" type="checkbox" name="Winter term" value="True"
+                                            hx-post="/ws/filter" hx-trigger="change" hx-target="#table"
+                                            hx-swap="innerHTML">
+                                    </label>
+                                </div>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="field">
+                                <div class="control">
+                                    <label class="checkbox">
+                                        <input type="checkbox" type="checkbox" name="Summer term" value="True"
+                                            hx-post="/ws/filter" hx-trigger="change" hx-target="#table"
+                                            hx-swap="innerHTML">
+                                    </label>
+                                </div>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="table">
+                    {% for index, row in df_predmety.iterrows() %}
+                    <tr
+                        _="on click fetch /ws/predmet/{{ row['Code'] }}/{{ row['Department'] }} put the result after me">
+                        {% for column in df_predmety.columns %}
+                            {% if column in ['Department', 'Code'] %}
+                            <td class="has-text-centered">{{ row[column] }}</td>
+                            {% elif column in ['Winter term', 'Summer term'] %}
+                                {% if row[column] == 'A' %}
+                                <td class="has-text-centered"><span class="icon is-medium has-text-success">
+                                        <i class="mdi mdi-24px mdi-check"></i>
+                                    </span></td>
+                                {% else %}
+                                <td class="has-text-centered"><span class="icon is-medium has-text-danger">
+                                        <i class="mdi mdi-24px mdi-close"></i>
+                                    </span></td>
+                                {% endif %}
+                            {% else %}
+                            <td class="pl-5">{{ row[column] }}</td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </form>
+
+    </section>
+
+
+</body>
+
+</html>

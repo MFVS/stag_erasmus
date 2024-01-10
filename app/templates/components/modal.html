@@ -1,0 +1,90 @@
+<div id="modal" class="modal is-active">
+    <div class="modal-background" _="on click remove #modal"></div>
+    <div class="modal-content animate__animated animate__zoomIn animate__faster" style="width: 50%;">
+        <div class="container">
+            <div class="box">
+                <h1 class="title is-1 has-text-centered p-3">{{df['nazev'][0]}}</h1>
+                <table class="table mx-auto p-5">
+                    <tbody>
+                        <tr>
+                            <th>Code</th>
+                            <td>{{ df['katedra'][0] }}/{{ df['zkratka'][0] }}</td>
+                        </tr>
+                        <tr>
+                            <th>Credits</th>
+                            <td>{{ df['kreditu'][0] }}</td>
+                        </tr>
+                        <tr>
+                            <th>Lecturers</th>
+                            <td>
+                                {{ (df['prednasejici'][0] | string).translate({39:None}) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Term</th>
+                            <td>
+                                {% if df['vyukaZS'][0] == 'A' %}
+                                Winter
+                                {% else %}
+                                Summer
+                                {% endif %}
+                            </td>
+                        </tr>
+
+                        <tr>
+                        {% if df['jednotekPrednasek'][0] > 0 %}
+                        <th>Lectures</th>
+                        <td>{{ df['jednotekPrednasek'][0] }} {{ df['jednotkaPrednasky'][0] }}</td>
+                        {% endif %}
+                        </tr>
+                        <tr>
+                        {% if df['jednotekCviceni'][0] > 0 %}
+                        <th>Practical exercises</th>
+                        <td>{{ df['jednotekCviceni'][0] }} {{ df['jednotkaCviceni'][0] }}</td>
+                        {% endif %}
+                        </tr>
+                        <tr>
+                        {% if df['jednotekSeminare'][0] > 0 %}
+                        <th>Seminars</th>
+                        <td>{{ df['jednotekSeminare'][0] }} {{ df['jednotkaSeminare'][0] }}</td>
+                        {% endif %}
+                        </tr>
+                        <tr>
+                            <th>Zakončení</th>
+                            <td>{{ df['typZkousky'][0] }}</td>
+                        </tr>
+                        <tr>
+                            <th>Prerequisites</th>
+                            <td>{{ df['podminujiciPredmety'][0] }}</td>
+                        </tr>
+                        <tr>
+                            <th>Is prerequisite to</th>
+                            <td>{{ df['podminujePredmety'][0] }}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <h2 class="subtitle has-text-black">Anotation:</h2>
+                                {{ df['anotace'][0] }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <h2 class="subtitle has-text-black">Overview:</h2>
+                                {{ df['prehledLatky'][0] | replace("\n", "<br />" | safe ) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <h2 class="subtitle has-text-black">Requirements:</h2>
+                                {{ df['pozadavky'][0] | replace("\n", "<br />" | safe ) }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+
+</div>

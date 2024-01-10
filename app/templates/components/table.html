@@ -1,0 +1,22 @@
+{% for index, row in df_predmety.iterrows() %}
+    <tr
+        _="on click fetch /ws/predmet/{{ row['Code'] }}/{{ row['Department'] }} put the result after me">
+        {% for column in df_predmety.columns %}
+            {% if column in ['Department', 'Code'] %}
+            <td class="has-text-centered">{{ row[column] }}</td>
+            {% elif column in ['Winter term', 'Summer term'] %}
+                {% if row[column] == 'A' %}
+                <td class="has-text-centered"><span class="icon is-medium has-text-success">
+                        <i class="mdi mdi-24px mdi-check"></i>
+                    </span></td>
+                {% else %}
+                <td class="has-text-centered"><span class="icon is-medium has-text-danger">
+                        <i class="mdi mdi-24px mdi-close"></i>
+                    </span></td>
+                {% endif %}
+            {% else %}
+            <td class="pl-5">{{ row[column] }}</td>
+            {% endif %}
+        {% endfor %}
+    </tr>
+{% endfor %}
