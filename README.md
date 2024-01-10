@@ -1,2 +1,2 @@
-# stag_erasmus
+# STAG Erasmus
 Seznam předmětů nabízených pro zahraniční studenty.
