@@ -37,7 +37,8 @@ def login(request: Request, stagUserTicket: str | None = None):
     if stagUserTicket and stagUserTicket != b"anonymous" and stagUserTicket != b"None":
         return RedirectResponse(url=f"/home?stagUserTicket={stagUserTicket}" )
     else:
-        login_url = "https://ws.ujep.cz/ws/login?originalURL=http://localhost:8000"
+        # login_url = "https://ws.ujep.cz/ws/login?originalURL=http://localhost:8000"
+        login_url = "https://ws.ujep.cz/ws/login?originalURL=http://stagapps.ki.ujep.cz"
         return RedirectResponse(url=login_url)
 
 
