@@ -20,13 +20,41 @@
                                 {{ (df['prednasejici'][0] | string).translate({39:None}) }}
                             </td>
                         </tr>
-                        <tr>
+                        <!-- <tr>
                             <th>Term</th>
                             <td>
                                 {% if df['vyukaZS'][0] == 'A' %}
                                 Winter
                                 {% else %}
                                 Summer
+                                {% endif %}
+                            </td>
+                        </tr> -->
+                        <tr>
+                            <th>Winter term</th>
+                            <td>
+                                {% if df['vyukaZS'][0] == 'A' %}
+                                <span class="icon is-medium has-text-success">
+                                    <i class="mdi mdi-24px mdi-check"></i>
+                                </span>
+                                {% else %}
+                                <span class="icon is-medium has-text-danger">
+                                    <i class="mdi mdi-24px mdi-close"></i>
+                                </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Summer term</th>
+                            <td>
+                                {% if df['vyukaLS'][0] == 'A' %}
+                                <span class="icon is-medium has-text-success">
+                                    <i class="mdi mdi-24px mdi-check"></i>
+                                </span>
+                                {% else %}
+                                <span class="icon is-medium has-text-danger">
+                                    <i class="mdi mdi-24px mdi-close"></i>
+                                </span>
                                 {% endif %}
                             </td>
                         </tr>
@@ -53,14 +81,14 @@
                             <th>Zakončení</th>
                             <td>{{ df['typZkousky'][0] }}</td>
                         </tr>
-                        <tr>
+                        <!-- <tr>
                             <th>Prerequisites</th>
                             <td>{{ df['podminujiciPredmety'][0] }}</td>
                         </tr>
                         <tr>
                             <th>Is prerequisite to</th>
                             <td>{{ df['podminujePredmety'][0] }}</td>
-                        </tr>
+                        </tr> -->
                         <tr>
                             <td colspan="2">
                                 <h2 class="subtitle has-text-black">Anotation:</h2>
