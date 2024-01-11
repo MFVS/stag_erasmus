@@ -4,7 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse, JSONResponse, FileResponse
 from fastapi.exceptions import RequestValidationError
 import logging
-import os
+import pandas as pd
 
 from .routers import ws
 from .utils import get_df
@@ -32,29 +32,32 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     )
 
 
+# @app.get("/")
+# def login(request: Request, stagUserTicket: str | None = None):
+#     if stagUserTicket and stagUserTicket != b"anonymous" and stagUserTicket != b"None":
+#         return RedirectResponse(url=f"/home?stagUserTicket={stagUserTicket}" )
+#     else:
+#         # login_url = "https://ws.ujep.cz/ws/login?originalURL=http://localhost:8000"
+#         login_url = "https://ws.ujep.cz/ws/login?originalURL=http://stagapps.ki.ujep.cz"
+#         return RedirectResponse(url=login_url)
+
+
 @app.get("/")
-def login(request: Request, stagUserTicket: str | None = None):
-    if stagUserTicket and stagUserTicket != b"anonymous" and stagUserTicket != b"None":
-        return RedirectResponse(url=f"/home?stagUserTicket={stagUserTicket}" )
-    else:
-        # login_url = "https://ws.ujep.cz/ws/login?originalURL=http://localhost:8000"
-        login_url = "https://ws.ujep.cz/ws/login?originalURL=http://stagapps.ki.ujep.cz"
-        return RedirectResponse(url=login_url)
+async def home(request: Request):
+    # url = "https://ws.ujep.cz/ws/services/rest2/predmety/getPredmetyByFakulta"
+    # params = {
+    #     "fakulta": "PRF",
+    #     "lang": "en",
+    #     "outputFormat": "CSV",
+    #     "outputFormatEncoding": "utf-8",
+    #     "jenNabizeneECTSPrijezdy": "true",
+    #     "rok": "2023",
+    # }
 
-
-@app.get("/home")
-async def home(request: Request, stagUserTicket: str):
-    url = "https://ws.ujep.cz/ws/services/rest2/predmety/getPredmetyByFakulta"
-    params = {
-        "fakulta": "PRF",
-        "lang": "en",
-        "outputFormat": "CSV",
-        "outputFormatEncoding": "utf-8",
-        "jenNabizeneECTSPrijezdy": "true",
-        "rok": "2023",
-    }
-
-    df_predmety = get_df(url, params, ticket=stagUserTicket)
+    # df_predmety = get_df(url, params, ticket=stagUserTicket)
+    
+    df_predmety = pd.read_csv("df.csv")
+    
     df_predmety = df_predmety[["katedra", "zkratka", "nazev", "vyukaZS", "vyukaLS"]]
     df_predmety.columns = ["Department", "Code", "Name", "Winter term", "Summer term"]
     df_predmety_str = df_predmety.to_json(orient="records")

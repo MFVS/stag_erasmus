@@ -23,8 +23,8 @@ def get_predmet(request: Request, predmet_zkr: str, katedra: str):
 
     df = pd.read_csv(StringIO(requests.get(url, params=vars).text), sep=";")
     df.fillna("—", inplace=True)
-    print(df.columns)
-    print(df[["jednotekPrednasek","jednotkaPrednasky"]])
+    # print(df.columns)
+    # print(df[["jednotekPrednasek","jednotkaPrednasky"]])
     return templates.TemplateResponse(
         "components/modal.html", {"request": request, "df": df}
     )
@@ -41,8 +41,6 @@ def filter_df(
     summer: bool = Form(None, alias="Summer term"),
 ):
     
-    print(winter, summer)
-
     df_filter = pd.read_json(StringIO(df))
     if department == "All":
         department = None
