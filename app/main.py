@@ -10,9 +10,9 @@ from .routers import ws
 from .utils import get_df
 
 app = FastAPI(
-    docs_url="/docs",
+    docs_url=None,
     redoc_url=None,
-    title="STAG API",
+    title="STAG Erasmus",
 )
 
 templates = Jinja2Templates(directory="app/templates")
