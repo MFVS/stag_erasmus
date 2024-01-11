@@ -15,6 +15,10 @@
                             <td>{{ df['kreditu'][0] }}</td>
                         </tr>
                         <tr>
+                            <th>Guarantor</th>
+                            <td>{{ (df['garanti'][0] | string).translate({39:None}) }}</td>
+                        </tr>
+                        <tr>
                             <th>Lecturers</th>
                             <td>
                                 {{ (df['prednasejici'][0] | string).translate({39:None}) }}
@@ -77,10 +81,10 @@
                         <td>{{ df['jednotekSeminare'][0] }} {{ df['jednotkaSeminare'][0] }}</td>
                         {% endif %}
                         </tr>
-                        <tr>
-                            <th>Zakončení</th>
+                        <!-- <tr>
+                            <th></th>
                             <td>{{ df['typZkousky'][0] }}</td>
-                        </tr>
+                        </tr> -->
                         <!-- <tr>
                             <th>Prerequisites</th>
                             <td>{{ df['podminujiciPredmety'][0] }}</td>
