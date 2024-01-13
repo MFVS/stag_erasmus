@@ -16,7 +16,8 @@ app = FastAPI(
 )
 
 templates = Jinja2Templates(directory="app/templates")
-app.mount("/static/*", StaticFiles(directory="app/static"), name="static")
+# app.mount("/static/", StaticFiles(directory="app/static"), name="static")
+app.mount("/static", StaticFiles(directory="app/static", html=False), name="static")
 
 
 app = FastAPI()
@@ -75,6 +76,10 @@ async def home(request: Request):
 @app.get("/static/{image}")
 async def image(image: str):
     return FileResponse(f"app/static/{image}", media_type="image/svg+xml")
+
+# @app.get("/static/main.css")
+# async def get_css():
+#     return FileResponse("app/static/main.css", media_type="text/css")
 
 
 app.include_router(ws.router)

@@ -44,7 +44,7 @@
             align-items: center;
             justify-content: center;
             height: 100%;
-            padding-top: 12px;
+            padding-top: 12px;        
         }
     </style>
 
@@ -64,9 +64,6 @@
             </div>
         </div>
     </nav>
-</head>
-
-<body>
 
     <section class="hero is-primary p-5">
         <div class="hero-body">
@@ -76,7 +73,30 @@
                 </h1>
             </div>
         </div>
+        <div class="hero-foot">
+            <nav class="tabs is-centered is-toggle">
+              <div class="container">
+                <ul>
+                    <li class="is-active" _="on click take .is-active then hide #cards then show #form">
+                    <a>
+                        <span>Table</span>
+                    </a>
+                    </li>
+                    <li _="on click take .is-active then hide #form then show #cards end">
+                    <a>
+                        <span>All</span>
+                    </a>
+                    </li>
+                </ul>
+              </div>
+            </nav>
+          </div>
     </section>
+
+</head>
+
+<body>
+
 
     <section class="section">
         <form id="form" hx-post="/ws/filter" hx-indicator="#progress" hx-target="#table">
@@ -174,9 +194,14 @@
                     </tr>
                     {% endfor %}
                 </tbody>
-
             </table>
         </form>
+
+        <div id="cards" class="container" style="display: none;">
+            <p>
+                prehled
+            </p>
+        </div>
 
     </section>
 
