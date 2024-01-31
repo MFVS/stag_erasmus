@@ -13,7 +13,7 @@ RUN poetry install --verbose
 
 FROM base AS app
 
-WORKDIR /app
+WORKDIR /app    
 COPY . .
 
 ENTRYPOINT ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]

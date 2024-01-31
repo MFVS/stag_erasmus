@@ -82,7 +82,7 @@
                         <span>Table</span>
                     </a>
                     </li>
-                    <li _="on click take .is-active then hide #form then show #cards end">
+                    <li _="on click take .is-active then hide #form then show #cards">
                     <a>
                         <span>All</span>
                     </a>
@@ -183,9 +183,11 @@
                                         <i class="mdi mdi-24px mdi-check"></i>
                                     </span></td>
                                 {% else %}
-                                <td class="has-text-centered"><span class="icon is-medium has-text-danger">
+                                <td class="has-text-centered">
+                                    <span class="icon is-medium has-text-danger">
                                         <i class="mdi mdi-24px mdi-close"></i>
-                                    </span></td>
+                                    </span>
+                                </td>
                                 {% endif %}
                             {% else %}
                             <td class="pl-5">{{ row[column] }}</td>

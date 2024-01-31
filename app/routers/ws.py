@@ -1,10 +1,13 @@
 from fastapi import APIRouter, Request, Form
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
-from io import StringIO
+from io import StringIO, BytesIO
 from unidecode import unidecode
 import requests
 import pandas as pd
+import json
+
+from ..redis_db import redis_client
 
 router = APIRouter(prefix="/ws", tags=["WS"])
 
@@ -12,19 +15,28 @@ templates = Jinja2Templates(directory="app/templates")
 
 @router.get("/predmet/{predmet_zkr}/{katedra}")
 def get_predmet(request: Request, predmet_zkr: str, katedra: str):
-    url = "https://ws.ujep.cz/ws/services/rest2/predmety/getPredmetInfo"
-    vars = {
-        "zkratka": predmet_zkr,
-        "katedra": katedra,
-        "lang": "en",
-        "outputFormat": "CSV",
-        "outputFormatEncoding": "utf-8",
-    }
+    
+    if redis_client.exists(f"predmet:{predmet_zkr}"):
+        print("uz tam byl")
+        predmet = redis_client.get(f"predmet:{predmet_zkr}")
+        df = pd.read_json(BytesIO(predmet), orient="records")
 
-    df = pd.read_csv(StringIO(requests.get(url, params=vars).text), sep=";")
-    df.fillna("—", inplace=True)
-    # print(df.columns)
-    # print(df[["jednotekPrednasek","jednotkaPrednasky"]])
+    else:
+        print("nebyl tam")
+        url = "https://ws.ujep.cz/ws/services/rest2/predmety/getPredmetInfo"
+        vars = {
+            "zkratka": predmet_zkr,
+            "katedra": katedra,
+            "lang": "en",
+            "outputFormat": "CSV",
+            "outputFormatEncoding": "utf-8",
+        }
+
+        df = pd.read_csv(StringIO(requests.get(url, params=vars).text), sep=";")
+        df.fillna("—", inplace=True)
+        
+        redis_client.setex(f"predmet:{predmet_zkr}", 60, df.to_json())
+
     return templates.TemplateResponse(
         "components/modal.html", {"request": request, "df": df}
     )

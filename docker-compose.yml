@@ -3,8 +3,23 @@ version: "3.9"
 services:
   app:
     build: .
-    # networks:
-    #   - mynet
+    networks:
+      - mynet
     # network_mode: host
     ports:
       - 80:80
+    depends_on:
+      - cacheredis
+    volumes:
+      - ./:/app
+  cacheredis:
+    hostname: redis
+    image: redis:latest
+    # network_mode: host
+    # ports:
+    #   - 6379:6379
+    networks:
+      - mynet
+networks:
+  mynet:
+    driver: bridge
