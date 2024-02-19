@@ -1,11 +1,9 @@
 from fastapi import APIRouter, Request, Form
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
 from io import StringIO, BytesIO
-from unidecode import unidecode
 import requests
 import pandas as pd
-import json
+import aiohttp
 
 from ..redis_db import redis_client
 
@@ -15,14 +13,12 @@ templates = Jinja2Templates(directory="app/templates")
 
 @router.get("/predmet/{predmet_zkr}/{katedra}")
 def get_predmet(request: Request, predmet_zkr: str, katedra: str):
-    
+
     if redis_client.exists(f"predmet:{predmet_zkr}"):
-        print("uz tam byl")
         predmet = redis_client.get(f"predmet:{predmet_zkr}")
         df = pd.read_json(BytesIO(predmet), orient="records")
 
     else:
-        print("nebyl tam")
         url = "https://ws.ujep.cz/ws/services/rest2/predmety/getPredmetInfo"
         vars = {
             "zkratka": predmet_zkr,
@@ -41,19 +37,46 @@ def get_predmet(request: Request, predmet_zkr: str, katedra: str):
         "components/modal.html", {"request": request, "df": df}
     )
 
+async def fetch_data(session, url, params):
+    async with session.get(url, params=params) as response:
+        return await response.text()
+
+async def process_row(row, url):
+    vars = {
+        "zkratka": row["zkratka"],
+        "katedra": row["katedra"],
+        "lang": "en",
+        "outputFormat": "CSV",
+        "outputFormatEncoding": "utf-8",
+    }
+    async with aiohttp.ClientSession() as session:
+        response_text = await fetch_data(session, url, params=vars)
+        df_predmet = pd.read_csv(StringIO(response_text), sep=";")
+        df_predmet.fillna("—", inplace=True)
+        return df_predmet
+
+@router.get("/cards")
+async def get_cards(request: Request):
+    predmety_df = pd.read_csv("predmety.csv")
+
+    return templates.TemplateResponse(
+        "components/cards.html", {"request": request, "df": predmety_df}
+    )
 
 @router.post("/filter")
 def filter_df(
     request: Request,
-    df: str = Form(alias="df"),
     department: str = Form(alias="Department"),
     shortcut: str = Form(None, alias="Code"),
     name: str = Form(None, alias="Name"),
     winter: bool = Form(None, alias="Winter term"),
     summer: bool = Form(None, alias="Summer term"),
 ):
-    
-    df_filter = pd.read_json(StringIO(df))
+
+    df = pd.read_csv("df.csv")
+    df_filter = df[["katedra", "zkratka", "nazev", "vyukaZS", "vyukaLS"]]
+    df_filter.columns = ["Department", "Code", "Name", "Winter term", "Summer term"]
+
     if department == "All":
         department = None
 
@@ -77,7 +100,5 @@ def filter_df(
         {
             "request": request,
             "df_predmety": df_filter,
-            "df_predmety_str": df,
-            "df_predmety_full": pd.read_json(StringIO(df)),
         },
     )

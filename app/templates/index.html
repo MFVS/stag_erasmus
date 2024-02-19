@@ -97,10 +97,10 @@
 
 <body>
 
+    <progress id="progress" class="progress htmx-indicator is-primary"></progress>
 
     <section class="section">
         <form id="form" hx-post="/ws/filter" hx-indicator="#progress" hx-target="#table">
-            <input type="hidden" name="df" value="{{ df_predmety_str }}">
             <table class="table is-hoverable mx-auto">
                 <thead>
                     <tr>
@@ -172,8 +172,7 @@
                 </thead>
                 <tbody id="table">
                     {% for index, row in df_predmety.iterrows() %}
-                    <tr
-                        _="on click fetch /ws/predmet/{{ row['Code'] }}/{{ row['Department'] }} put the result after me">
+                    <tr _="on click fetch /ws/predmet/{{ row['Code'] }}/{{ row['Department'] }} put the result after me">
                         {% for column in df_predmety.columns %}
                             {% if column in ['Department', 'Code'] %}
                             <td class="has-text-centered">{{ row[column] }}</td>
@@ -199,10 +198,9 @@
             </table>
         </form>
 
-        <div id="cards" class="container" style="display: none;">
-            <p>
-                prehled
-            </p>
+        <div id="cards" class="container" style="display: none;"
+        hx-get="/ws/cards" hx-trigger="revealed" hx-indicator="#progress">
+
         </div>
 
     </section>

@@ -1,0 +1,118 @@
+<div class="columns is-multiline is-centered">
+{% for index, row in df.iterrows() %}
+<div class="column is-6">
+    <div class="box">
+        <h1 class="title is-1 has-text-centered p-3">{{row['nazev']}}</h1>
+        <table class="table mx-auto p-5">
+            <tbody>
+                <tr>
+                    <th>Code</th>
+                    <td>{{ row['katedra'] }}/{{ row['zkratka'] }}</td>
+                </tr>
+                <tr>
+                    <th>Credits</th>
+                    <td>{{ row['kreditu'] }}</td>
+                </tr>
+                <tr>
+                    <th>Guarantor</th>
+                    <td>{{ (row['garanti'] | string).translate({39:None}) }}</td>
+                </tr>
+                <tr>
+                    <th>Lecturers</th>
+                    <td>
+                        {{ (row['prednasejici'] | string).translate({39:None}) }}
+                    </td>
+                </tr>
+                <!-- <tr>
+                    <th>Term</th>
+                    <td>
+                        {% if row['vyukaZS'] == 'A' %}
+                        Winter
+                        {% else %}
+                        Summer
+                        {% endif %}
+                    </td>
+                </tr> -->
+                <tr>
+                    <th>Winter term</th>
+                    <td>
+                        {% if row['vyukaZS'] == 'A' %}
+                        <span class="icon is-medium has-text-success">
+                            <i class="mdi mdi-24px mdi-check"></i>
+                        </span>
+                        {% else %}
+                        <span class="icon is-medium has-text-danger">
+                            <i class="mdi mdi-24px mdi-close"></i>
+                        </span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Summer term</th>
+                    <td>
+                        {% if row['vyukaLS'] == 'A' %}
+                        <span class="icon is-medium has-text-success">
+                            <i class="mdi mdi-24px mdi-check"></i>
+                        </span>
+                        {% else %}
+                        <span class="icon is-medium has-text-danger">
+                            <i class="mdi mdi-24px mdi-close"></i>
+                        </span>
+                        {% endif %}
+                    </td>
+                </tr>
+
+                <tr>
+                    {% if row['jednotekPrednasek'] > 0 %}
+                    <th>Lectures</th>
+                    <td>{{ row['jednotekPrednasek'] }} {{ row['jednotkaPrednasky'] }}</td>
+                    {% endif %}
+                </tr>
+                <tr>
+                    {% if row['jednotekCviceni'] > 0 %}
+                    <th>Practical exercises</th>
+                    <td>{{ row['jednotekCviceni'] }} {{ row['jednotkaCviceni'] }}</td>
+                    {% endif %}
+                </tr>
+                <tr>
+                {% if row['jednotekSeminare'] > 0 %}
+                <th>Seminars</th>
+                <td>{{ row['jednotekSeminare'] }} {{ row['jednotkaSeminare'] }}</td>
+                {% endif %}
+                </tr>
+                <tr>
+                    <th>Type of completion</th>
+                    <td>{{ row['typZkousky'] }}</td>
+                </tr>
+                <!-- <tr>
+                    <th>Prerequisites</th>
+                    <td>{{ row['podminujiciPredmety'] }}</td>
+                </tr>
+                <tr>
+                    <th>Is prerequisite to</th>
+                    <td>{{ row['podminujePredmety'] }}</td>
+                </tr> -->
+                <tr>
+                    <td colspan="2">
+                        <h2 class="subtitle has-text-black">Anotation:</h2>
+                        {{ row['anotace'] }}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <h2 class="subtitle has-text-black">Overview:</h2>
+                        {{ row['prehledLatky'] | replace("\n", "<br />" | safe ) }}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <h2 class="subtitle has-text-black">Requirements:</h2>
+                        {{ row['pozadavky'] | replace("\n", "<br />" | safe ) }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endfor %}
+</div>
