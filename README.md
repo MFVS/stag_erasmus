@@ -2,6 +2,17 @@
 
 Seznam předmětů nabízených pro zahraniční studenty.
 
+## Customize bulma
+
+```bash
+cd app/static
+sass --sourcemap=none --style=compressed sass/mystyles.scss:css/mystyles.css
+```
+
+```bash
+sass --watch --sourcemap=none sass/mystyles.scss:css/mystyles.css
+```
+
 ## Použité služby
 
 - [/predmety/getPredmetyByFakulta](https://ws.ujep.cz/ws/services/rest2/predmety/getPredmetyByFakulta)
@@ -14,3 +25,17 @@ Seznam předmětů nabízených pro zahraniční studenty.
 - fakulty
 - roky
 - cachovani dat
+
+## Schůze 27.2.2024
+
+přídat filtry:
+úvodní stránka kde si uživatel bude muset zvolit následujícíc parametry
+
+- [ ] fakulta (povinný filtr)
+- [ ] akademický rok (povinný filtr)
+
+[ ] předpoklady
+
+vizuál:
+
+- [ ] univerzitní logo

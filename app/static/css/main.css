@@ -1,7 +1,6 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 5rem;
-  font-family: 'Poppins', sans-serif;
 }
 
 body {
@@ -26,5 +25,5 @@ table {
   align-items: center;
   justify-content: center;
   height: 100%;
-  padding-top: 12px;
+  padding-top: 12px;        
 }
