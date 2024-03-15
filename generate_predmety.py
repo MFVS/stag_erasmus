@@ -3,7 +3,7 @@ import aiohttp
 import pandas as pd
 from io import StringIO
 
-df = pd.read_csv("df.csv")
+df = pd.read_csv("df.csv", delimiter=";")
 
 
 async def fetch_data(session, url, params):

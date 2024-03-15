@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Request, Form
+from fastapi import APIRouter, Request
+from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 import pandas as pd
 
@@ -9,12 +10,15 @@ templates = Jinja2Templates(directory="app/templates")
 
 @router.get("/")
 def get_subjects(faculty: str, year: str, request: Request):
-    df = pd.read_csv("df.csv")
-    
-    df = df[["katedra", "zkratka", "nazev", "vyukaZS", "vyukaLS"]]
-    df.columns = ["Department", "Code", "Name", "Winter term", "Summer term"]
+    try:
+        df = pd.read_csv("df.csv", delimiter=";")
+        
+        df = df[["katedra", "zkratka", "nazev", "vyukaZS", "vyukaLS", "kreditu", "vyucovaciJazyky", "urovenNastavena"]]
+        df.columns = ["Department", "Code", "Name", "Winter term", "Summer term", "Credits", "Languages", "Level"]
 
-    return templates.TemplateResponse(
-        "pages/faculty.html",
-        {"request": request, "faculty": faculty, "year": year, "df": df},
-    )
+        return templates.TemplateResponse(
+            "pages/faculty.html",
+            {"request": request, "faculty": faculty, "year": year, "df": df},
+        )
+    except Exception as e:
+        return HTMLResponse(content=f"<h1>Error on our side</h1>", status_code=500)

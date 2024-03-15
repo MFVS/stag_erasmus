@@ -9,45 +9,47 @@ Erasmus • {{ faculty }}
         <a class="navbar-item" href="https://prf.ujep.cz/cs/">
             <img src="/static/logos/ujep_logo.svg">
         </a>
-        <a role="button" class="navbar-burger p-3">
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-        </a>
     </div>
     <div class="navbar-menu">
         <div class="navbar-start">
+            <a class="navbar-item" href="/">
+                    <span class="icon is-large">
+                        <i class="mdi mdi-36px mdi-home"></i>
+                    </span>
+            </a>
         </div>
     </div>
 </nav>
 
-<section class="hero is-{{ faculty }} p-5">
-    <div class="hero-body">
-        <div class="container" sty>
-            <h1 class="title is-1 has-text-centered has-text-white">
-                Erasmus
-            </h1>
+    <section class="hero is-{{ faculty }} is-medium">
+      
+        <div class="hero-body">
+          <div class="container has-text-centered">
+            <p class="title is-1" style="font-size: 5em;">
+              Erasmus
+            </p>
+          </div>
         </div>
-    </div>
-    <div class="hero-foot">
-        <nav class="tabs is-centered is-toggle">
-            <div class="container">
-            <ul>
-                <li class="is-active" _="on click take .is-active then hide #cards then show #form">
-                <a>
-                    <span>Table</span>
-                </a>
-                </li>
-                <li _="on click take .is-active then hide #form then show #cards">
-                <a>
-                    <span>All</span>
-                </a>
-                </li>
-            </ul>
+      
+        <div class="hero-foot">
+            <nav class="tabs is-centered is-boxed is-fullwidth">
+                <div class="container">
+                <ul>
+                    <li class="is-active" _="on click take .is-active then hide #cards then show #form">
+                    <a>
+                        <span>Table</span>
+                    </a>
+                    </li>
+                    <li _="on click take .is-active then hide #form then show #cards">
+                    <a>
+                        <span>All</span>
+                    </a>
+                    </li>
+                </ul>
+                </div>
+            </nav>
             </div>
-        </nav>
-        </div>
-</section>
+      </section>
 {% endblock head %}
 {% block body %}
 
@@ -71,7 +73,7 @@ Erasmus • {{ faculty }}
                             <div class="select is-{{ faculty }} is-rounded mx-auto">
                                 <select name="Department" hx-post="/ws/filter" hx-trigger="change" hx-target="#table"
                                     hx-swap="innerHTML">
-                                    <option>All</option>
+                                    <option></option>
                                     {% for value in df["Department"].unique() %}
                                     <option>{{ value }}</option>
                                     {% endfor %}
@@ -122,6 +124,39 @@ Erasmus • {{ faculty }}
                                 </div>
                             </div>
                         </th>
+                        <th>
+                            <div class="select is-{{ faculty }} is-rounded mx-auto">
+                                <select name="Credits" hx-post="/ws/filter" hx-trigger="change" hx-target="#table"
+                                    hx-swap="innerHTML">
+                                    <option>-</option>
+                                    {% for value in df["Credits"].unique() %}
+                                    <option>{{ value }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="select is-{{ faculty }} is-rounded mx-auto">
+                                <select name="Languages" hx-post="/ws/filter" hx-trigger="change" hx-target="#table"
+                                    hx-swap="innerHTML">
+                                    <option>All</option>
+                                    {% for value in df["Languages"].unique() %}
+                                    <option>{{ value }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="select is-{{ faculty }} is-rounded mx-auto">
+                                <select name="Level" hx-post="/ws/filter" hx-trigger="change" hx-target="#table"
+                                    hx-swap="innerHTML">
+                                    <option>All</option>
+                                    {% for value in df["Level"].unique() %}
+                                    <option>{{ value }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </th>
                     </tr>
                 </thead>
                 <tbody id="table">
@@ -156,7 +191,6 @@ Erasmus • {{ faculty }}
         hx-get="/ws/cards" hx-trigger="revealed" hx-indicator="#progress">
 
         </div>
-
     </section>
     
 {% endblock body %}

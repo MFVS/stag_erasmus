@@ -31,11 +31,15 @@ sass --watch --sourcemap=none sass/mystyles.scss:css/mystyles.css
 přídat filtry:
 úvodní stránka kde si uživatel bude muset zvolit následujícíc parametry
 
-- [ ] fakulta (povinný filtr)
-- [ ] akademický rok (povinný filtr)
+- [x] fakulta (povinný filtr)
+- [x] akademický rok (povinný filtr)
+
+- [x] jazyk vyuky
+- [x] kredity
+- [x] typ studia
 
 [ ] předpoklady
 
 vizuál:
 
-- [ ] univerzitní logo
+- [x] univerzitní logo

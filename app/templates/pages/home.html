@@ -5,21 +5,23 @@ UJEP • Erasmus
 {% endblock title %}
 
 {% block head %}
-<h1 class="title is-1 has-text-centered p-5">Erasmus</h1>    
+  
+<h1 class="title is-1 has-text-centered pt-5" style="font-size: 4em;">Erasmus</h1>
+<h1 class="subtitle is-1 has-text-centered" style="font-size: 4em;">UJEP</h1>   
+
 {% endblock head %}
 
 {% block body %}
 
-
 <div class="container">
-    <div class="box has-background-light m-auto" style="max-width: 600px;">
+    <div class="box mx-auto has-background-light" style="max-width: 600px;">
         <form action="/subjects" method="get">
             <div class="columns is-centered">
                 <div class="column is-half">
                     <div class="field">
                         <label class="label">Faculty</label>
                         <div class="control">
-                            <div class="select is-fullwidth">
+                            <div class="select is-fullwidth mx-auto is-purple is-rounded">
                                 <select name="faculty">
                                     <option value="fvtm">Faculty of Mechanical Engineering</option>
                                     <option value="fzp">Faculty of Environment</option>
@@ -40,7 +42,7 @@ UJEP • Erasmus
                     <div class="field">
                         <label class="label">Year</label>
                         <div class="control">
-                            <div class="select is-fullwidth">
+                            <div class="select is-fullwidth mx-auto is-purple is-rounded">
                                 <select name="year">
                                     <option>2021/2022</option>
                                     <option>2022/2023</option>
@@ -54,9 +56,9 @@ UJEP • Erasmus
             </div>
             <div class="columns is-centered">
                 <div class="column is-half">
-                    <div class="field">
+                    <div class="field has-text-centered">
                         <div class="control">
-                            <button type="submit" class="button is-purple">Submit</button>
+                            <button type="submit" class="button is-purple is-rounded is-medium">Search</button>
                         </div>
                     </div>
                 </div>
