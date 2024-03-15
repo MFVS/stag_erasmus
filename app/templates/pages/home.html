@@ -1,0 +1,68 @@
+{% extends 'index.html' %}
+
+{% block title %}
+UJEP • Erasmus
+{% endblock title %}
+
+{% block head %}
+<h1 class="title is-1 has-text-centered p-5">Erasmus</h1>    
+{% endblock head %}
+
+{% block body %}
+
+
+<div class="container">
+    <div class="box has-background-light m-auto" style="max-width: 600px;">
+        <form action="/subjects" method="get">
+            <div class="columns is-centered">
+                <div class="column is-half">
+                    <div class="field">
+                        <label class="label">Faculty</label>
+                        <div class="control">
+                            <div class="select is-fullwidth">
+                                <select name="faculty">
+                                    <option value="fvtm">Faculty of Mechanical Engineering</option>
+                                    <option value="fzp">Faculty of Environment</option>
+                                    <option value="fud">Faculty of Art and Design</option>
+                                    <option value="ff">Faculty of Arts</option>
+                                    <option value="fzs">Faculty of Health Studies</option>
+                                    <option value="prf">Faculty of Science</option>
+                                    <option value="pf">Faculty of Education</option>
+                                    <option value="fse">Faculty of Social and Economic Studies</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="columns is-centered">
+                <div class="column is-half">
+                    <div class="field">
+                        <label class="label">Year</label>
+                        <div class="control">
+                            <div class="select is-fullwidth">
+                                <select name="year">
+                                    <option>2021/2022</option>
+                                    <option>2022/2023</option>
+                                    <option>2023/2024</option>
+                                    <option>2024/2025</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="columns is-centered">
+                <div class="column is-half">
+                    <div class="field">
+                        <div class="control">
+                            <button type="submit" class="button is-purple">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock body %}

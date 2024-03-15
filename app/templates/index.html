@@ -10,56 +10,17 @@
     <script src="https://unpkg.com/htmx.org/dist/htmx.js"></script>
     <link rel="stylesheet" href="/static/css/mystyles.css">
     <link rel="stylesheet" href="/static/css/main.css">
-    <title>UJEP • Erasmus</title>
+    <title>{% block title%}{% endblock %}</title>
+<!-- UJEP • Erasmus -->
 
-    <nav class="navbar is-prf is-fixed-top">
-        <div class="navbar-brand">
-            <a class="navbar-item" href="https://prf.ujep.cz/cs/">
-                <img src="/static/prf_logo.svg" height="100">
-            </a>
-            <a role="button" class="navbar-burger p-3">
-                <span aria-hidden="true"></span>
-                <span aria-hidden="true"></span>
-                <span aria-hidden="true"></span>
-            </a>
-        </div>
-        <div class="navbar-menu">
-            <div class="navbar-start">
-            </div>
-        </div>
-    </nav>
-
-    <section class="hero is-prf p-5">
-        <div class="hero-body">
-            <div class="container" sty>
-                <h1 class="title is-1 has-text-centered">
-                    Erasmus
-                </h1>
-            </div>
-        </div>
-        <div class="hero-foot">
-            <nav class="tabs is-centered is-toggle">
-              <div class="container">
-                <ul>
-                    <li class="is-active" _="on click take .is-active then hide #cards then show #form">
-                    <a>
-                        <span>Table</span>
-                    </a>
-                    </li>
-                    <li _="on click take .is-active then hide #form then show #cards">
-                    <a>
-                        <span>All</span>
-                    </a>
-                    </li>
-                </ul>
-              </div>
-            </nav>
-          </div>
-    </section>
+    {% block head %}
+    {% endblock %}
 
 </head>
 <body>
-    <progress id="progress" class="progress htmx-indicator is-primary"></progress>
+
+    {% block body %}
+    {% endblock %}
     
 </body>
 </html>

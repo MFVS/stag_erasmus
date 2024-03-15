@@ -31,7 +31,7 @@ async def main():
     url = "https://ws.ujep.cz/ws/services/rest2/predmety/getPredmetInfo"
     temp_dfs = []
 
-    tasks = [process_row(row, url) for index, row in df.iterrows()]
+    tasks = [process_row(row, url) for _, row in df.iterrows()]
     temp_dfs = await asyncio.gather(*tasks)
 
     predmety_df = pd.concat(temp_dfs)

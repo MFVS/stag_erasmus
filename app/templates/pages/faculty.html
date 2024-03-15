@@ -1,0 +1,162 @@
+{% extends 'index.html' %}
+{% block title %}
+Erasmus • {{ faculty }}
+{% endblock title %}
+{% block head %}
+    
+<nav class="navbar is-{{ faculty }} is-fixed-top">
+    <div class="navbar-brand">
+        <a class="navbar-item" href="https://prf.ujep.cz/cs/">
+            <img src="/static/logos/ujep_logo.svg">
+        </a>
+        <a role="button" class="navbar-burger p-3">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+    </div>
+    <div class="navbar-menu">
+        <div class="navbar-start">
+        </div>
+    </div>
+</nav>
+
+<section class="hero is-{{ faculty }} p-5">
+    <div class="hero-body">
+        <div class="container" sty>
+            <h1 class="title is-1 has-text-centered has-text-white">
+                Erasmus
+            </h1>
+        </div>
+    </div>
+    <div class="hero-foot">
+        <nav class="tabs is-centered is-toggle">
+            <div class="container">
+            <ul>
+                <li class="is-active" _="on click take .is-active then hide #cards then show #form">
+                <a>
+                    <span>Table</span>
+                </a>
+                </li>
+                <li _="on click take .is-active then hide #form then show #cards">
+                <a>
+                    <span>All</span>
+                </a>
+                </li>
+            </ul>
+            </div>
+        </nav>
+        </div>
+</section>
+{% endblock head %}
+{% block body %}
+
+<progress id="progress" class="progress htmx-indicator is-{{ faculty }}"></progress>
+
+    <section class="section">
+        <form id="form" hx-post="/ws/filter" hx-indicator="#progress" hx-target="#table">
+            <table class="table is-hoverable mx-auto">
+                <thead>
+                    <tr>
+                        {% for column in df.columns %}
+                        <th class="has-text-centered">
+                            {{ column }}
+                        </th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <thead>
+                    <tr>
+                        <th>
+                            <div class="select is-{{ faculty }} is-rounded mx-auto">
+                                <select name="Department" hx-post="/ws/filter" hx-trigger="change" hx-target="#table"
+                                    hx-swap="innerHTML">
+                                    <option>All</option>
+                                    {% for value in df["Department"].unique() %}
+                                    <option>{{ value }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="field">
+                                <p class="control has-icons-left">
+                                    <input class="input is-{{ faculty }} is-rounded" type="text" name="Code" value=""
+                                        hx-post="/ws/filter" hx-trigger="change" hx-target="#table" hx-swap="innerHTML">
+                                    <span class="icon is-medium is-left">
+                                        <i class="mdi mdi-magnify"></i>
+                                    </span>
+                                </p>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="field">
+                                <p class="control has-icons-left">
+                                    <input class="input is-{{ faculty }} is-rounded" type="text" name="Name" value=""
+                                        hx-post="/ws/filter" hx-trigger="change" hx-target="#table" hx-swap="innerHTML">
+                                    <span class="icon is-medium is-left">
+                                        <i class="mdi mdi-magnify"></i>
+                                    </span>
+                                </p>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="field">
+                                <div class="control">
+                                    <label class="checkbox">
+                                        <input type="checkbox" type="checkbox" name="Winter term" value="True"
+                                            hx-post="/ws/filter" hx-trigger="change" hx-target="#table"
+                                            hx-swap="innerHTML">
+                                    </label>
+                                </div>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="field">
+                                <div class="control">
+                                    <label class="checkbox">
+                                        <input type="checkbox" type="checkbox" name="Summer term" value="True"
+                                            hx-post="/ws/filter" hx-trigger="change" hx-target="#table"
+                                            hx-swap="innerHTML">
+                                    </label>
+                                </div>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="table">
+                    {% for index, row in df.iterrows() %}
+                    <tr _="on click fetch /ws/predmet/{{ row['Code'] }}/{{ row['Department'] }} put the result after me">
+                        {% for column in df.columns %}
+                            {% if column in ['Department', 'Code'] %}
+                            <td class="has-text-centered">{{ row[column] }}</td>
+                            {% elif column in ['Winter term', 'Summer term'] %}
+                                {% if row[column] == 'A' %}
+                                <td class="has-text-centered"><span class="icon is-medium has-text-success">
+                                        <i class="mdi mdi-24px mdi-check"></i>
+                                    </span></td>
+                                {% else %}
+                                <td class="has-text-centered">
+                                    <span class="icon is-medium has-text-danger">
+                                        <i class="mdi mdi-24px mdi-close"></i>
+                                    </span>
+                                </td>
+                                {% endif %}
+                            {% else %}
+                            <td class="pl-5">{{ row[column] }}</td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </form>
+
+        <div id="cards" class="container" style="display: none;"
+        hx-get="/ws/cards" hx-trigger="revealed" hx-indicator="#progress">
+
+        </div>
+
+    </section>
+    
+{% endblock body %}
