@@ -12,9 +12,6 @@ body {
   overflow-x: auto;
 }
 
-table {
-  width: 75%;
-}
 
 .checkbox input[type="checkbox"] {
   transform: scale(1.5);

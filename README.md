@@ -43,3 +43,16 @@ přídat filtry:
 vizuál:
 
 - [x] univerzitní logo
+
+
+## RA x predmety
+
+garanti a vyucujici (prednasejici, cvicici, seminarici)
+
+jen rozvrhovane?
+
+garant = 1
+
+prednaska -> prednasejici, cviceni -> cvicici, seminar -> seminarici
+garant je mezi vyucujicimi (ma prednasku pokud prednaska)
+

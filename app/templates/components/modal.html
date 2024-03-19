@@ -1,6 +1,6 @@
 <div id="modal" class="modal is-active">
     <div class="modal-background" _="on click remove #modal"></div>
-    <div class="modal-content animate__animated animate__zoomIn animate__faster" style="width: 50%;">
+    <div class="modal-content" style="width: 50%;">
         <div class="container">
             <div class="box">
                 <h1 class="title is-1 has-text-centered p-3">{{df['nazev'][0]}}</h1>
@@ -24,16 +24,6 @@
                                 {{ (df['prednasejici'][0] | string).translate({39:None}) }}
                             </td>
                         </tr>
-                        <!-- <tr>
-                            <th>Term</th>
-                            <td>
-                                {% if df['vyukaZS'][0] == 'A' %}
-                                Winter
-                                {% else %}
-                                Summer
-                                {% endif %}
-                            </td>
-                        </tr> -->
                         <tr>
                             <th>Winter term</th>
                             <td>

@@ -1,6 +1,6 @@
-{% for index, row in df_predmety.iterrows() %}
-    <tr _="on click fetch /ws/predmet/{{ row['Code'] }}/{{ row['Department'] }} put the result after me">
-        {% for column in df_predmety.columns %}
+{% for index, row in df.iterrows() %}
+    <tr _="on click fetch /subjects/{{ row['Code'] }}/{{ row['Department'] }} put the result after me">
+        {% for column in df.columns %}
             {% if column in ['Department', 'Code'] %}
             <td class="has-text-centered">{{ row[column] }}</td>
             {% elif column in ['Winter term', 'Summer term'] %}

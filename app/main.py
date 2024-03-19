@@ -7,10 +7,9 @@ from .routers import subjects
 
 
 app = FastAPI(
-    # docs_url=None,
+    docs_url=None,
     redoc_url=None,
-    title="FastAPI Template",
-    description="A simple FastAPI template",
+    title="STAG ERASMUS",
     version="0.1.0",
 )
 
