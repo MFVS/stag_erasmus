@@ -7,6 +7,8 @@ from io import StringIO, BytesIO
 import requests
 import redis
 
+from ..utils import process_df, filter_df
+
 router = APIRouter(prefix="/subjects", tags=["Subjects"])
 
 templates = Jinja2Templates(directory="app/templates")
@@ -18,13 +20,12 @@ redis_client = redis.Redis(host="redis", port=6379, db=0)
 @router.get("/")
 def get_subjects(faculty: str, year: str, request: Request):
     try:
-        
-        df_facult = df[["katedra", "zkratka", "nazev", "vyukaZS", "vyukaLS", "kreditu", "vyucovaciJazyky", "urovenNastavena"]]
-        df_facult.columns = ["Department", "Code", "Name", "Winter term", "Summer term", "Credits", "Languages", "Level"]
+        df_facult = process_df(df)
+        unique_languages = df_facult["Languages"].str.split(", ").explode().unique().tolist()
 
         return templates.TemplateResponse(
             "pages/faculty.html",
-            {"request": request, "faculty": faculty, "year": year, "df": df_facult},
+            {"request": request, "faculty": faculty, "year": year, "df": df_facult, "unique_languages": unique_languages},
         )
     except Exception as e:
         return HTMLResponse(content=f"<h1>Error on our side</h1>", status_code=500)
@@ -42,9 +43,7 @@ def filter_df(
     languages: str = Form(None, alias="Languages"),
     level: str = Form(None, alias="Level")
 ):
-    
-    df_filter = df[["katedra", "zkratka", "nazev", "vyukaZS", "vyukaLS", "kreditu", "vyucovaciJazyky", "urovenNastavena"]]
-    df_filter.columns = ["Department", "Code", "Name", "Winter term", "Summer term", "Credits", "Languages", "Level"]
+    df_filter = process_df(df)
     
     if department == "All":
         department = None
@@ -57,8 +56,6 @@ def filter_df(
     if level == "All":
         level = None
         
-    print(department, shortcut, name, winter, summer, credits, languages, level)
-    print(df_filter["Credits"].unique())
     if department:
         df_filter = df_filter.loc[df_filter["Department"] == department]
     if shortcut:
@@ -82,6 +79,8 @@ def filter_df(
     if level:
         df_filter = df_filter[df_filter["Level"] == level]
     
+    df_filter.fillna("—", inplace=True)
+
     return templates.TemplateResponse(
         "components/table.html",
         {
@@ -103,12 +102,10 @@ def get_predmet(request: Request, predmet_zkr: str, katedra: str):
     }
 
     if redis_client.exists(f"predmet:{predmet_zkr}"):
-        print("uz tam byl")
         predmet = redis_client.get(f"predmet:{predmet_zkr}")
         df = pd.read_json(BytesIO(predmet), orient="records")
 
     else:
-        print("nebyl tam")
         url = "https://ws.ujep.cz/ws/services/rest2/predmety/getPredmetInfo"
         vars = {
             "zkratka": predmet_zkr,
@@ -125,8 +122,7 @@ def get_predmet(request: Request, predmet_zkr: str, katedra: str):
 
     df = pd.read_csv(StringIO(requests.get(url, params=vars).text), sep=";")
     df.fillna("—", inplace=True)
-    # print(df.columns)
-    # print(df[["jednotekPrednasek","jednotkaPrednasky"]])
+
     return templates.TemplateResponse(
         "components/modal.html", {"request": request, "df": df}
     )

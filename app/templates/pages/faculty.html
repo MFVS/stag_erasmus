@@ -71,7 +71,7 @@ Erasmus • {{ faculty }}
                             <div class="select is-{{ faculty }} is-rounded mx-auto">
                                 <select name="Department" hx-post="/subjects/filter" hx-trigger="change" hx-target="#table"
                                     hx-swap="innerHTML">
-                                    <option></option>
+                                    <option>All</option>
                                     {% for value in df["Department"].unique() %}
                                     <option>{{ value }}</option>
                                     {% endfor %}
@@ -134,11 +134,11 @@ Erasmus • {{ faculty }}
                             </div>
                         </th>
                         <th>
-                            <div class="select is-{{ faculty }} is-rounded mx-auto">
+                            <div class="select is-{{ faculty }} is-rounded mx-auto is-fullwidth">
                                 <select name="Languages" hx-post="/subjects/filter" hx-trigger="change" hx-target="#table"
                                     hx-swap="innerHTML">
                                     <option>All</option>
-                                    {% for value in df["Languages"].unique() %}
+                                    {% for value in unique_languages %}
                                     <option>{{ value }}</option>
                                     {% endfor %}
                                 </select>

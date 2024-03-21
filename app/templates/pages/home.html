@@ -5,15 +5,23 @@ UJEP • Erasmus
 {% endblock title %}
 
 {% block head %}
+
+<style>
+    html {
+        background-color: hsl(0, 0%, 21%);
+    }
+</style>
   
-<h1 class="title is-1 has-text-centered pt-5" style="font-size: 4em;">Erasmus</h1>
-<h1 class="subtitle is-1 has-text-centered" style="font-size: 4em;">UJEP</h1>   
+<div class="container p-5">
+    <h1 class="title is-1 has-text-white has-text-centered pt-5" style="font-size: 4em;">Erasmus</h1>
+    <h1 class="subtitle is-1 has-text-light has-text-centered" style="font-size: 4em;">UJEP</h1>   
+</div>
 
 {% endblock head %}
 
 {% block body %}
 
-<div class="container">
+<div class="container p-5">
     <div class="box mx-auto has-background-light" style="max-width: 600px;">
         <form action="/subjects" method="get">
             <div class="columns is-centered">
