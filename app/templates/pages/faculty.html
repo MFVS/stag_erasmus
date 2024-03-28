@@ -3,7 +3,7 @@
 Erasmus • {{ faculty }}
 {% endblock title %}
 {% block head %}
-    
+
 <nav class="navbar is-{{ faculty }} is-fixed-top">
     <div class="navbar-brand">
         <a class="navbar-item" href="https://prf.ujep.cz/cs/">
@@ -53,7 +53,7 @@ Erasmus • {{ faculty }}
 
 <progress id="progress" class="progress htmx-indicator is-{{ faculty }}"></progress>
 
-    <section class="section">
+    <section id="section" class="section">
         <form id="form" hx-post="/subjects/filter" hx-indicator="#progress" hx-target="#table">
             <table class="table is-hoverable mx-auto is-fullwidth">
                 <thead>
@@ -126,7 +126,7 @@ Erasmus • {{ faculty }}
                             <div class="select is-{{ faculty }} is-rounded mx-auto">
                                 <select name="Credits" hx-post="/subjects/filter" hx-trigger="change" hx-target="#table"
                                     hx-swap="innerHTML">
-                                    <option>-</option>
+                                    <option>All</option>
                                     {% for value in df["Credits"].unique() %}
                                     <option>{{ value }}</option>
                                     {% endfor %}
@@ -159,7 +159,7 @@ Erasmus • {{ faculty }}
                 </thead>
                 <tbody id="table">
                     {% for index, row in df.iterrows() %}
-                    <tr _="on click fetch /subjects/{{ row['Code'] }}/{{ row['Department'] }} put the result after me">
+                    <tr _="on click fetch /subjects/{{ row['Code'] }}/{{ row['Department'] }} put the result after #section">
                         {% for column in df.columns %}
                             {% if column in ['Department', 'Code'] %}
                             <td class="has-text-centered">{{ row[column] }}</td>

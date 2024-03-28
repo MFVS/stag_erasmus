@@ -44,10 +44,10 @@ def filter_df(
     level: str = Form(None, alias="Level")
 ):
     df_filter = process_df(df)
-    
+
     if department == "All":
         department = None
-    if credits == "-":
+    if credits == "All":
         credits = None
     else:
         credits = int(credits)
@@ -55,7 +55,7 @@ def filter_df(
         languages = None
     if level == "All":
         level = None
-        
+
     if department:
         df_filter = df_filter.loc[df_filter["Department"] == department]
     if shortcut:
