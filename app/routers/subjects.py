@@ -21,7 +21,9 @@ redis_client = redis.Redis(host="redis", port=6379, db=0)
 def get_subjects(faculty: str, year: str, request: Request):
     try:
         df_facult = process_df(df)
+        df_facult.fillna("–", inplace=True)
         unique_languages = df_facult["Languages"].str.split(", ").explode().unique().tolist()
+        # unique_languages = unique_languages.sort()
 
         return templates.TemplateResponse(
             "pages/faculty.html",
@@ -79,7 +81,7 @@ def filter_df(
     if level:
         df_filter = df_filter[df_filter["Level"] == level]
     
-    df_filter.fillna("—", inplace=True)
+    df_filter.fillna("–", inplace=True)
 
     return templates.TemplateResponse(
         "components/table.html",
@@ -116,12 +118,12 @@ def get_predmet(request: Request, predmet_zkr: str, katedra: str):
         }
 
         df = pd.read_csv(StringIO(requests.get(url, params=vars).text), sep=";")
-        df.fillna("—", inplace=True)
+        df.fillna("–", inplace=True)
 
         redis_client.setex(f"predmet:{predmet_zkr}", 60, df.to_json())
 
     df = pd.read_csv(StringIO(requests.get(url, params=vars).text), sep=";")
-    df.fillna("—", inplace=True)
+    df.fillna("–", inplace=True)
 
     return templates.TemplateResponse(
         "components/modal.html", {"request": request, "df": df}

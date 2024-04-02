@@ -138,7 +138,7 @@ Erasmus • {{ faculty }}
                                 <select name="Languages" hx-post="/subjects/filter" hx-trigger="change" hx-target="#table"
                                     hx-swap="innerHTML">
                                     <option>All</option>
-                                    {% for value in unique_languages %}
+                                    {% for value in unique_languages|sort %}
                                     <option>{{ value }}</option>
                                     {% endfor %}
                                 </select>
@@ -149,7 +149,7 @@ Erasmus • {{ faculty }}
                                 <select name="Level" hx-post="/subjects/filter" hx-trigger="change" hx-target="#table"
                                     hx-swap="innerHTML">
                                     <option>All</option>
-                                    {% for value in df["Level"].unique() %}
+                                    {% for value in df["Level"].unique()|sort %}
                                     <option>{{ value }}</option>
                                     {% endfor %}
                                 </select>

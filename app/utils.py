@@ -4,6 +4,8 @@ import pandas as pd
 def process_df(df: pd.DataFrame) -> pd.DataFrame:
     df = df[["katedra", "zkratka", "nazev", "vyukaZS", "vyukaLS", "kreditu", "vyucovaciJazyky", "urovenNastavena"]]
     df.columns = ["Department", "Code", "Name", "Winter term", "Summer term", "Credits", "Languages", "Level"]
+    df.fillna("–", inplace=True)
+    
     return df
 
 
