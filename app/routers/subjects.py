@@ -13,7 +13,8 @@ router = APIRouter(prefix="/subjects", tags=["Subjects"])
 
 templates = Jinja2Templates(directory="app/templates")
 
-df = pd.read_csv("df.csv", delimiter=";")
+# df = pd.read_csv("df.csv", delimiter=";")
+df = pd.read_csv("predmety.csv")
 redis_client = redis.Redis(host="redis", port=6379, db=0)
 
 
@@ -128,3 +129,10 @@ def get_predmet(request: Request, predmet_zkr: str, katedra: str):
     return templates.TemplateResponse(
         "components/modal.html", {"request": request, "df": df}
     )
+
+
+@router.get("/cards")
+def get_cards(request: Request):
+    text_sorted_df = df.sort_values(by=["prehledLatky", "pozadavky"], ascending=False)
+    
+    return templates.TemplateResponse("components/cards.html", {"request": request, "df": text_sorted_df})

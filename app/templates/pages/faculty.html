@@ -1,6 +1,6 @@
 {% extends 'index.html' %}
 {% block title %}
-Erasmus • {{ faculty }}
+Erasmus • {{ faculty | upper }}
 {% endblock title %}
 {% block head %}
 
@@ -46,7 +46,7 @@ Erasmus • {{ faculty }}
                 </ul>
                 </div>
             </nav>
-            </div>
+        </div>
       </section>
 {% endblock head %}
 {% block body %}
@@ -186,7 +186,7 @@ Erasmus • {{ faculty }}
         </form>
 
         <div id="cards" class="container" style="display: none;"
-        hx-post="/ws/cards" hx-trigger="revealed" hx-indicator="#progress">
+        hx-get="/subjects/cards" hx-trigger="revealed" hx-indicator="#progress">
 
         </div>
     </section>
