@@ -14,17 +14,18 @@ router = APIRouter(prefix="/subjects", tags=["Subjects"])
 templates = Jinja2Templates(directory="app/templates")
 
 # df = pd.read_csv("df.csv", delimiter=";")
-df = pd.read_csv("predmety.csv")
+df = pd.read_csv("search_predmety.csv", delimiter=";")
 redis_client = redis.Redis(host="redis", port=6379, db=0)
 
 
 @router.get("/")
 def get_subjects(faculty: str, year: str, request: Request):
     try:
-        df_facult = process_df(df)
+        faculty = faculty.lower()
+        new_df = df.loc[(df["fakulta"].str.lower() == faculty) & (df["rok"] == int(year))]
+        df_facult = process_df(new_df)
         df_facult.fillna("–", inplace=True)
         unique_languages = df_facult["Languages"].str.split(", ").explode().unique().tolist()
-        # unique_languages = unique_languages.sort()
 
         return templates.TemplateResponse(
             "pages/faculty.html",
@@ -34,9 +35,11 @@ def get_subjects(faculty: str, year: str, request: Request):
         return HTMLResponse(content=f"<h1>Error on our side</h1>", status_code=500)
 
 
-@router.post("/filter")
+@router.post("/filter/{faculty}/{year}")
 def filter_df(
     request: Request,
+    faculty: str,
+    year: str,
     department: str = Form(None, alias="Department"),
     shortcut: str = Form(None, alias="Code"),
     name: str = Form(None, alias="Name"),
@@ -46,7 +49,8 @@ def filter_df(
     languages: str = Form(None, alias="Languages"),
     level: str = Form(None, alias="Level")
 ):
-    df_filter = process_df(df)
+    faculta_df = df.loc[(df["fakulta"].str.lower() == faculty) & (df["rok"] == int(year))]
+    df_filter = process_df(faculta_df)
 
     if department == "All":
         department = None
@@ -89,12 +93,13 @@ def filter_df(
         {
             "request": request,
             "df": df_filter,
+            "year": year,
         },
     )
 
 
-@router.get("/{predmet_zkr}/{katedra}")
-def get_predmet(request: Request, predmet_zkr: str, katedra: str):
+@router.get("/{predmet_zkr}/{katedra}/{year}")
+def get_predmet(request: Request, predmet_zkr: str, katedra: str, year: str):
     url = "https://ws.ujep.cz/ws/services/rest2/predmety/getPredmetInfo"
     vars = {
         "zkratka": predmet_zkr,
@@ -103,9 +108,9 @@ def get_predmet(request: Request, predmet_zkr: str, katedra: str):
         "outputFormat": "CSV",
         "outputFormatEncoding": "utf-8",
     }
-
-    if redis_client.exists(f"predmet:{predmet_zkr}"):
-        predmet = redis_client.get(f"predmet:{predmet_zkr}")
+    print(f"predmet:{predmet_zkr}:{year}")
+    if redis_client.exists(f"predmet:{predmet_zkr}:{year}"):
+        predmet = redis_client.get(f"predmet:{predmet_zkr}:{year}")
         df = pd.read_json(BytesIO(predmet), orient="records")
 
     else:
@@ -113,15 +118,17 @@ def get_predmet(request: Request, predmet_zkr: str, katedra: str):
         vars = {
             "zkratka": predmet_zkr,
             "katedra": katedra,
+            "rok": year,
             "lang": "en",
             "outputFormat": "CSV",
             "outputFormatEncoding": "utf-8",
         }
+        response = requests.get(url, params=vars)
 
-        df = pd.read_csv(StringIO(requests.get(url, params=vars).text), sep=";")
+        df = pd.read_csv(StringIO(response.text), sep=";")
         df.fillna("–", inplace=True)
 
-        redis_client.setex(f"predmet:{predmet_zkr}", 60, df.to_json())
+        redis_client.setex(f"predmet:{predmet_zkr}:{year}", 60, df.to_json())
 
     df = pd.read_csv(StringIO(requests.get(url, params=vars).text), sep=";")
     df.fillna("–", inplace=True)
@@ -131,8 +138,8 @@ def get_predmet(request: Request, predmet_zkr: str, katedra: str):
     )
 
 
-@router.get("/cards")
-def get_cards(request: Request):
-    text_sorted_df = df.sort_values(by=["prehledLatky", "pozadavky"], ascending=False)
+# @router.get("/cards")
+# def get_cards(request: Request):
+#     # text_sorted_df = df.sort_values(by=["prehledLatky", "pozadavky"], ascending=False)
     
-    return templates.TemplateResponse("components/cards.html", {"request": request, "df": text_sorted_df})
+#     return templates.TemplateResponse("components/cards.html", {"request": request, "df": df})

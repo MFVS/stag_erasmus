@@ -1,5 +1,5 @@
 {% for index, row in df.iterrows() %}
-    <tr _="on click fetch /subjects/{{ row['Code'] }}/{{ row['Department'] }} put the result after me">
+    <tr _="on click fetch /subjects/{{ row['Code'] }}/{{ row['Department'] }}/{{ year }} put the result after me">
         {% for column in df.columns %}
             {% if column in ['Department', 'Code'] %}
             <td class="has-text-centered">{{ row[column] }}</td>
