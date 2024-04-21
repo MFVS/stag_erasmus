@@ -13,6 +13,10 @@ sass --sourcemap=none --style=compressed sass/mystyles.scss:css/mystyles.css
 sass --watch --sourcemap=none sass/mystyles.scss:css/mystyles.css
 ```
 
+## SVG
+
+<https://www.svgbackgrounds.com/set/free-svg-backgrounds-and-patterns/>
+
 ## Použité služby
 
 - [/predmety/getPredmetyByFakulta](https://ws.ujep.cz/ws/services/rest2/predmety/getPredmetyByFakulta)
