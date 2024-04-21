@@ -19,6 +19,7 @@ python-multipart = "^0.0.6"
 redis = "^5.0.1"
 aiohttp = "^3.9.3"
 python-dotenv = "^1.0.1"
+logger = "^1.4"
 
 
 [build-system]

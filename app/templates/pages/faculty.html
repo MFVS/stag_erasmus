@@ -185,10 +185,17 @@ Erasmus • {{ faculty | upper }}
             </table>
         </form>
 
-        <!-- <div id="cards" class="container" style="display: none;"
-        hx-get="/subjects/cards" hx-trigger="revealed" hx-indicator="#progress">
+        <div id="cards" class="container" style="display: none;">
+            
+        <h2 class="title is-3 has-text-centered">Search anotation and overview</h2>
+            <p class="control has-icons-left">
+                <input class="input is-{{ faculty }} is-rounded" type="text" placeholder="Search" hx-get="/subjects/cards" hx-trigger="keyup"
+                    hx-target="#cards" hx-swap="innerHTML" name="search">
+                <span class="icon is-medium is-left">
+                    <i class="mdi mdi-magnify"></i>
+                </span>
 
-        </div> -->
+    </div>
     </section>
     
 {% endblock body %}

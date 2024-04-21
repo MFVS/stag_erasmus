@@ -3,6 +3,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel, Field, field_validator
 import pandas as pd
+# from loguru import logger
 from io import StringIO, BytesIO
 import requests
 import redis
@@ -13,8 +14,8 @@ router = APIRouter(prefix="/subjects", tags=["Subjects"])
 
 templates = Jinja2Templates(directory="app/templates")
 
-# df = pd.read_csv("df.csv", delimiter=";")
 df = pd.read_csv("search_predmety.csv", delimiter=";")
+df_predmety = pd.read_csv("predmety.csv")
 redis_client = redis.Redis(host="redis", port=6379, db=0)
 
 
@@ -32,6 +33,7 @@ def get_subjects(faculty: str, year: str, request: Request):
             {"request": request, "faculty": faculty, "year": year, "df": df_facult, "unique_languages": unique_languages},
         )
     except Exception as e:
+        logger.error(e)
         return HTMLResponse(content=f"<h1>Error on our side</h1>", status_code=500)
 
 
@@ -138,8 +140,11 @@ def get_predmet(request: Request, predmet_zkr: str, katedra: str, year: str):
     )
 
 
-# @router.get("/cards")
-# def get_cards(request: Request):
-#     # text_sorted_df = df.sort_values(by=["prehledLatky", "pozadavky"], ascending=False)
-    
-#     return templates.TemplateResponse("components/cards.html", {"request": request, "df": df})
+@router.get("/cards")
+def get_cards(request: Request, search: str = None):
+    if search:
+        df_search_predmety = df_predmety.loc[
+            (df_predmety["anotace"].str.contains(search, case=False, na=False)) | (df_predmety["prehledLatky"].str.contains(search, case=False, na=False))
+        ]
+
+    return templates.TemplateResponse("components/cards.html", {"request": request, "df": df_search_predmety})
