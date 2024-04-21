@@ -146,5 +146,7 @@ def get_cards(request: Request, search: str = None):
         df_search_predmety = df_predmety.loc[
             (df_predmety["anotace"].str.contains(search, case=False, na=False)) | (df_predmety["prehledLatky"].str.contains(search, case=False, na=False))
         ]
-
-    return templates.TemplateResponse("components/cards.html", {"request": request, "df": df_search_predmety})
+        
+        return templates.TemplateResponse("components/cards.html", {"request": request, "df": df_search_predmety, "search": search})
+    else:
+        return HTMLResponse(content="<div id=\"cards_content\"></div>", status_code=200)

@@ -40,7 +40,7 @@ Erasmus • {{ faculty | upper }}
                     </li>
                     <li _="on click take .is-active then hide #form then show #cards">
                     <a>
-                        <span>All</span>
+                        <span>Search</span>
                     </a>
                     </li>
                 </ul>
@@ -188,12 +188,15 @@ Erasmus • {{ faculty | upper }}
         <div id="cards" class="container" style="display: none;">
             
         <h2 class="title is-3 has-text-centered">Search anotation and overview</h2>
-            <p class="control has-icons-left">
-                <input class="input is-{{ faculty }} is-rounded" type="text" placeholder="Search" hx-get="/subjects/cards" hx-trigger="keyup"
-                    hx-target="#cards" hx-swap="innerHTML" name="search">
+            <p class="control has-icons-left pb-5">
+                <input class="input is-{{ faculty }} is-rounded" type="text" placeholder="e.g. math, physics, chemistry, ..."
+                    hx-get="/subjects/cards" hx-trigger="change" hx-indicator="#progress"
+                    hx-target="#cards_content" hx-swap="outer" name="search">
                 <span class="icon is-medium is-left">
                     <i class="mdi mdi-magnify"></i>
                 </span>
+            </p>
+        <div id="cards_content"></div>
 
     </div>
     </section>
