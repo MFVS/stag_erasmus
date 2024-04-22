@@ -4,16 +4,38 @@ Erasmus • {{ faculty | upper }}
 {% endblock title %}
 {% block head %}
 
-<nav class="navbar is-{{ faculty }} is-fixed-top">
-    <div class="navbar-brand">
-        <a class="navbar-item" href="https://prf.ujep.cz/cs/">
+<style>
+    /* Desktop Styles */
+    .desktop-component {
+        display: block;
+    }
+    /* Mobile Styles */
+    .mobile-component {
+        display: none;
+    }
+
+    /* Media query for mobile devices */
+    @media (max-width: 768px) {
+        .desktop-component {
+            display: none;
+        }
+        .mobile-component {
+            display: block;
+        }
+        /* Add additional styles specific to mobile devices */
+    }
+</style>
+
+<nav class="navbar is-fixed-top px-3" style="background-color: transparent;">
+    <div class="navbar-brand has-background-dark" style="border-radius:0 0 10px 10px;">
+        <a class="navbar-item" href="https://prf.ujep.cz/en/">
             <img src="/static/logos/ujep_logo.svg">
         </a>
     </div>
-    <div class="navbar-menu">
+    <div class="navbar-menu px-3">
         <div class="navbar-start">
-            <a class="navbar-item" href="/">
-                    <span class="icon is-large">
+            <a class="navbar-item has-text-white has-background-dark" href="/" style="border-radius:0 0 10px 10px;">
+                <span class="icon">
                         <i class="mdi mdi-36px mdi-home"></i>
                     </span>
             </a>
@@ -21,33 +43,34 @@ Erasmus • {{ faculty | upper }}
     </div>
 </nav>
 
-    <section class="hero is-{{ faculty }} is-medium">
-      
+    <section class="hero is-{{ faculty }} is-medium" style="background-image: url(/static/images/hero-bg-{{faculty}}.svg); background-size: cover; background-position: bottom;">
+          
         <div class="hero-body">
-          <div class="container has-text-centered">
-            <p class="title is-1">Erasmus</p>
-          </div>
+            <div class="container has-text-centered">
+                <h1 class="title is-1">{{ faculty_name }}</h1>
+                <!-- <h2 class="subtitle is-3">Erasmus</h2> -->
+            </div>
         </div>
-      
+          
         <div class="hero-foot">
-            <nav class="tabs is-centered is-boxed is-fullwidth">
+            <nav class="tabs is-centered is-boxed is-fullwidth is-medium">
                 <div class="container">
-                <ul>
-                    <li class="is-active" _="on click take .is-active then hide #cards then show #form">
-                    <a>
-                        <span>Table</span>
-                    </a>
-                    </li>
-                    <li _="on click take .is-active then hide #form then show #cards">
-                    <a>
-                        <span>Search</span>
-                    </a>
-                    </li>
-                </ul>
+                    <ul>
+                        <li class="is-active" _="on click take .is-active then hide #cards then show #form">
+                            <a style="border-color: transparent;">
+                                <i class="mdi mdi-24px mdi-table px-2"></i> Table
+                            </a>
+                        </li>
+                        <li _="on click take .is-active then hide #form then show #cards">
+                            <a style="border-color: transparent;">
+                                <i class="mdi mdi-24px mdi-magnify px-2"></i> Search
+                            </a>
+                        </li>
+                    </ul>
                 </div>
             </nav>
         </div>
-      </section>
+    </section>
 {% endblock head %}
 {% block body %}
 
@@ -190,7 +213,7 @@ Erasmus • {{ faculty | upper }}
         <h2 class="title is-3 has-text-centered">Search anotation and overview</h2>
             <p class="control has-icons-left pb-5">
                 <input class="input is-{{ faculty }} is-rounded" type="text" placeholder="e.g. math, physics, chemistry, ..."
-                    hx-get="/subjects/cards" hx-trigger="change" hx-indicator="#progress"
+                    hx-get="/subjects/{{ faculty }}/cards" hx-trigger="change" hx-indicator="#progress"
                     hx-target="#cards_content" hx-swap="outer" name="search">
                 <span class="icon is-medium is-left">
                     <i class="mdi mdi-magnify"></i>

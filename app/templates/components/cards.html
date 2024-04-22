@@ -1,29 +1,43 @@
-<div id="cards_content">
+<div id="cards_content" class="desktop-component">
     {% for index, row in df.iterrows() %}
-        <div class="card m-5">
-            <h1 class="title is-1 has-text-centered p-3">{{row['nazev']}}</h1>
+        <div class="card m-5" style="border-radius: 20px 20px 20px 20px;">
             <div class="card-content">
-                <nav class="tabs is-centered is-toggle is-toggle-rounded is-fullwidth is-purple">
-                    <div class="container">
-                        <ul>
-                            <!-- TODO: color -->
-                            <li class="is-active" id="tab-table-{{ row['zkratka'] }}" _="on click take .is-active from [ #tab-annotation-{{ row['zkratka'] }}, #tab-overview-{{ row['zkratka'] }}, #tab-requirements-{{ row['zkratka'] }} ] then show #tab-table-content-{{ row['zkratka'] }} then hide [ #tab-annotation-content-{{ row['zkratka'] }}, #tab-overview-content-{{ row['zkratka'] }}, #tab-requirements-content-{{ row['zkratka'] }} ]">
-                                <a>Table</a>
-                            </li>
-                            <li id="tab-annotation-{{ row['zkratka'] }}" _="on click take .is-active from [ #tab-table-{{ row['zkratka'] }}, #tab-overview-{{ row['zkratka'] }}, #tab-requirements-{{ row['zkratka'] }} ] then show #tab-annotation-content-{{ row['zkratka'] }} then hide [ #tab-table-content-{{ row['zkratka'] }}, #tab-overview-content-{{ row['zkratka'] }}, #tab-requirements-content-{{ row['zkratka'] }} ]">
-                                <a>Annotation</a>
-                            </li>
-                            <li id="tab-overview-{{ row['zkratka'] }}" _="on click take .is-active from [ #tab-table-{{ row['zkratka'] }}, #tab-annotation-{{ row['zkratka'] }}, #tab-requirements-{{ row['zkratka'] }} ] then show #tab-overview-content-{{ row['zkratka'] }} then hide [ #tab-table-content-{{ row['zkratka'] }}, #tab-annotation-content-{{ row['zkratka'] }}, #tab-requirements-content-{{ row['zkratka'] }} ]">
-                                <a>Overview</a>
-                            </li>
-                            <li id="tab-requirements-{{ row['zkratka'] }}" _="on click take .is-active from [ #tab-table-{{ row['zkratka'] }}, #tab-annotation-{{ row['zkratka'] }}, #tab-overview-{{ row['zkratka'] }} ] then show #tab-requirements-content-{{ row['zkratka'] }} then hide [ #tab-table-content-{{ row['zkratka'] }}, #tab-annotation-content-{{ row['zkratka'] }}, #tab-overview-content-{{ row['zkratka'] }} ]">
-                                <a>Requirements</a>
-                            </li>
-                        </ul>
+                <section class="hero has-background-light" style="border-radius: 20px 20px 20px 20px;">
+                  <div class="hero-body">
+                    <div class="container has-text-centered">
+                      <h1 class="title is-1 p-3">
+                        {{ row['nazev'] }}
+                      </h1>
                     </div>
-                </nav>
+                  </div>
+                  <div class="hero-foot">
+                    <nav class="tabs is-centered is-boxed">
+                        <div class="container">
+                            <ul>
+                                <li class="is-active" id="tab-table-{{ row['zkratka'] }}" _="on click take .is-active from [ #tab-annotation-{{ row['zkratka'] }}, #tab-overview-{{ row['zkratka'] }}, #tab-requirements-{{ row['zkratka'] }} ] then show #tab-table-content-{{ row['zkratka'] }} then hide [ #tab-annotation-content-{{ row['zkratka'] }}, #tab-overview-content-{{ row['zkratka'] }}, #tab-requirements-content-{{ row['zkratka'] }} ]">
+                                    <a class="has-text-dark" style="border-color: transparent;">
+                                        <span>Table</span></a>
+                                </li>
+                                <li id="tab-annotation-{{ row['zkratka'] }}" _="on click take .is-active from [ #tab-table-{{ row['zkratka'] }}, #tab-overview-{{ row['zkratka'] }}, #tab-requirements-{{ row['zkratka'] }} ] then show #tab-annotation-content-{{ row['zkratka'] }} then hide [ #tab-table-content-{{ row['zkratka'] }}, #tab-overview-content-{{ row['zkratka'] }}, #tab-requirements-content-{{ row['zkratka'] }} ]">
+                                     <a class="has-text-dark" style="border-color: transparent;">
+                                         <span>Annotation</span>
+                                        </a>
+                                </li>
+                                <li id="tab-overview-{{ row['zkratka'] }}" _="on click take .is-active from [ #tab-table-{{ row['zkratka'] }}, #tab-annotation-{{ row['zkratka'] }}, #tab-requirements-{{ row['zkratka'] }} ] then show #tab-overview-content-{{ row['zkratka'] }} then hide [ #tab-table-content-{{ row['zkratka'] }}, #tab-annotation-content-{{ row['zkratka'] }}, #tab-requirements-content-{{ row['zkratka'] }} ]">
+                                    <a class="has-text-dark" style="border-color: transparent;"> <span>Overview</span></a>
+                                </li>
+                                <li id="tab-requirements-{{ row['zkratka'] }}" _="on click take .is-active from [ #tab-table-{{ row['zkratka'] }}, #tab-annotation-{{ row['zkratka'] }}, #tab-overview-{{ row['zkratka'] }} ] then show #tab-requirements-content-{{ row['zkratka'] }} then hide [ #tab-table-content-{{ row['zkratka'] }}, #tab-annotation-content-{{ row['zkratka'] }}, #tab-overview-content-{{ row['zkratka'] }} ]">
+                                    <a class="has-text-dark" style="border-color: transparent;"> <span>Requirements</span></a>
+                                </li>
+                            </ul>
+                        </div>
+
+                    </nav>
+                  </div>
+                </section>
+                <section class="p-5">
                 <div id="tab-table-content-{{ row['zkratka'] }}">
-                    <table class="table mx-auto p-5">
+                    <table class="table mx-auto p-5 is-fullwidth is-hoverable">
                         <tbody>
                             <tr>
                                 <th>Code</th>
@@ -112,7 +126,145 @@
                         {{ row['pozadavky'] | replace("\n", "<br />" | safe ) }}
                     </div>
                 </div>
+            </section>
             </div>
         </div>
+    {% endfor %}
+</div>
+
+<div class="mobile-component">
+    {% for index, row in df.iterrows() %}
+    <div class="card m-5" style="border-radius: 20px 20px 20px 20px;">
+        <div class="card-content">
+            <section class="hero has-background-light" style="border-radius: 20px 20px 20px 20px;">
+                <div class="hero-body">
+                    <div class="container has-text-centered">
+                        <h1 class="has-text-weight-bold is-size-4">
+                            {{ row['nazev'] }}
+                        </h1>
+                    </div>
+                </div>
+                <div class="hero-foot">
+                    <nav class="tabs is-centered is-boxed" style="overflow-x:scroll">
+                        <div class="container">
+                            <ul>
+                                <li class="is-active" id="tab-table-{{ row['zkratka'] }}" _="on click take .is-active from [ #tab-annotation-{{ row['zkratka'] }}, #tab-overview-{{ row['zkratka'] }}, #tab-requirements-{{ row['zkratka'] }} ] then show #tab-table-content-{{ row['zkratka'] }} then hide [ #tab-annotation-content-{{ row['zkratka'] }}, #tab-overview-content-{{ row['zkratka'] }}, #tab-requirements-content-{{ row['zkratka'] }} ]">
+                                    <a class="has-text-dark" style="border-color: transparent;">
+                                        <span>Table</span>
+                                    </a>
+                                </li>
+                                <li id="tab-annotation-{{ row['zkratka'] }}" _="on click take .is-active from [ #tab-table-{{ row['zkratka'] }}, #tab-overview-{{ row['zkratka'] }}, #tab-requirements-{{ row['zkratka'] }} ] then show #tab-annotation-content-{{ row['zkratka'] }} then hide [ #tab-table-content-{{ row['zkratka'] }}, #tab-overview-content-{{ row['zkratka'] }}, #tab-requirements-content-{{ row['zkratka'] }} ]">
+                                    <a class="has-text-dark" style="border-color: transparent;">
+                                        <span>Annotation</span>
+                                    </a>
+                                </li>
+                                <li id="tab-overview-{{ row['zkratka'] }}" _="on click take .is-active from [ #tab-table-{{ row['zkratka'] }}, #tab-annotation-{{ row['zkratka'] }}, #tab-requirements-{{ row['zkratka'] }} ] then show #tab-overview-content-{{ row['zkratka'] }} then hide [ #tab-table-content-{{ row['zkratka'] }}, #tab-annotation-content-{{ row['zkratka'] }}, #tab-requirements-content-{{ row['zkratka'] }} ]">
+                                    <a class="has-text-dark" style="border-color: transparent;"> <span>Overview</span></a>
+                                </li>
+                                <li id="tab-requirements-{{ row['zkratka'] }}" _="on click take .is-active from [ #tab-table-{{ row['zkratka'] }}, #tab-annotation-{{ row['zkratka'] }}, #tab-overview-{{ row['zkratka'] }} ] then show #tab-requirements-content-{{ row['zkratka'] }} then hide [ #tab-table-content-{{ row['zkratka'] }}, #tab-annotation-content-{{ row['zkratka'] }}, #tab-overview-content-{{ row['zkratka'] }} ]">
+                                    <a class="has-text-dark" style="border-color: transparent;">
+                                        <span>Requirements</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+                </div>
+            </section>
+            <section class="p-5">
+                <div id="tab-table-content-{{ row['zkratka'] }}">
+                    <table class="table is-hoverable is-narrow">
+                        <tbody>
+                            <tr>
+                                <th>Code</th>
+                                <td>{{ row['katedra'] }}/{{ row['zkratka'] }}</td>
+                            </tr>
+                            <tr>
+                                <th>Credits</th>
+                                <td>{{ row['kreditu'] }}</td>
+                            </tr>
+                            <!-- <tr>
+                                <th>Guarantor</th>
+                                <td>{{ (row['garanti'] | string).translate({39:None}) }}</td>
+                            </tr>
+                            <tr>
+                                <th>Lecturers</th>
+                                <td>{{ (row['prednasejici'] | string).translate({39:None}) }}</td>
+                            </tr> -->
+                            <tr>
+                                <th>Winter term</th>
+                                <td>
+                                    {% if row['vyukaZS'] == 'A' %}
+                                    <span class="icon is-medium has-text-success">
+                                        <i class="mdi mdi-24 px mdi-check"></i>
+                                    </span>
+                                    {% else %}
+                                    <span class="icon is-medium has-text-danger">
+                                        <i class="mdi mdi-24 px mdi-close"></i>
+                                    </span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Summer term</th>
+                                <td>
+                                    {% if row['vyukaLS'] == 'A' %}
+                                    <span class="icon is-medium has-text-success">
+                                        <i class="mdi mdi-24
+                                        px mdi-check"></i>
+                                    </span>
+                                    {% else %}
+                                    <span class="icon is-medium has-text-danger">
+                                        <i class="mdi mdi-24px mdi-close"></i>
+                                    </span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                {% if row['jednotekPrednasek'] > 0 %}
+                                <th>Lectures</th>
+                                <td>{{ row['jednotekPrednasek'] }} {{ row['jednotkaPrednasky'] }}</td>
+                                {% endif %}
+                            </tr>
+                            <tr>
+                                {% if row['jednotekCviceni'] > 0 %}
+                                <th>Practical exercises</th>
+                                <td>{{ row['jednotekCviceni'] }} {{ row['jednotkaCviceni'] }}</td>
+                                {% endif %}
+                            </tr>
+                            <tr>
+                                {% if row['jednotekSeminare'] > 0 %}
+                                <th>Seminars</th>
+                                <td>{{ row['jednotekSeminare'] }} {{ row['jednotkaSeminare'] }}</td>
+                                {% endif %}
+                            </tr>
+                            <tr>
+                                <th>Type of completion</th>
+                                <td>{{ row['typZkousky'] }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            <div id="tab-annotation-content-{{ row['zkratka'] }}" style="display: none;">
+                <div class="content">
+                    <h2 class="subtitle has-text-black">Annotation:</h2>
+                    {{ row['anotace'] }}
+                </div>
+            </div>
+            <div id="tab-overview-content-{{ row['zkratka'] }}" style="display: none;">
+                <div class="content">
+                    <h2 class="subtitle has-text-black">Overview:</h2>
+                    {{ row['prehledLatky'] | replace("\n", "<br />" | safe ) }}
+                </div>
+            </div>
+            <div id="tab-requirements-content-{{ row['zkratka'] }}" style="display: none;">
+                <div class="content">
+                    <h2 class="subtitle has-text-black">Requirements:</h2>
+                    {{ row['pozadavky'] | replace("\n", "<br />" | safe ) }}
+                </div>
+            </div>
+        </div>
+    </div>
     {% endfor %}
 </div>

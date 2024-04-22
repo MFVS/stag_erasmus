@@ -3,7 +3,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel, Field, field_validator
 import pandas as pd
-# from loguru import logger
+from loguru import logger
 from io import StringIO, BytesIO
 import requests
 import redis
@@ -18,6 +18,17 @@ df = pd.read_csv("search_predmety.csv", delimiter=";")
 df_predmety = pd.read_csv("predmety.csv")
 redis_client = redis.Redis(host="redis", port=6379, db=0)
 
+faculties = {
+    "fsi": "Faculty of Mechanical Engineering",
+    "ff": "Faculty of Arts",
+    "prf": "Faculty of Science",
+    "fžp": "Faculty of Environment",
+    "fzs": "Faculty of Health Studies",
+    "pf": "Faculty of Education",
+    "fse": "Faculty of Social and Economic Studies",
+    "fud": "Faculty of Art and Design",
+}
+
 
 @router.get("/")
 def get_subjects(faculty: str, year: str, request: Request):
@@ -30,7 +41,7 @@ def get_subjects(faculty: str, year: str, request: Request):
 
         return templates.TemplateResponse(
             "pages/faculty.html",
-            {"request": request, "faculty": faculty, "year": year, "df": df_facult, "unique_languages": unique_languages},
+            {"request": request, "faculty": faculty, "year": year, "df": df_facult, "unique_languages": unique_languages, "faculty_name": faculties[faculty]}
         )
     except Exception as e:
         logger.error(e)
@@ -140,13 +151,13 @@ def get_predmet(request: Request, predmet_zkr: str, katedra: str, year: str):
     )
 
 
-@router.get("/cards")
-def get_cards(request: Request, search: str = None):
+@router.get("/{faculty}/cards")
+def get_cards(request: Request, faculty: str, search: str = None):
     if search:
         df_search_predmety = df_predmety.loc[
             (df_predmety["anotace"].str.contains(search, case=False, na=False)) | (df_predmety["prehledLatky"].str.contains(search, case=False, na=False))
         ]
         
-        return templates.TemplateResponse("components/cards.html", {"request": request, "df": df_search_predmety, "search": search})
+        return templates.TemplateResponse("components/cards.html", {"request": request, "df": df_search_predmety, "search": search, "faculty": faculty})
     else:
         return HTMLResponse(content="<div id=\"cards_content\"></div>", status_code=200)

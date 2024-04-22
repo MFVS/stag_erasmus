@@ -13,9 +13,6 @@
     <link rel="stylesheet" href="/static/css/main.css">
     <title>{% block title%}{% endblock %}</title>
 
-    <style>
-    </style>
-
     {% block head %}
     {% endblock %}
 
@@ -26,4 +23,18 @@
     {% endblock %}
 
 </body>
+<footer class="has-background-light">
+    <!-- <div class="container p-5">
+        <h1 class="title is-5 has-text-weight-bold">Links:</h1>
+        <ul>
+            <li>• 1</li>
+            <li>• 2</li>
+            <li>• 3</li>
+            <li>• 4</li>            
+        </ul>
+
+    </div> -->
+    {% block footer %}
+    {% endblock %}
+</footer>
 </html>
