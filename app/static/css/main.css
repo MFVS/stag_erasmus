@@ -41,11 +41,21 @@ body {
   .mobile-component {
       display: block;
   }
-  /* Add additional styles specific to mobile devices */
+
+  .title {
+    padding-top: 10%;
+  }
+
+  .resize-title {
+    font-size: 2rem !important;
+  }
 }
 
+
+/* Hover na brand a home tlačítko */
 .high {
-  transition: height 1s ease-in-out;
+  height: 100%;
+  transition: height 0.2s ease-in-out;
 }
 
 .high:hover {
