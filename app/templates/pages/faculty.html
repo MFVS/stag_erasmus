@@ -4,40 +4,21 @@ Erasmus • {{ faculty | upper }}
 {% endblock title %}
 {% block head %}
 
-<style>
-    /* Desktop Styles */
-    .desktop-component {
-        display: block;
-    }
-    /* Mobile Styles */
-    .mobile-component {
-        display: none;
-    }
-
-    /* Media query for mobile devices */
-    @media (max-width: 768px) {
-        .desktop-component {
-            display: none;
-        }
-        .mobile-component {
-            display: block;
-        }
-        /* Add additional styles specific to mobile devices */
-    }
-</style>
-
 <nav class="navbar is-fixed-top px-3" style="background-color: transparent;">
-    <div class="navbar-brand has-background-dark" style="border-radius:0 0 10px 10px;">
-        <a class="navbar-item" href="https://prf.ujep.cz/en/">
+    <div class="navbar-brand">
+        <a class="navbar-item has-background-dark high" href="https://www.ujep.cz/en/" style="border-radius:0 0 10px 10px;">
             <img src="/static/logos/ujep_logo.svg">
         </a>
+        <a href="/" class="navbar-burger has-text-white has-background-dark ml-2" role="button" _="on click toggle .is-active" style="border-radius: 0 0 10px 10px;">
+            <i class="mdi mdi-36px mdi-home px-2"></i>
+        </a>
     </div>
-    <div class="navbar-menu px-3">
-        <div class="navbar-start">
-            <a class="navbar-item has-text-white has-background-dark" href="/" style="border-radius:0 0 10px 10px;">
+    <div class="navbar-menu">
+        <div class="navbar-start px-3">
+            <a class="navbar-item has-text-white has-background-dark high" href="/" style="border-radius:0 0 10px 10px;">
                 <span class="icon">
-                        <i class="mdi mdi-36px mdi-home"></i>
-                    </span>
+                    <i class="mdi mdi-36px mdi-home"></i>
+                </span>
             </a>
         </div>
     </div>
@@ -48,7 +29,6 @@ Erasmus • {{ faculty | upper }}
         <div class="hero-body">
             <div class="container has-text-centered">
                 <h1 class="title is-1">{{ faculty_name }}</h1>
-                <!-- <h2 class="subtitle is-3">Erasmus</h2> -->
             </div>
         </div>
           
@@ -56,6 +36,18 @@ Erasmus • {{ faculty | upper }}
             <nav class="tabs is-centered is-boxed is-fullwidth is-medium">
                 <div class="container">
                     <ul>
+                        {% if faculty == "fud" %}
+                        <li class="is-active" _="on click take .is-active then hide #cards then show #form then add .has-background-white to #table_fud then remove .has-background-white from #search_fud">
+                            <a id="table_fud" style="border-color: transparent;" class="has-background-white">
+                                <i class="mdi mdi-24px mdi-table px-2"></i> Table
+                            </a>
+                        </li>
+                        <li _="on click take .is-active then hide #form then show #cards then add .has-background-white to #search_fud then remove .has-background-white from #table_fud">
+                            <a id="search_fud" style="border-color: transparent;">
+                                <i class="mdi mdi-24px mdi-magnify px-2"></i> Search
+                            </a>
+                        </li>
+                        {% else %}
                         <li class="is-active" _="on click take .is-active then hide #cards then show #form">
                             <a style="border-color: transparent;">
                                 <i class="mdi mdi-24px mdi-table px-2"></i> Table
@@ -66,6 +58,7 @@ Erasmus • {{ faculty | upper }}
                                 <i class="mdi mdi-24px mdi-magnify px-2"></i> Search
                             </a>
                         </li>
+                        {% endif %}
                     </ul>
                 </div>
             </nav>
@@ -91,7 +84,7 @@ Erasmus • {{ faculty | upper }}
                 <thead>
                     <tr>
                         <th>
-                            <div class="select is-{{ faculty }} is-rounded mx-auto">
+                            <div class="select is-{{ faculty }} is-rounded">
                                 <select name="Department" hx-post="/subjects/filter/{{ faculty }}/{{ year }}" hx-trigger="change" hx-target="#table"
                                     hx-swap="innerHTML">
                                     <option>All</option>
@@ -146,7 +139,7 @@ Erasmus • {{ faculty | upper }}
                             </div>
                         </th>
                         <th>
-                            <div class="select is-{{ faculty }} is-rounded mx-auto">
+                            <div class="select is-{{ faculty }} is-rounded">
                                 <select name="Credits" hx-post="/subjects/filter/{{ faculty }}/{{ year }}" hx-trigger="change" hx-target="#table"
                                     hx-swap="innerHTML">
                                     <option>All</option>
@@ -182,9 +175,9 @@ Erasmus • {{ faculty | upper }}
                 </thead>
                 <tbody id="table">
                     {% for index, row in df.iterrows() %}
-                    <tr _="on click fetch /subjects/{{ row['Code'] }}/{{ row['Department'] }}/{{ year }} put the result after #section">
+                    <tr _="on click fetch /subjects/{{ row['Code'] }}/{{ row['Department'] }}/{{ year }} then put the result after #section">
                         {% for column in df.columns %}
-                            {% if column in ['Department', 'Code'] %}
+                            {% if column in ['Department', 'Code', 'Credits'] %}
                             <td class="has-text-centered">{{ row[column] }}</td>
                             {% elif column in ['Winter term', 'Summer term'] %}
                                 {% if row[column] == 'A' %}

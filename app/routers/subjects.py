@@ -121,7 +121,6 @@ def get_predmet(request: Request, predmet_zkr: str, katedra: str, year: str):
         "outputFormat": "CSV",
         "outputFormatEncoding": "utf-8",
     }
-    print(f"predmet:{predmet_zkr}:{year}")
     if redis_client.exists(f"predmet:{predmet_zkr}:{year}"):
         predmet = redis_client.get(f"predmet:{predmet_zkr}:{year}")
         df = pd.read_json(BytesIO(predmet), orient="records")

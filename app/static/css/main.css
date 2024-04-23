@@ -24,3 +24,30 @@ body {
   height: 100%;
   padding-top: 12px;        
 }
+
+.desktop-component {
+  display: block;
+}
+/* Mobile Styles */
+.mobile-component {
+  display: none;
+}
+
+/* Media query for mobile devices */
+@media (max-width: 768px) {
+  .desktop-component {
+      display: none;
+  }
+  .mobile-component {
+      display: block;
+  }
+  /* Add additional styles specific to mobile devices */
+}
+
+.high {
+  transition: height 1s ease-in-out;
+}
+
+.high:hover {
+  height: 130%;
+}

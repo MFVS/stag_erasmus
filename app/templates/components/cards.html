@@ -134,7 +134,7 @@
 
 <div class="mobile-component">
     {% for index, row in df.iterrows() %}
-    <div class="card m-5" style="border-radius: 20px 20px 20px 20px;">
+    <div class="card" style="border-radius: 20px 20px 20px 20px;">
         <div class="card-content">
             <section class="hero has-background-light" style="border-radius: 20px 20px 20px 20px;">
                 <div class="hero-body">
@@ -171,9 +171,9 @@
                     </nav>
                 </div>
             </section>
-            <section class="p-5">
+            <section class="pt-5">
                 <div id="tab-table-content-{{ row['zkratka'] }}">
-                    <table class="table is-hoverable is-narrow">
+                    <table class="table is-hoverable">
                         <tbody>
                             <tr>
                                 <th>Code</th>
