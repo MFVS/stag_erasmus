@@ -30,6 +30,10 @@ sass --watch --sourcemap=none sass/mystyles.scss:css/mystyles.css
 - roky
 - cachovani dat
 
+!MAIL!
+
+- [ ] Uzivatel do .env
+
 ## Schůze 27.2.2024
 
 přídat filtry:

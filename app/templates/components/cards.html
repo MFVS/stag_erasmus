@@ -1,8 +1,8 @@
-<div id="cards_content" class="desktop-component">
+<div id="cards_content" class="desktop-component pt-5 columns is-multiline">
     {% for index, row in df.iterrows() %}
-        <div class="card m-5" style="border-radius: 20px 20px 20px 20px;">
-            <div class="card-content">
-                <section class="hero has-background-light" style="border-radius: 20px 20px 20px 20px;">
+    <div class="column is-6">
+        <div class="box p-0" style="border-radius: 20px;">
+                <section class="hero has-background-light" style="border-radius: 20px 20px 0 0;">
                   <div class="hero-body">
                     <div class="container has-text-centered">
                       <h1 class="title is-1 p-3">
@@ -35,8 +35,8 @@
                     </nav>
                   </div>
                 </section>
-                <section class="p-5">
-                <div id="tab-table-content-{{ row['zkratka'] }}">
+                <section class="p-5" style="height: 500px; overflow-y: auto;">
+                <div class="p-5" id="tab-table-content-{{ row['zkratka'] }}">
                     <table class="table mx-auto p-5 is-fullwidth is-hoverable">
                         <tbody>
                             <tr>
@@ -108,35 +108,26 @@
                         </tbody>
                     </table>
                 </div>
-                <div id="tab-annotation-content-{{ row['zkratka'] }}" style="display: none;">
-                    <div class="content">
-                        <h2 class="subtitle has-text-black">Annotation:</h2>
+                <div class="p-5" id="tab-annotation-content-{{ row['zkratka'] }}" style="display: none;">
                         {{ row['anotace'] }}
-                    </div>
                 </div>
-                <div id="tab-overview-content-{{ row['zkratka'] }}" style="display: none;">
-                    <div class="content">
-                        <h2 class="subtitle has-text-black">Overview:</h2>
+                <div class="p-5" id="tab-overview-content-{{ row['zkratka'] }}" style="display: none;">
                         {{ row['prehledLatky'] | replace("\n", "<br />" | safe ) }}
-                    </div>
                 </div>
-                <div id="tab-requirements-content-{{ row['zkratka'] }}" style="display: none;">
-                    <div class="content">
-                        <h2 class="subtitle has-text-black">Requirements:</h2>
+                <div class="p-5" id="tab-requirements-content-{{ row['zkratka'] }}" style="display: none;">
                         {{ row['pozadavky'] | replace("\n", "<br />" | safe ) }}
-                    </div>
                 </div>
             </section>
-            </div>
         </div>
+    </div>
+
     {% endfor %}
 </div>
 
 <div class="mobile-component">
     {% for index, row in df.iterrows() %}
-    <div class="card" style="border-radius: 20px 20px 20px 20px;">
-        <div class="card-content">
-            <section class="hero has-background-light" style="border-radius: 20px 20px 20px 20px;">
+    <div class="box p-0" style="border-radius: 20px 20px 20px 20px;">
+            <section class="hero has-background-light" style="border-radius: 20px 20px 20px 20px; padding-top: 0 !important;">
                 <div class="hero-body">
                     <div class="container has-text-centered">
                         <h1 class="has-text-weight-bold is-size-4">
@@ -173,7 +164,7 @@
             </section>
             <section class="pt-5">
                 <div id="tab-table-content-{{ row['zkratka'] }}">
-                    <table class="table is-hoverable">
+                    <table class="table is-hoverable mx-auto">
                         <tbody>
                             <tr>
                                 <th>Code</th>
@@ -264,7 +255,6 @@
                     {{ row['pozadavky'] | replace("\n", "<br />" | safe ) }}
                 </div>
             </div>
-        </div>
     </div>
     {% endfor %}
 </div>

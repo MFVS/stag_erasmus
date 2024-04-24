@@ -203,20 +203,22 @@ Erasmus • {{ faculty | upper }}
             </table>
         </form>
 
-        <div id="cards" class="container" style="display: none;">
-            
-        <h2 class="title is-3 has-text-centered">Search anotation and overview</h2>
-            <p class="control has-icons-left pb-5">
-                <input class="input is-{{ faculty }} is-rounded" type="text" placeholder="e.g. math, german, physiology, ..."
-                    hx-get="/subjects/{{ faculty }}/cards" hx-trigger="change" hx-indicator="#progress"
-                    hx-target="#cards_content" hx-swap="outer" name="search">
-                <span class="icon is-medium is-left">
-                    <i class="mdi mdi-magnify"></i>
-                </span>
-            </p>
-        <div id="cards_content"></div>
+        <div id="cards" style="display: none;">
+            <div class="container">
+                <h2 class="title is-3 has-text-centered">Search anotation and overview</h2>
+                    <p class="control has-icons-left pb-5">
+                        <input class="input is-{{ faculty }} is-rounded" type="text" placeholder="e.g. math, german, physiology, ..."
+                            hx-get="/subjects/{{ faculty }}/cards" hx-trigger="change" hx-indicator="#progress"
+                            hx-target="#cards_content" hx-swap="outer" name="search">
+                        <span class="icon is-medium is-left">
+                            <i class="mdi mdi-magnify"></i>
+                        </span>
+                    </p>
+                </div>
 
-    </div>
+            <div id="cards_content"></div>
+        </div>
+
     </section>
     
 {% endblock body %}
