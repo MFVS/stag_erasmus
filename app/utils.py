@@ -2,7 +2,7 @@ import pandas as pd
 
 
 def process_df(df: pd.DataFrame) -> pd.DataFrame:
-    df = df[["katedra", "zkratka", "nazev", "vyukaZS", "vyukaLS", "kreditu", "vyucovaciJazyky", "urovenVypoctena"]]
+    df = df[["katedra", "zkratka", "nazev", "vyukaZS", "vyukaLS", "kreditu", "vyucovaciJazyky", "urovenNastavena"]]
     df.columns = ["Department", "Code", "Name", "Winter term", "Summer term", "Credits", "Languages", "Level"]
     df.fillna("–", inplace=True)
     
@@ -20,7 +20,6 @@ def filter_df(
     languages: str = None,
     level: str = None
 ) -> pd.DataFrame:
-    df_filter = process_df(df)
 
     if department:
         df_filter = df_filter.loc[df_filter["Department"] == department]

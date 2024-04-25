@@ -208,7 +208,7 @@ Erasmus • {{ faculty | upper }}
                 <h2 class="title is-3 has-text-centered">Search anotation and overview</h2>
                     <p class="control has-icons-left pb-5">
                         <input class="input is-{{ faculty }} is-rounded" type="text" placeholder="e.g. math, german, physiology, ..."
-                            hx-get="/subjects/{{ faculty }}/cards" hx-trigger="change" hx-indicator="#progress"
+                            hx-get="/subjects/search/cards/{{ faculty }}/{{ year }}" hx-trigger="change" hx-indicator="#progress"
                             hx-target="#cards_content" hx-swap="outer" name="search">
                         <span class="icon is-medium is-left">
                             <i class="mdi mdi-magnify"></i>

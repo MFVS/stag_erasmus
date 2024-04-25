@@ -1,12 +1,13 @@
 from fastapi import APIRouter, Request, Form
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from pydantic import BaseModel, Field, field_validator
 import pandas as pd
 from loguru import logger
 from io import StringIO, BytesIO
+from dotenv import load_dotenv
 import requests
 import redis
+import os
 
 from ..utils import process_df, filter_df
 
@@ -14,9 +15,11 @@ router = APIRouter(prefix="/subjects", tags=["Subjects"])
 
 templates = Jinja2Templates(directory="app/templates")
 
-df = pd.read_csv("search_predmety.csv", delimiter=";")
-df_predmety = pd.read_csv("predmety.csv")
+load_dotenv()
+
 redis_client = redis.Redis(host="redis", port=6379, db=0)
+url = "https://ws.ujep.cz/ws/services/rest2/predmety/getPredmetyByFakultaFullInfo"
+auth = (os.getenv("STAG_USER"), os.getenv("STAG_PASSWORD"))
 
 faculties = {
     "fsi": "Faculty of Mechanical Engineering",
@@ -32,10 +35,24 @@ faculties = {
 
 @router.get("/")
 def get_subjects(faculty: str, year: str, request: Request):
+    params = {
+        "fakulta": faculty.upper(),
+        "lang": "en",
+        "jenNabizeneECTSPrijezdy": "true",
+        "rok": year,
+        "outputFormat": "CSV",
+        "outputFormatEncoding": "utf-8",
+    }
     try:
-        faculty = faculty.lower()
-        new_df = df.loc[(df["fakulta"].str.lower() == faculty) & (df["rok"] == int(year))]
-        df_facult = process_df(new_df)
+        if redis_client.exists(f"predmety:{faculty}:{year}"):
+            predmety_faculty = redis_client.get(f"predmety:{faculty}:{year}")
+            df = pd.read_json(BytesIO(predmety_faculty), orient="records")
+        else:
+            response = requests.get(url, params=params, auth=auth)
+            df = pd.read_csv(StringIO(response.text), sep=";")
+            redis_client.setex(f"predmety:{faculty}:{year}", 86400, df.to_json()) # 24 hours
+
+        df_facult = process_df(df)
         df_facult.fillna("–", inplace=True)
         unique_languages = df_facult["Languages"].str.split(", ").explode().unique().tolist()
 
@@ -62,53 +79,72 @@ def filter_df(
     languages: str = Form(None, alias="Languages"),
     level: str = Form(None, alias="Level")
 ):
-    faculta_df = df.loc[(df["fakulta"].str.lower() == faculty) & (df["rok"] == int(year))]
-    df_filter = process_df(faculta_df)
+    params = {
+        "fakulta": faculty.upper(),
+        "lang": "en",
+        "jenNabizeneECTSPrijezdy": "true",
+        "rok": year,
+        "outputFormat": "CSV",
+        "outputFormatEncoding": "utf-8",
+    }
+    try:
+        if redis_client.exists(f"predmety:{faculty}:{year}"):
+            predmety_faculty = redis_client.get(f"predmety:{faculty}:{year}")
+            df = pd.read_json(BytesIO(predmety_faculty), orient="records")
+        else:
+            response = requests.get(url, params=params, auth=auth)
+            df = pd.read_csv(StringIO(response.text), sep=";")
+            redis_client.setex(f"predmety:{faculty}:{year}", 86400, df.to_json()) # 24 hours
+        
+        df_filter = process_df(df)
 
-    if department == "All":
-        department = None
-    if credits == "All":
-        credits = None
-    else:
-        credits = int(credits)
-    if languages == "All":
-        languages = None
-    if level == "All":
-        level = None
+        if department == "All":
+            department = None
+        if credits == "All":
+            credits = None
+        else:
+            credits = int(credits)
+        if languages == "All":
+            languages = None
+        if level == "All":
+            level = None
 
-    if department:
-        df_filter = df_filter.loc[df_filter["Department"] == department]
-    if shortcut:
-        df_filter = df_filter[
-            df_filter["Code"].str.contains(shortcut, case=False, na=False)
-        ]
-    if name:
-        df_filter = df_filter[
-            df_filter["Name"].str.contains(name, case=False, na=False)
-        ]
-    if winter:
-        df_filter = df_filter[df_filter["Winter term"] == "A"]
-    if summer:
-        df_filter = df_filter[df_filter["Summer term"] == "A"]
-    if credits:
-        df_filter = df_filter[df_filter["Credits"] == credits]
-    if languages:
-        df_filter = df_filter[
-            df_filter["Languages"].str.contains(languages, case=False, na=False)
-        ]
-    if level:
-        df_filter = df_filter[df_filter["Level"] == level]
-    
-    df_filter.fillna("–", inplace=True)
+        if department:
+            df_filter = df_filter.loc[df_filter["Department"] == department]
+        if shortcut:
+            df_filter = df_filter[
+                df_filter["Code"].str.contains(shortcut, case=False, na=False)
+            ]
+        if name:
+            df_filter = df_filter[
+                df_filter["Name"].str.contains(name, case=False, na=False)
+            ]
+        if winter:
+            df_filter = df_filter[df_filter["Winter term"] == "A"]
+        if summer:
+            df_filter = df_filter[df_filter["Summer term"] == "A"]
+        if credits:
+            df_filter = df_filter[df_filter["Credits"] == credits]
+        if languages:
+            df_filter = df_filter[
+                df_filter["Languages"].str.contains(languages, case=False, na=False)
+            ]
+        if level:
+            df_filter = df_filter[df_filter["Level"] == level]
 
-    return templates.TemplateResponse(
-        "components/table.html",
-        {
-            "request": request,
-            "df": df_filter,
-            "year": year,
-        },
-    )
+        df_filter.fillna("–", inplace=True)
+
+        return templates.TemplateResponse(
+            "components/table.html",
+            {
+                "request": request,
+                "df": df_filter,
+                "year": year,
+            },
+        )
+    except Exception as e:
+        logger.error(e)
+        return HTMLResponse(content=f"<h1>Error on our side</h1>", status_code=500)
 
 
 @router.get("/{predmet_zkr}/{katedra}/{year}")
@@ -150,13 +186,27 @@ def get_predmet(request: Request, predmet_zkr: str, katedra: str, year: str):
     )
 
 
-@router.get("/{faculty}/cards")
-def get_cards(request: Request, faculty: str, search: str = None):
+@router.get("/search/cards/{faculty}/{year}")
+def get_cards(request: Request, faculty: str, search: str | None = None, year: str = None):
     if search:
-        df_search_predmety = df_predmety.loc[
-            (df_predmety["anotace"].str.contains(search, case=False, na=False)) | (df_predmety["prehledLatky"].str.contains(search, case=False, na=False))
-        ]
+        if redis_client.exists(f"predmety:{faculty}:{year}"):
+            predmety_faculty = redis_client.get(f"predmety:{faculty}:{year}")
+            df = pd.read_json(BytesIO(predmety_faculty), orient="records")
+        else:
+            params = {
+                "fakulta": faculty.upper(),
+                "lang": "en",
+                "jenNabizeneECTSPrijezdy": "true",
+                "rok": year,
+                "outputFormat": "CSV",
+                "outputFormatEncoding": "utf-8",
+            }
+            response = requests.get(url, params=params, auth=auth)
+            df = pd.read_csv(StringIO(response.text), sep=";")
+            redis_client.setex(f"predmety:{faculty}", 86400, df.to_json()) # 24 hours
+
+        df_facult = df.loc[(df["anotace"].str.contains(search, case=False, na=False)) | (df["prehledLatky"].str.contains(search, case=False, na=False))]
         
-        return templates.TemplateResponse("components/cards.html", {"request": request, "df": df_search_predmety, "search": search, "faculty": faculty})
+        return templates.TemplateResponse("components/cards.html", {"request": request, "df": df_facult, "search": search, "faculty": faculty})
     else:
         return HTMLResponse(content="<div id=\"cards_content\"></div>", status_code=200)
