@@ -207,6 +207,9 @@ def get_cards(request: Request, faculty: str, search: str | None = None, year: s
 
         df_facult = df.loc[(df["anotace"].str.contains(search, case=False, na=False)) | (df["prehledLatky"].str.contains(search, case=False, na=False))]
         
+        if df_facult.empty:
+            return HTMLResponse(content="<div id=\"cards_content\" class=\"notification is-warning is-light\">No subjects found</div>", status_code=200)
+        
         return templates.TemplateResponse("components/cards.html", {"request": request, "df": df_facult, "search": search, "faculty": faculty})
     else:
         return HTMLResponse(content="<div id=\"cards_content\"></div>", status_code=200)
