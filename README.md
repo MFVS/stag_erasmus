@@ -17,6 +17,10 @@ sass --watch --sourcemap=none sass/mystyles.scss:css/mystyles.css
 
 <https://github.com/tobiasahlin/SpinKit>
 
+## MDI icons
+
+<https://pictogrammers.com/library/mdi/>
+
 ## SVG
 
 <https://www.svgbackgrounds.com/set/free-svg-backgrounds-and-patterns/>

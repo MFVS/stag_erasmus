@@ -75,6 +75,7 @@ def get_subjects(faculty: str, year: str, request: Request):
                 "unique_languages": unique_languages,
                 "faculty_name": faculties[faculty],
             },
+            headers={"hx-redirect": f"/subjects/{faculty}/{year}"},
         )
     except Exception as e:
         logger.error(e)
@@ -167,41 +168,54 @@ def filter_df(
 
 @router.get("/{predmet_zkr}/{katedra}/{year}")
 def get_predmet(request: Request, predmet_zkr: str, katedra: str, year: str):
-    url = "https://ws.ujep.cz/ws/services/rest2/predmety/getPredmetInfo"
-    vars = {
-        "zkratka": predmet_zkr,
-        "katedra": katedra,
-        "lang": "en",
-        "outputFormat": "CSV",
-        "outputFormatEncoding": "utf-8",
-    }
-    if redis_client.exists(f"predmet:{predmet_zkr}:{year}"):
-        predmet = redis_client.get(f"predmet:{predmet_zkr}:{year}")
-        df = pd.read_json(BytesIO(predmet), orient="records")
-
-    else:
+    try:
         url = "https://ws.ujep.cz/ws/services/rest2/predmety/getPredmetInfo"
         vars = {
             "zkratka": predmet_zkr,
             "katedra": katedra,
-            "rok": year,
             "lang": "en",
             "outputFormat": "CSV",
             "outputFormatEncoding": "utf-8",
         }
-        response = requests.get(url, params=vars)
+        if redis_client.exists(f"predmet:{predmet_zkr}:{year}"):
+            predmet = redis_client.get(f"predmet:{predmet_zkr}:{year}")
+            df = pd.read_json(BytesIO(predmet), orient="records")
 
-        df = pd.read_csv(StringIO(response.text), sep=";")
+        else:
+            url = "https://ws.ujep.cz/ws/services/rest2/predmety/getPredmetInfo"
+            vars = {
+                "zkratka": predmet_zkr,
+                "katedra": katedra,
+                "rok": year,
+                "lang": "en",
+                "outputFormat": "CSV",
+                "outputFormatEncoding": "utf-8",
+            }
+            response = requests.get(url, params=vars)
+
+            df = pd.read_csv(StringIO(response.text), sep=";")
+            df.fillna("–", inplace=True)
+
+            redis_client.setex(f"predmet:{predmet_zkr}:{year}", 60, df.to_json())
+
+        df = pd.read_csv(StringIO(requests.get(url, params=vars).text), sep=";")
         df.fillna("–", inplace=True)
 
-        redis_client.setex(f"predmet:{predmet_zkr}:{year}", 60, df.to_json())
-
-    df = pd.read_csv(StringIO(requests.get(url, params=vars).text), sep=";")
-    df.fillna("–", inplace=True)
-
-    return templates.TemplateResponse(
-        "components/modal.html", {"request": request, "df": df}
-    )
+        return templates.TemplateResponse(
+            "components/modal.html", {"request": request, "df": df}
+        )
+    except Exception as e:
+        modal = """
+        <div id="modal" class="modal is-active"
+            style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow: auto;">
+            <div class="modal-background" _="on click remove #modal"></div>
+            <div class="modal-content has-text-white">
+            <h1>Error on our side</h1>
+            </div>
+        </div>    
+        """
+        logger.error(e)
+        return HTMLResponse(content=modal, status_code=500)
 
 
 @router.get("/search/cards/{faculty}/{year}")

@@ -9,7 +9,7 @@ Erasmus • {{ faculty | upper }}
         <a class="navbar-item has-background-dark high" href="https://www.ujep.cz/en/" style="border-radius:0 0 10px 10px;">
             <img src="/static/logos/ujep_logo.svg">
         </a>
-        <a href="/" class="navbar-burger has-text-white has-background-dark ml-2" role="button" _="on click toggle .is-active" style="border-radius: 0 0 10px 10px;">
+        <a href="/" class="navbar-burger has-text-white has-background-dark ml-2" role="button" style="border-radius: 0 0 10px 10px;">
             <i class="mdi mdi-36px mdi-home px-2"></i>
         </a>
     </div>
@@ -39,7 +39,7 @@ Erasmus • {{ faculty | upper }}
                         {% if faculty == "fud" %}
                         <li class="is-active" _="on click take .is-active then hide #cards then show #form then add .has-background-white to #table_fud then remove .has-background-white from #search_fud">
                             <a id="table_fud" style="border-color: transparent;" class="has-background-white">
-                                <i class="mdi mdi-24px mdi-table px-2"></i> Table
+                                <i class="mdi mdi-24px mdi-book-open-variant px-2"></i> Overview
                             </a>
                         </li>
                         <li _="on click take .is-active then hide #form then show #cards then add .has-background-white to #search_fud then remove .has-background-white from #table_fud">
@@ -50,7 +50,7 @@ Erasmus • {{ faculty | upper }}
                         {% else %}
                         <li class="is-active" _="on click take .is-active then hide #cards then show #form">
                             <a style="border-color: transparent;">
-                                <i class="mdi mdi-24px mdi-table px-2"></i> Table
+                                <i class="mdi mdi-24px mdi-book-open-variant px-2"></i> Overview
                             </a>
                         </li>
                         <li _="on click take .is-active then hide #form then show #cards">
