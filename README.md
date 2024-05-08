@@ -13,6 +13,10 @@ sass --sourcemap=none --style=compressed sass/mystyles.scss:css/mystyles.css
 sass --watch --sourcemap=none sass/mystyles.scss:css/mystyles.css
 ```
 
+## SpinKit
+
+<https://github.com/tobiasahlin/SpinKit>
+
 ## SVG
 
 <https://www.svgbackgrounds.com/set/free-svg-backgrounds-and-patterns/>
@@ -22,17 +26,12 @@ sass --watch --sourcemap=none sass/mystyles.scss:css/mystyles.css
 - [/predmety/getPredmetyByFakulta](https://ws.ujep.cz/ws/services/rest2/predmety/getPredmetyByFakulta)
   - parametr `jenNabizeneECTSPrijezdy` se nastaví na `true`
 
+<!-- TODO nepotrebuju -->
 - [/predmety/getPredmetInfo](https://ws.ujep.cz/ws/services/rest2/predmety/getPredmetInfo)
 
 ## TODO
 
-- fakulty
-- roky
-- cachovani dat
-
-!MAIL!
-
-- [ ] Uzivatel do .env
+- [x] Uzivatel do .env
 
 ## Schůze 27.2.2024
 
@@ -47,3 +46,13 @@ přídat filtry:
 - [x] typ studia
 
 [ ] předpoklady
+
+## Dokumentace
+
+<https://ttl255.com/jinja2-tutorial-part-6-include-and-import/>
+
+## Test
+
+```bash
+~/go/bin/go-wrk -d 30 -c 6 http://127.00.1:80/subjects/?faculty=fsi\&year=2024
+```

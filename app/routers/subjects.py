@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Request, Form
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 import pandas as pd
 from loguru import logger
@@ -35,6 +35,11 @@ faculties = {
 
 @router.get("/")
 def get_subjects(faculty: str, year: str, request: Request):
+    return RedirectResponse(url=f"/subjects/{faculty}/{year}")
+
+
+@router.get("/{faculty}/{year}")
+def get_subjects(faculty: str, year: str, request: Request):
     params = {
         "fakulta": faculty.upper(),
         "lang": "en",
@@ -50,15 +55,26 @@ def get_subjects(faculty: str, year: str, request: Request):
         else:
             response = requests.get(url, params=params, auth=auth)
             df = pd.read_csv(StringIO(response.text), sep=";")
-            redis_client.setex(f"predmety:{faculty}:{year}", 86400, df.to_json()) # 24 hours
+            redis_client.setex(
+                f"predmety:{faculty}:{year}", 86400, df.to_json()
+            )  # 24 hours
 
         df_facult = process_df(df)
         df_facult.fillna("–", inplace=True)
-        unique_languages = df_facult["Languages"].str.split(", ").explode().unique().tolist()
+        unique_languages = (
+            df_facult["Languages"].str.split(", ").explode().unique().tolist()
+        )
 
         return templates.TemplateResponse(
             "pages/faculty.html",
-            {"request": request, "faculty": faculty, "year": year, "df": df_facult, "unique_languages": unique_languages, "faculty_name": faculties[faculty]}
+            {
+                "request": request,
+                "faculty": faculty,
+                "year": year,
+                "df": df_facult,
+                "unique_languages": unique_languages,
+                "faculty_name": faculties[faculty],
+            },
         )
     except Exception as e:
         logger.error(e)
@@ -77,7 +93,7 @@ def filter_df(
     summer: bool = Form(None, alias="Summer term"),
     credits: str = Form(None, alias="Credits"),
     languages: str = Form(None, alias="Languages"),
-    level: str = Form(None, alias="Level")
+    level: str = Form(None, alias="Level"),
 ):
     params = {
         "fakulta": faculty.upper(),
@@ -94,8 +110,10 @@ def filter_df(
         else:
             response = requests.get(url, params=params, auth=auth)
             df = pd.read_csv(StringIO(response.text), sep=";")
-            redis_client.setex(f"predmety:{faculty}:{year}", 86400, df.to_json()) # 24 hours
-        
+            redis_client.setex(
+                f"predmety:{faculty}:{year}", 86400, df.to_json()
+            )  # 24 hours
+
         df_filter = process_df(df)
 
         if department == "All":
@@ -187,7 +205,9 @@ def get_predmet(request: Request, predmet_zkr: str, katedra: str, year: str):
 
 
 @router.get("/search/cards/{faculty}/{year}")
-def get_cards(request: Request, faculty: str, search: str | None = None, year: str = None):
+def get_cards(
+    request: Request, faculty: str, search: str | None = None, year: str = None
+):
     if search:
         if redis_client.exists(f"predmety:{faculty}:{year}"):
             predmety_faculty = redis_client.get(f"predmety:{faculty}:{year}")
@@ -203,10 +223,13 @@ def get_cards(request: Request, faculty: str, search: str | None = None, year: s
             }
             response = requests.get(url, params=params, auth=auth)
             df = pd.read_csv(StringIO(response.text), sep=";")
-            redis_client.setex(f"predmety:{faculty}", 86400, df.to_json()) # 24 hours
+            redis_client.setex(f"predmety:{faculty}", 86400, df.to_json())  # 24 hours
 
-        df_facult = df.loc[(df["anotace"].str.contains(search, case=False, na=False)) | (df["prehledLatky"].str.contains(search, case=False, na=False))]
-        
+        df_facult = df.loc[
+            (df["anotace"].str.contains(search, case=False, na=False))
+            | (df["prehledLatky"].str.contains(search, case=False, na=False))
+        ]
+
         if df_facult.empty:
             message = f"""
             <article id="cards_content" class="message is-warning is-medium">
@@ -215,7 +238,10 @@ def get_cards(request: Request, faculty: str, search: str | None = None, year: s
                 </div>
             </article>"""
             return HTMLResponse(content=message, status_code=200)
-        
-        return templates.TemplateResponse("components/cards.html", {"request": request, "df": df_facult, "search": search, "faculty": faculty})
+
+        return templates.TemplateResponse(
+            "components/cards.html",
+            {"request": request, "df": df_facult, "search": search, "faculty": faculty},
+        )
     else:
-        return HTMLResponse(content="<div id=\"cards_content\"></div>", status_code=200)
+        return HTMLResponse(content='<div id="cards_content"></div>', status_code=200)

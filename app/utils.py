@@ -2,10 +2,30 @@ import pandas as pd
 
 
 def process_df(df: pd.DataFrame) -> pd.DataFrame:
-    df = df[["katedra", "zkratka", "nazev", "vyukaZS", "vyukaLS", "kreditu", "vyucovaciJazyky", "urovenNastavena"]]
-    df.columns = ["Department", "Code", "Name", "Winter term", "Summer term", "Credits", "Languages", "Level"]
+    df = df[
+        [
+            "katedra",
+            "zkratka",
+            "nazev",
+            "vyukaZS",
+            "vyukaLS",
+            "kreditu",
+            "vyucovaciJazyky",
+            "urovenNastavena",
+        ]
+    ]
+    df.columns = [
+        "Department",
+        "Code",
+        "Name",
+        "Winter term",
+        "Summer term",
+        "Credits",
+        "Languages",
+        "Level",
+    ]
     df.fillna("–", inplace=True)
-    
+
     return df
 
 
@@ -18,9 +38,8 @@ def filter_df(
     summer: bool = None,
     credits: int = None,
     languages: str = None,
-    level: str = None
+    level: str = None,
 ) -> pd.DataFrame:
-
     if department:
         df_filter = df_filter.loc[df_filter["Department"] == department]
     if shortcut:

@@ -1,9 +1,6 @@
-FROM python:3.10 AS base
+FROM python:3.10 AS app
 
 WORKDIR /app
-ENV PYTHONFAULTHANDLER=1 \
-    PYTHONHASHSEED=random \
-    PYTHONUNBUFFERED=1
 
 COPY pyproject.toml poetry.lock ./
 
@@ -11,9 +8,23 @@ RUN pip install poetry
 RUN poetry config virtualenvs.create false
 RUN poetry install --verbose
 
-FROM base AS app
-
-WORKDIR /app    
 COPY . .
 
-ENTRYPOINT ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80", "--workers", "6"]
+
+FROM python:3.10 AS updater
+
+# Set the working directory in the container
+WORKDIR /app
+
+COPY pyproject.toml poetry.lock ./
+
+RUN pip install poetry
+RUN poetry config virtualenvs.create false
+RUN poetry install --verbose
+
+# Copy the dependencies file to the working directory
+COPY scripts/ /app
+
+# Set the default command to run your script
+CMD ["python", "script.py"]

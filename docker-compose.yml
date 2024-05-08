@@ -2,24 +2,34 @@ version: "3.9"
 
 services:
   app:
-    build: .
+    build:
+      context: .
+      target: app
     networks:
       - mynet
-    # network_mode: host
     ports:
       - 80:80
     depends_on:
       - cacheredis
     volumes:
       - ./:/app
+
+  script:
+    build:
+      context: .
+      target: updater
+    command: python scripts/script.py
+    networks:
+      - mynet
+    volumes:
+      - ./:/app
+
   cacheredis:
     hostname: redis
     image: redis:latest
-    # network_mode: host
-    # ports:
-    #   - 6379:6379
     networks:
       - mynet
+
 networks:
   mynet:
     driver: bridge
