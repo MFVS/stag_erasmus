@@ -67,6 +67,12 @@ Erasmus • {{ faculty | upper }}
 {% endblock head %}
 {% block body %}
 
+{% if df.empty %}
+<div class="container has-text-centered">
+    <h1 class="title is-1">No data available</h1>
+</div>
+{% else %}
+
 <progress id="progress" class="progress htmx-indicator is-{{ faculty }}"></progress>
 
     <section id="section" class="section desktop-component">
@@ -220,5 +226,6 @@ Erasmus • {{ faculty | upper }}
         </div>
 
     </section>
+{% endif %}
     
 {% endblock body %}

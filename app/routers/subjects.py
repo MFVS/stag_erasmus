@@ -59,11 +59,15 @@ def get_subjects(faculty: str, year: str, request: Request):
                 f"predmety:{faculty}:{year}", 86400, df.to_json()
             )  # 24 hours
 
-        df_facult = process_df(df)
-        df_facult.fillna("–", inplace=True)
-        unique_languages = (
-            df_facult["Languages"].str.split(", ").explode().unique().tolist()
-        )
+        if df.empty:
+            df_facult = pd.DataFrame()
+            unique_languages = []
+        else:
+            df_facult = process_df(df)
+            df_facult.fillna("–", inplace=True)
+            unique_languages = (
+                df_facult["Languages"].str.split(", ").explode().unique().tolist()
+            )
 
         return templates.TemplateResponse(
             "pages/faculty.html",

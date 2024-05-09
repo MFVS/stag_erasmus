@@ -21,7 +21,7 @@ templates = Jinja2Templates(directory="app/templates")
 @app.get("/")
 async def root(request: Request):
     YEAR_NOW = datetime.now().year
-    years = [year for year in range(YEAR_NOW - 1, YEAR_NOW + 1)]
+    years = [year for year in range(YEAR_NOW - 1, YEAR_NOW + 2)]
     
     return templates.TemplateResponse("pages/home.html", {"request": request, "years": years})
 
