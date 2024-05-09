@@ -58,3 +58,8 @@ přídat filtry:
 ```bash
 ~/go/bin/go-wrk -d 30 -c 6 http://127.00.1:80/subjects/?faculty=fsi\&year=2024
 ```
+
+## TODO
+
+- Roky - zjistit jestli uz jsou predmety z aktualniho roku:
+  - davaji se vse najednou?

@@ -69,7 +69,7 @@ Erasmus • {{ faculty | upper }}
 
 <progress id="progress" class="progress htmx-indicator is-{{ faculty }}"></progress>
 
-    <section id="section" class="section">
+    <section id="section" class="section desktop-component">
         <form id="form" hx-post="/subjects/filter/{{ faculty }}/{{ year }}" hx-indicator="#progress" hx-target="#table">
             <table class="table is-hoverable mx-auto is-fullwidth">
                 <thead>
@@ -84,7 +84,7 @@ Erasmus • {{ faculty | upper }}
                 <thead>
                     <tr>
                         <th>
-                            <div class="select is-{{ faculty }} is-rounded">
+                            <div class="select is-{{ faculty }} is-rounded is-fullwidth">
                                 <select name="Department" hx-post="/subjects/filter/{{ faculty }}/{{ year }}" hx-trigger="change" hx-target="#table"
                                     hx-swap="innerHTML">
                                     <option>All</option>
@@ -94,7 +94,7 @@ Erasmus • {{ faculty | upper }}
                                 </select>
                             </div>
                         </th>
-                        <th>
+                        <th style="width: 10%;">
                             <div class="field">
                                 <p class="control has-icons-left">
                                     <input class="input is-{{ faculty }} is-rounded" type="text" name="Code" value=""
@@ -141,7 +141,7 @@ Erasmus • {{ faculty | upper }}
                             </div>
                         </th>
                         <th>
-                            <div class="select is-{{ faculty }} is-rounded">
+                            <div class="select is-{{ faculty }} is-rounded is-fullwidth">
                                 <select name="Credits" hx-post="/subjects/filter/{{ faculty }}/{{ year }}" hx-trigger="change" hx-target="#table"
                                     hx-swap="innerHTML">
                                     <option>All</option>
@@ -152,7 +152,7 @@ Erasmus • {{ faculty | upper }}
                             </div>
                         </th>
                         <th>
-                            <div class="select is-{{ faculty }} is-rounded mx-auto is-fullwidth">
+                            <div class="select is-{{ faculty }} is-rounded is-fullwidth">
                                 <select name="Languages" hx-post="/subjects/filter/{{ faculty }}/{{ year }}" hx-trigger="change" hx-target="#table"
                                     hx-swap="innerHTML">
                                     <option>All</option>
@@ -163,7 +163,7 @@ Erasmus • {{ faculty | upper }}
                             </div>
                         </th>
                         <th>
-                            <div class="select is-{{ faculty }} is-rounded mx-auto">
+                            <div class="select is-{{ faculty }} is-rounded is-fullwidth">
                                 <select name="Level" hx-post="/subjects/filter/{{ faculty }}/{{ year }}" hx-trigger="change" hx-target="#table"
                                     hx-swap="innerHTML">
                                     <option>All</option>
@@ -179,7 +179,7 @@ Erasmus • {{ faculty | upper }}
                     {% for index, row in df.iterrows() %}
                     <tr _="on click fetch /subjects/{{ row['Code'] }}/{{ faculty }}/{{ year }} then put the result after #section">
                         {% for column in df.columns %}
-                            {% if column in ['Department', 'Code', 'Credits'] %}
+                            {% if column in ['Department', 'Code', 'Credits', 'Level'] %}
                             <td class="has-text-centered">{{ row[column] }}</td>
                             {% elif column in ['Winter term', 'Summer term'] %}
                                 {% if row[column] == 'A' %}
