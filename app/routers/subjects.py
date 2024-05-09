@@ -166,41 +166,33 @@ def filter_df(
         return HTMLResponse(content=f"<h1>Error on our side</h1>", status_code=500)
 
 
-@router.get("/{predmet_zkr}/{katedra}/{year}")
-def get_predmet(request: Request, predmet_zkr: str, katedra: str, year: str):
+@router.get("/{predmet_zkr}/{faculty}/{year}")
+def get_predmet(request: Request, predmet_zkr: str, faculty: str, year: str):
     try:
-        url = "https://ws.ujep.cz/ws/services/rest2/predmety/getPredmetInfo"
-        vars = {
-            "zkratka": predmet_zkr,
-            "katedra": katedra,
-            "lang": "en",
-            "outputFormat": "CSV",
-            "outputFormatEncoding": "utf-8",
-        }
-        if redis_client.exists(f"predmet:{predmet_zkr}:{year}"):
-            predmet = redis_client.get(f"predmet:{predmet_zkr}:{year}")
+        if redis_client.exists(f"predmety:{faculty}:{year}"):
+            predmet = redis_client.get(f"predmety:{faculty}:{year}")
             df = pd.read_json(BytesIO(predmet), orient="records")
+            df.fillna("–", inplace=True)
 
         else:
-            url = "https://ws.ujep.cz/ws/services/rest2/predmety/getPredmetInfo"
-            vars = {
-                "zkratka": predmet_zkr,
-                "katedra": katedra,
-                "rok": year,
+            params = {
+                "fakulta": faculty.upper(),
                 "lang": "en",
+                "jenNabizeneECTSPrijezdy": "true",
+                "rok": year,
+                "predmetZkr": predmet_zkr,
                 "outputFormat": "CSV",
                 "outputFormatEncoding": "utf-8",
             }
-            response = requests.get(url, params=vars)
+            response = requests.get(url, params=params, auth=auth)
 
             df = pd.read_csv(StringIO(response.text), sep=";")
             df.fillna("–", inplace=True)
 
             redis_client.setex(f"predmet:{predmet_zkr}:{year}", 60, df.to_json())
 
-        df = pd.read_csv(StringIO(requests.get(url, params=vars).text), sep=";")
-        df.fillna("–", inplace=True)
-
+        df = df.loc[df["zkratka"] == predmet_zkr]
+        
         return templates.TemplateResponse(
             "components/modal.html", {"request": request, "df": df}
         )

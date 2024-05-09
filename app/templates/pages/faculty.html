@@ -177,7 +177,7 @@ Erasmus • {{ faculty | upper }}
                 </thead>
                 <tbody id="table">
                     {% for index, row in df.iterrows() %}
-                    <tr _="on click fetch /subjects/{{ row['Code'] }}/{{ row['Department'] }}/{{ year }} then put the result after #section">
+                    <tr _="on click fetch /subjects/{{ row['Code'] }}/{{ faculty }}/{{ year }} then put the result after #section">
                         {% for column in df.columns %}
                             {% if column in ['Department', 'Code', 'Credits'] %}
                             <td class="has-text-centered">{{ row[column] }}</td>

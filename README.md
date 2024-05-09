@@ -1,5 +1,6 @@
 # STAG Erasmus
 
+Digitalizace katalogu kurzů pro incomingové studenty.
 Seznam předmětů nabízených pro zahraniční studenty.
 
 ## Customize bulma
@@ -25,13 +26,10 @@ sass --watch --sourcemap=none sass/mystyles.scss:css/mystyles.css
 
 <https://www.svgbackgrounds.com/set/free-svg-backgrounds-and-patterns/>
 
-## Použité služby
+## Použité WS STAG služby
 
 - [/predmety/getPredmetyByFakulta](https://ws.ujep.cz/ws/services/rest2/predmety/getPredmetyByFakulta)
   - parametr `jenNabizeneECTSPrijezdy` se nastaví na `true`
-
-<!-- TODO nepotrebuju -->
-- [/predmety/getPredmetInfo](https://ws.ujep.cz/ws/services/rest2/predmety/getPredmetInfo)
 
 ## TODO
 
@@ -51,7 +49,7 @@ přídat filtry:
 
 [ ] předpoklady
 
-## Dokumentace
+## Dokumentace k některým knihovnám
 
 <https://ttl255.com/jinja2-tutorial-part-6-include-and-import/>
 
