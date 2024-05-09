@@ -6,16 +6,19 @@ Erasmus • {{ faculty | upper }}
 
 <nav class="navbar is-fixed-top px-3" style="background-color: transparent;">
     <div class="navbar-brand">
-        <a class="navbar-item has-background-dark high" href="https://www.ujep.cz/en/" style="border-radius:0 0 10px 10px;">
+        <a class="navbar-item has-background-dark high" href="https://www.ujep.cz/en/"
+            style="border-radius:0 0 10px 10px;">
             <img src="/static/logos/ujep_logo.svg">
         </a>
-        <a href="/" class="navbar-burger has-text-white has-background-dark ml-2" role="button" style="border-radius: 0 0 10px 10px;">
+        <a href="/" class="navbar-burger has-text-white has-background-dark ml-2" role="button"
+            style="border-radius: 0 0 10px 10px;">
             <i class="mdi mdi-36px mdi-home px-2"></i>
         </a>
     </div>
     <div class="navbar-menu">
         <div class="navbar-start px-3">
-            <a class="navbar-item has-text-white has-background-dark high" href="/" style="border-radius:0 0 10px 10px;">
+            <a class="navbar-item has-text-white has-background-dark high" href="/"
+                style="border-radius:0 0 10px 10px;">
                 <span class="icon">
                     <i class="mdi mdi-36px mdi-home"></i>
                 </span>
@@ -24,46 +27,49 @@ Erasmus • {{ faculty | upper }}
     </div>
 </nav>
 
-    <section class="hero is-{{ faculty }} is-medium" style="background-image: url(/static/images/hero-bg-{{faculty}}.svg); background-size: cover; background-position: bottom;">
-          
-        <div class="hero-body">
-            <div class="container has-text-centered">
-                <h1 class="title is-1 resize-title">{{ faculty_name }}</h1>
+<section class="hero is-{{ faculty }} is-medium"
+    style="background-image: url(/static/images/hero-bg-{{faculty}}.svg); background-size: cover; background-position: bottom;">
+
+    <div class="hero-body">
+        <div class="container has-text-centered">
+            <h1 class="title is-1 resize-title">{{ faculty_name }}</h1>
+        </div>
+    </div>
+
+    <div class="hero-foot">
+        <nav class="tabs is-centered is-boxed is-fullwidth is-medium">
+            <div class="container">
+                <ul>
+                    {% if faculty == "fud" %}
+                    <li class="is-active"
+                        _="on click take .is-active then hide #cards then show #form then add .has-background-white to #table_fud then remove .has-background-white from #search_fud">
+                        <a id="table_fud" style="border-color: transparent;" class="has-background-white">
+                            <i class="mdi mdi-24px mdi-book-open-variant px-2"></i> Overview
+                        </a>
+                    </li>
+                    <li
+                        _="on click take .is-active then hide #form then show #cards then add .has-background-white to #search_fud then remove .has-background-white from #table_fud">
+                        <a id="search_fud" style="border-color: transparent;">
+                            <i class="mdi mdi-24px mdi-magnify px-2"></i> Search
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="is-active" _="on click take .is-active then hide #cards then show #form">
+                        <a style="border-color: transparent;">
+                            <i class="mdi mdi-24px mdi-book-open-variant px-2"></i> Overview
+                        </a>
+                    </li>
+                    <li _="on click take .is-active then hide #form then show #cards">
+                        <a style="border-color: transparent;">
+                            <i class="mdi mdi-24px mdi-magnify px-2"></i> Search
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
             </div>
-        </div>
-          
-        <div class="hero-foot">
-            <nav class="tabs is-centered is-boxed is-fullwidth is-medium">
-                <div class="container">
-                    <ul>
-                        {% if faculty == "fud" %}
-                        <li class="is-active" _="on click take .is-active then hide #cards then show #form then add .has-background-white to #table_fud then remove .has-background-white from #search_fud">
-                            <a id="table_fud" style="border-color: transparent;" class="has-background-white">
-                                <i class="mdi mdi-24px mdi-book-open-variant px-2"></i> Overview
-                            </a>
-                        </li>
-                        <li _="on click take .is-active then hide #form then show #cards then add .has-background-white to #search_fud then remove .has-background-white from #table_fud">
-                            <a id="search_fud" style="border-color: transparent;">
-                                <i class="mdi mdi-24px mdi-magnify px-2"></i> Search
-                            </a>
-                        </li>
-                        {% else %}
-                        <li class="is-active" _="on click take .is-active then hide #cards then show #form">
-                            <a style="border-color: transparent;">
-                                <i class="mdi mdi-24px mdi-book-open-variant px-2"></i> Overview
-                            </a>
-                        </li>
-                        <li _="on click take .is-active then hide #form then show #cards">
-                            <a style="border-color: transparent;">
-                                <i class="mdi mdi-24px mdi-magnify px-2"></i> Search
-                            </a>
-                        </li>
-                        {% endif %}
-                    </ul>
-                </div>
-            </nav>
-        </div>
-    </section>
+        </nav>
+    </div>
+</section>
 {% endblock head %}
 {% block body %}
 
@@ -72,160 +78,325 @@ Erasmus • {{ faculty | upper }}
     <h1 class="title is-1">No data available</h1>
 </div>
 {% else %}
-
 <progress id="progress" class="progress htmx-indicator is-{{ faculty }}"></progress>
 
-    <section id="section" class="section desktop-component">
-        <form id="form" hx-post="/subjects/filter/{{ faculty }}/{{ year }}" hx-indicator="#progress" hx-target="#table">
-            <table class="table is-hoverable mx-auto is-fullwidth">
-                <thead>
-                    <tr>
-                        {% for column in df.columns %}
-                        <th class="has-text-centered">
-                            {{ column }}
-                        </th>
-                        {% endfor %}
-                    </tr>
-                </thead>
-                <thead>
-                    <tr>
-                        <th>
-                            <div class="select is-{{ faculty }} is-rounded is-fullwidth">
-                                <select name="Department" hx-post="/subjects/filter/{{ faculty }}/{{ year }}" hx-trigger="change" hx-target="#table"
-                                    hx-swap="innerHTML">
-                                    <option>All</option>
-                                    {% for value in df["Department"].unique() %}
-                                    <option>{{ value }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </th>
-                        <th style="width: 10%;">
-                            <div class="field">
-                                <p class="control has-icons-left">
-                                    <input class="input is-{{ faculty }} is-rounded" type="text" name="Code" value=""
-                                        hx-post="/subjects/filter/{{ faculty }}/{{ year }}" hx-target="#table" hx-swap="innerHTML">
-                                        <!-- _="on keyup fetch /subjects/filter/{{ faculty }}/{{ year }} with method:'POST' then set #table's innerHTML to response" -->
-
-                                        <span class="icon is-medium is-left">
-                                        <i class="mdi mdi-magnify"></i>
-                                    </span>
-                                </p>
-                            </div>
-                        </th>
-                        <th>
-                            <div class="field">
-                                <p class="control has-icons-left">
-                                    <input class="input is-{{ faculty }} is-rounded" type="text" name="Name" value=""
-                                        hx-post="/subjects/filter/{{ faculty }}/{{ year }}" hx-trigger="change" hx-target="#table" hx-swap="innerHTML">
-                                    <span class="icon is-medium is-left">
-                                        <i class="mdi mdi-magnify"></i>
-                                    </span>
-                                </p>
-                            </div>
-                        </th>
-                        <th>
-                            <div class="field">
-                                <div class="control">
-                                    <label class="checkbox">
-                                        <input type="checkbox" type="checkbox" name="Winter term" value="True"
-                                            hx-post="/subjects/filter/{{ faculty }}/{{ year }}" hx-trigger="change" hx-target="#table"
-                                            hx-swap="innerHTML">
-                                    </label>
-                                </div>
-                            </div>
-                        </th>
-                        <th>
-                            <div class="field">
-                                <div class="control">
-                                    <label class="checkbox">
-                                        <input type="checkbox" type="checkbox" name="Summer term" value="True"
-                                            hx-post="/subjects/filter/{{ faculty }}/{{ year }}" hx-trigger="change" hx-target="#table"
-                                            hx-swap="innerHTML">
-                                    </label>
-                                </div>
-                            </div>
-                        </th>
-                        <th>
-                            <div class="select is-{{ faculty }} is-rounded is-fullwidth">
-                                <select name="Credits" hx-post="/subjects/filter/{{ faculty }}/{{ year }}" hx-trigger="change" hx-target="#table"
-                                    hx-swap="innerHTML">
-                                    <option>All</option>
-                                    {% for value in df["Credits"].unique()|sort %}
-                                    <option>{{ value }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </th>
-                        <th>
-                            <div class="select is-{{ faculty }} is-rounded is-fullwidth">
-                                <select name="Languages" hx-post="/subjects/filter/{{ faculty }}/{{ year }}" hx-trigger="change" hx-target="#table"
-                                    hx-swap="innerHTML">
-                                    <option>All</option>
-                                    {% for value in unique_languages|sort %}
-                                    <option>{{ value }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </th>
-                        <th>
-                            <div class="select is-{{ faculty }} is-rounded is-fullwidth">
-                                <select name="Level" hx-post="/subjects/filter/{{ faculty }}/{{ year }}" hx-trigger="change" hx-target="#table"
-                                    hx-swap="innerHTML">
-                                    <option>All</option>
-                                    {% for value in df["Level"].unique()|sort %}
-                                    <option>{{ value }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody id="table">
-                    {% for index, row in df.iterrows() %}
-                    <tr _="on click fetch /subjects/{{ row['Code'] }}/{{ faculty }}/{{ year }} then put the result after #section">
-                        {% for column in df.columns %}
-                            {% if column in ['Department', 'Code', 'Credits', 'Level'] %}
-                            <td class="has-text-centered">{{ row[column] }}</td>
-                            {% elif column in ['Winter term', 'Summer term'] %}
-                                {% if row[column] == 'A' %}
-                                <td class="has-text-centered"><span class="icon is-medium has-text-success">
-                                        <i class="mdi mdi-24px mdi-check"></i>
-                                    </span></td>
-                                {% else %}
-                                <td class="has-text-centered">
-                                    <span class="icon is-medium has-text-danger">
-                                        <i class="mdi mdi-24px mdi-close"></i>
-                                    </span>
-                                </td>
-                                {% endif %}
-                            {% else %}
-                            <td class="pl-5">{{ row[column] }}</td>
-                            {% endif %}
-                        {% endfor %}
-                    </tr>
+<section id="section" class="section desktop-component">
+    <form id="form" hx-post="/subjects/filter/{{ faculty }}/{{ year }}" hx-indicator="#progress" hx-target="#table">
+        <table class="table is-hoverable mx-auto is-fullwidth">
+            <thead>
+                <tr>
+                    {% for column in df.columns %}
+                    <th class="has-text-centered">
+                        {{ column }}
+                    </th>
                     {% endfor %}
-                </tbody>
-            </table>
-        </form>
+                </tr>
+            </thead>
+            <thead>
+                <tr>
+                    <th>
+                        <div class="select is-{{ faculty }} is-rounded is-fullwidth">
+                            <select name="Department" hx-post="/subjects/filter/{{ faculty }}/{{ year }}"
+                                hx-trigger="change" hx-target="#table" hx-swap="innerHTML">
+                                <option>All</option>
+                                {% for value in df["Department"].unique() %}
+                                <option>{{ value }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </th>
+                    <th style="width: 10%;">
+                        <div class="field">
+                            <p class="control has-icons-left">
+                                <input class="input is-{{ faculty }} is-rounded" type="text" name="Code" value=""
+                                    hx-post="/subjects/filter/{{ faculty }}/{{ year }}" hx-target="#table"
+                                    hx-swap="innerHTML">
+                                <!-- _="on keyup fetch /subjects/filter/{{ faculty }}/{{ year }} with method:'POST' then set #table's innerHTML to response" -->
 
-        <div id="cards" style="display: none;">
-            <div class="container">
-                <h2 class="title is-3 has-text-centered">Search anotation and overview</h2>
-                    <p class="control has-icons-left pb-5">
-                        <input class="input is-{{ faculty }} is-rounded" type="text" placeholder="e.g. math, german, physiology, ..."
-                            hx-get="/subjects/search/cards/{{ faculty }}/{{ year }}" hx-trigger="change" hx-indicator="#progress"
-                            hx-target="#cards_content" hx-swap="outer" name="search">
-                        <span class="icon is-medium is-left">
-                            <i class="mdi mdi-magnify"></i>
+                                <span class="icon is-medium is-left">
+                                    <i class="mdi mdi-magnify"></i>
+                                </span>
+                            </p>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="field">
+                            <p class="control has-icons-left">
+                                <input class="input is-{{ faculty }} is-rounded" type="text" name="Name" value=""
+                                    hx-post="/subjects/filter/{{ faculty }}/{{ year }}" hx-trigger="change"
+                                    hx-target="#table" hx-swap="innerHTML">
+                                <span class="icon is-medium is-left">
+                                    <i class="mdi mdi-magnify"></i>
+                                </span>
+                            </p>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="field">
+                            <div class="control">
+                                <label class="checkbox">
+                                    <input type="checkbox" type="checkbox" name="Winter term" value="True"
+                                        hx-post="/subjects/filter/{{ faculty }}/{{ year }}" hx-trigger="change"
+                                        hx-target="#table" hx-swap="innerHTML">
+                                </label>
+                            </div>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="field">
+                            <div class="control">
+                                <label class="checkbox">
+                                    <input type="checkbox" type="checkbox" name="Summer term" value="True"
+                                        hx-post="/subjects/filter/{{ faculty }}/{{ year }}" hx-trigger="change"
+                                        hx-target="#table" hx-swap="innerHTML">
+                                </label>
+                            </div>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="select is-{{ faculty }} is-rounded is-fullwidth">
+                            <select name="Credits" hx-post="/subjects/filter/{{ faculty }}/{{ year }}"
+                                hx-trigger="change" hx-target="#table" hx-swap="innerHTML">
+                                <option>All</option>
+                                {% for value in df["Credits"].unique()|sort %}
+                                <option>{{ value }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="select is-{{ faculty }} is-rounded is-fullwidth">
+                            <select name="Languages" hx-post="/subjects/filter/{{ faculty }}/{{ year }}"
+                                hx-trigger="change" hx-target="#table" hx-swap="innerHTML">
+                                <option>All</option>
+                                {% for value in unique_languages|sort %}
+                                <option>{{ value }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="select is-{{ faculty }} is-rounded is-fullwidth">
+                            <select name="Level" hx-post="/subjects/filter/{{ faculty }}/{{ year }}" hx-trigger="change"
+                                hx-target="#table" hx-swap="innerHTML">
+                                <option>All</option>
+                                {% for value in df["Level"].unique()|sort %}
+                                <option>{{ value }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="table">
+                {% for index, row in df.iterrows() %}
+                <tr
+                    _="on click fetch /subjects/{{ row['Code'] }}/{{ faculty }}/{{ year }} then put the result after #section">
+                    {% for column in df.columns %}
+                    {% if column in ['Department', 'Code', 'Credits', 'Level'] %}
+                    <td class="has-text-centered">{{ row[column] }}</td>
+                    {% elif column in ['Winter term', 'Summer term'] %}
+                    {% if row[column] == 'A' %}
+                    <td class="has-text-centered"><span class="icon is-medium has-text-success">
+                            <i class="mdi mdi-24px mdi-check"></i>
+                        </span></td>
+                    {% else %}
+                    <td class="has-text-centered">
+                        <span class="icon is-medium has-text-danger">
+                            <i class="mdi mdi-24px mdi-close"></i>
                         </span>
-                    </p>
-                </div>
+                    </td>
+                    {% endif %}
+                    {% else %}
+                    <td class="pl-5">{{ row[column] }}</td>
+                    {% endif %}
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </form>
 
-            <div id="cards_content"></div>
+    <div id="cards" style="display: none;">
+        <div class="container">
+            <h2 class="title is-3 has-text-centered">Search anotation and overview</h2>
+            <p class="control has-icons-left pb-5">
+                <input class="input is-{{ faculty }} is-rounded" type="text"
+                    placeholder="e.g. math, german, physiology, ..."
+                    hx-get="/subjects/search/cards/{{ faculty }}/{{ year }}" hx-trigger="change"
+                    hx-indicator="#progress" hx-target="#cards_content" hx-swap="outer" name="search">
+                <span class="icon is-medium is-left">
+                    <i class="mdi mdi-magnify"></i>
+                </span>
+            </p>
         </div>
 
-    </section>
+        <div id="cards_content"></div>
+    </div>
+
+</section>
+
+<section class="section mobile-component">
+    <div id="form" class="columns is-centered">
+        <div class="column is-half">
+            <form id="form" hx-post="/subjects/filter/{{ faculty }}/{{ year }}" hx-indicator="#progress"
+                hx-target="#table">
+                <div class="field">
+                    <label class="label has-text-centered">Department</label>
+                    <div class="control">
+                        <div class="select is-fullwidth is-{{ faculty }} is-rounded">
+                            <select name="Department" hx-post="/subjects/filter/{{ faculty }}/{{ year }}"
+                                hx-trigger="change" hx-target="#table" hx-swap="innerHTML">
+                                <option>All</option>
+                                {% for value in df["Department"].unique() %}
+                                <option>{{ value }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label has-text-centered">Code</label>
+                    <div class="control has-icons-left">
+                        <input class="input is-fullwidth is-{{ faculty }} is-rounded" type="text" name="Code" value=""
+                            hx-post="/subjects/filter/{{ faculty }}/{{ year }}" hx-target="#table" hx-swap="innerHTML">
+                        <span class="icon is-left">
+                            <i class="mdi mdi-magnify"></i>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label has-text-centered">Name</label>
+                    <div class="control has-icons-left">
+                        <input class="input is-fullwidth is-{{ faculty }} is-rounded" type="text" name="Name" value=""
+                            hx-post="/subjects/filter/{{ faculty }}/{{ year }}" hx-trigger="change" hx-target="#table"
+                            hx-swap="innerHTML">
+                        <span class="icon is-left">
+                            <i class="mdi mdi-magnify"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class=" columns is-mobile">
+                    <div class="column">
+                        <div class="field">
+                            <label class="checkbox">
+                                <input type="checkbox" name="Winter term" value="True"
+                                    hx-post="/subjects/filter/{{ faculty }}/{{ year }}" hx-trigger="change"
+                                    hx-target="#table" hx-swap="innerHTML">
+                                Winter term
+                            </label>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="field">
+                            <label class="checkbox">
+                                <input type="checkbox" name="Summer term" value="True"
+                                    hx-post="/subjects/filter/{{ faculty }}/{{ year }}" hx-trigger="change"
+                                    hx-target="#table" hx-swap="innerHTML">
+                                Summer term
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label has-text-centered">Credits</label>
+                    <div class="control">
+                        <div class="select is-fullwidth is-{{ faculty }} is-rounded">
+                            <select name="Credits" hx-post="/subjects/filter/{{ faculty }}/{{ year }}"
+                                hx-trigger="change" hx-target="#table" hx-swap="innerHTML">
+                                <option>All</option>
+                                {% for value in df["Credits"].unique()|sort %}
+                                <option>{{ value }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label has-text-centered">Languages</label>
+                    <div class="control">
+                        <div class="select is-fullwidth is-{{ faculty }} is-rounded">
+                            <select name="Languages" hx-post="/subjects/filter/{{ faculty }}/{{ year }}"
+                                hx-trigger="change" hx-target="#table" hx-swap="innerHTML">
+                                <option>All</option>
+                                {% for value in unique_languages|sort %}
+                                <option>{{ value }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label has-text-centered">Level</label>
+                    <div class="control">
+                        <div class="select is-fullwidth is-{{ faculty }} is-rounded">
+                            <select name="Level" hx-post="/subjects/filter/{{ faculty }}/{{ year }}" hx-trigger="change"
+                                hx-target="#table" hx-swap="innerHTML">
+                                <option>All</option>
+                                {% for value in df["Level"].unique()|sort %}
+                                <option>{{ value }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <div class="control">
+                        <button type="submit" class="button is-{{ faculty }} is-fullwidth is-rounded">Search</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <table class="table is-hoverable mx-auto is-fullwidth">
+        <thead>
+            <tr>
+                {% for column in df.columns %}
+                <th class="has-text-centered">
+                    {{ column }}
+                </th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody id="table">
+            {% for index, row in df.iterrows() %}
+            <tr
+                _="on click fetch /subjects/{{ row['Code'] }}/{{ faculty }}/{{ year }} then put the result after #section">
+                {% for column in df.columns %}
+                {% if column in ['Department', 'Code', 'Credits', 'Level'] %}
+                <td class="has-text-centered">{{ row[column] }}</td>
+                {% elif column in ['Winter term', 'Summer term'] %}
+                {% if row[column] == 'A' %}
+                <td class="has-text-centered"><span class="icon is-medium has-text-success">
+                        <i class="mdi mdi-24px mdi-check"></i>
+                    </span></td>
+                {% else %}
+                <td class="has-text-centered">
+                    <span class="icon is-medium has-text-danger">
+                        <i class="mdi mdi-24px mdi-close"></i>
+                    </span>
+                </td>
+                {% endif %}
+                {% else %}
+                <td class="pl-5">{{ row[column] }}</td>
+                {% endif %}
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</section>
+
+
 {% endif %}
-    
+
 {% endblock body %}
