@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Request, Form
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, Response
 from fastapi.templating import Jinja2Templates
 import pandas as pd
 from loguru import logger
@@ -35,7 +35,7 @@ faculties = {
 
 @router.get("/")
 def get_subjects(faculty: str, year: str, request: Request):
-    return RedirectResponse(url=f"/subjects/{faculty}/{year}")
+    return Response(headers={"hx-redirect": f"/subjects/{faculty}/{year}"}, status_code=303)
 
 
 @router.get("/{faculty}/{year}")
@@ -78,7 +78,6 @@ def get_subjects(faculty: str, year: str, request: Request):
                 "unique_languages": unique_languages,
                 "faculty_name": faculties[faculty],
             },
-            headers={"hx-redirect": f"/subjects/{faculty}/{year}"},
         )
     except Exception as e:
         logger.error(e)

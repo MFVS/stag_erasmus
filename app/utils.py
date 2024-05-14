@@ -25,7 +25,11 @@ def process_df(df: pd.DataFrame) -> pd.DataFrame:
         "Languages",
         "Level",
     ]
-    df.fillna("—", inplace=True)
+    df.is_copy = False
+
+    # FIXME: pokud ma sloupec Level jen nan tak tak se logguje incompatible dtype chyba
+    df.loc[:, "Languages"] = df.loc[:, "Languages"].fillna("—")
+    df.loc[:, "Level"] = df.loc[:, "Level"].fillna("—")
     
     return df
 
