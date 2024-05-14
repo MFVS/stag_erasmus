@@ -4,31 +4,31 @@
     <div class="modal-content desktop-component" style="width: 50%;">
         <div class="container">
             <div class="box">
-                <h1 class="title is-1 has-text-centered p-3">{{df['nazev'][0]}}</h1>
+                <h1 class="title is-1 has-text-centered p-3">{{df['nazev'].iloc[0]}}</h1>
                 <table class="table mx-auto p-5">
                     <tbody>
                         <tr>
                             <th class="px-5">Code</th>
-                            <td class="px-5">{{ df['katedra'][0] }}/{{ df['zkratka'][0] }}</td>
+                            <td class="px-5">{{ df['katedra'].iloc[0] }}/{{ df['zkratka'].iloc[0] }}</td>
                         </tr>
                         <tr>
                             <th class="px-5">Credits</th>
-                            <td class="px-5">{{ df['kreditu'][0] }}</td>
+                            <td class="px-5">{{ df['kreditu'].iloc[0] }}</td>
                         </tr>
                         <tr>
                             <th class="px-5">Guarantor</th>
-                            <td class="px-5">{{ (df['garanti'][0] | string).translate({39:None}) }}</td>
+                            <td class="px-5">{{ (df['garanti'].iloc[0] | string).translate({39:None}) }}</td>
                         </tr>
                         <tr>
                             <th class="px-5">Lecturers</th>
                             <td class="px-5">
-                                {{ (df['prednasejici'][0] | string).translate({39:None}) }}
+                                {{ (df['prednasejici'].iloc[0] | string).translate({39:None}) }}
                             </td>
                         </tr>
                         <tr>
                             <th class="px-5">Winter term</th>
                             <td class="px-5">
-                                {% if df['vyukaZS'][0] == 'A' %}
+                                {% if df['vyukaZS'].iloc[0] == 'A' %}
                                 <span class="icon is-medium has-text-success">
                                     <i class="mdi mdi-24px mdi-check"></i>
                                 </span>
@@ -42,7 +42,7 @@
                         <tr>
                             <th class="px-5">Summer term</th>
                             <td class="px-5">
-                                {% if df['vyukaLS'][0] == 'A' %}
+                                {% if df['vyukaLS'].iloc[0] == 'A' %}
                                 <span class="icon is-medium has-text-success">
                                     <i class="mdi mdi-24px mdi-check"></i>
                                 </span>
@@ -55,46 +55,46 @@
                         </tr>
 
                         <tr>
-                            {% if df['jednotekPrednasek'][0] > 0 %}
+                            {% if df['jednotekPrednasek'].iloc[0] > 0 %}
                             <th class="px-5">Lectures</th>
-                            <td class="px-5">{{ df['jednotekPrednasek'][0] }} {{ df['jednotkaPrednasky'][0] }}</td>
+                            <td class="px-5">{{ df['jednotekPrednasek'].iloc[0] }} {{ df['jednotkaPrednasky'].iloc[0] }}</td>
                             {% endif %}
                         </tr>
                         <tr>
-                            {% if df['jednotekCviceni'][0] > 0 %}
+                            {% if df['jednotekCviceni'].iloc[0] > 0 %}
                             <th class="px-5">Practical exercises</th>
-                            <td class="px-5">{{ df['jednotekCviceni'][0] }} {{ df['jednotkaCviceni'][0] }}</td>
+                            <td class="px-5">{{ df['jednotekCviceni'].iloc[0] }} {{ df['jednotkaCviceni'].iloc[0] }}</td>
                             {% endif %}
                         </tr>
                         <tr>
-                            {% if df['jednotekSeminare'][0] > 0 %}
+                            {% if df['jednotekSeminare'].iloc[0] > 0 %}
                             <th class="px-5">Seminars</th>
-                            <td class="px-5">{{ df['jednotekSeminare'][0] }} {{ df['jednotkaSeminare'][0] }}</td>
+                            <td class="px-5">{{ df['jednotekSeminare'].iloc[0] }} {{ df['jednotkaSeminare'].iloc[0] }}</td>
                             {% endif %}
                         </tr>
                         <tr>
                             <th class="px-5">Type of completion</th>
-                            <td class="px-5">{{ df['typZkousky'][0] }}</td>
+                            <td class="px-5">{{ df['typZkousky'].iloc[0] }}</td>
                         </tr>
                         <tr>
                             <td colspan="2" class="px-5">
                                 <h2 class="subtitle has-text-black mb-2 has-text-weight-bold has-text-dark">Anotation:
                                 </h2>
-                                {{ df['anotace'][0] | replace("\n", "<br />" | safe )}}
+                                {{ df['anotace'].iloc[0] | replace("\n", "<br />" | safe )}}
                             </td>
                         </tr>
                         <tr>
                             <td colspan="2" class="px-5">
                                 <h2 class="subtitle has-text-black mb-2 has-text-weight-bold has-text-dark">Overview:
                                 </h2>
-                                {{ df['prehledLatky'][0] | replace("\n", "<br />" | safe ) }}
+                                {{ df['prehledLatky'].iloc[0] | replace("\n", "<br />" | safe ) }}
                             </td>
                         </tr>
                         <tr>
                             <td colspan="2" class="px-5">
                                 <h2 class="subtitle has-text-black mb-2 has-text-weight-bold has-text-dark">
                                     Requirements:</h2>
-                                {{ df['pozadavky'][0] | replace("\n", "<br />" | safe ) }}
+                                {{ df['pozadavky'].iloc[0] | replace("\n", "<br />" | safe ) }}
                             </td>
                         </tr>
                     </tbody>
@@ -106,31 +106,31 @@
     <div class="modal-content mobile-component">
         <div class="container px-2">
             <div class="box">
-                <h1 class="title is-4 has-text-centered">{{df['nazev'][0]}}</h1>
+                <h1 class="title is-3 has-text-centered">{{df['nazev'].iloc[0]}}</h1>
                 <table class="table is-narrow">
                     <tbody>
                         <tr>
                             <th class="px-5">Code</th>
-                            <td class="px-5">{{ df['katedra'][0] }}/{{ df['zkratka'][0] }}</td>
+                            <td class="px-5">{{ df['katedra'].iloc[0] }}/{{ df['zkratka'].iloc[0] }}</td>
                         </tr>
                         <tr>
                             <th class="px-5">Credits</th>
-                            <td class="px-5">{{ df['kreditu'][0] }}</td>
+                            <td class="px-5">{{ df['kreditu'].iloc[0] }}</td>
                         </tr>
                         <tr>
                             <th class="px-5">Guarantor</th>
-                            <td class="px-5">{{ (df['garanti'][0] | string).translate({39:None}) }}</td>
+                            <td class="px-5">{{ (df['garanti'].iloc[0] | string).translate({39:None}) }}</td>
                         </tr>
                         <tr>
                             <th class="px-5">Lecturers</th>
                             <td class="px-5">
-                                {{ (df['prednasejici'][0] | string).translate({39:None}) }}
+                                {{ (df['prednasejici'].iloc[0] | string).translate({39:None}) }}
                             </td>
                         </tr>
                         <tr>
                             <th class="px-5">Winter term</th>
                             <td class="px-5">
-                                {% if df['vyukaZS'][0] == 'A' %}
+                                {% if df['vyukaZS'].iloc[0] == 'A' %}
                                 <span class="icon is-medium has-text-success">
                                     <i class="mdi mdi-24px mdi-check"></i>
                                 </span>
@@ -144,7 +144,7 @@
                         <tr>
                             <th class="px-5">Summer term</th>
                             <td class="px-5">
-                                {% if df['vyukaLS'][0] == 'A' %}
+                                {% if df['vyukaLS'].iloc[0] == 'A' %}
                                 <span class="icon is-medium has-text-success">
                                     <i class="mdi mdi-24px mdi-check"></i>
                                 </span>
@@ -157,46 +157,46 @@
                         </tr>
 
                         <tr>
-                            {% if df['jednotekPrednasek'][0] > 0 %}
+                            {% if df['jednotekPrednasek'].iloc[0] > 0 %}
                             <th class="px-5">Lectures</th>
-                            <td class="px-5">{{ df['jednotekPrednasek'][0] }} {{ df['jednotkaPrednasky'][0] }}</td>
+                            <td class="px-5">{{ df['jednotekPrednasek'].iloc[0] }} {{ df['jednotkaPrednasky'].iloc[0] }}</td>
                             {% endif %}
                         </tr>
                         <tr>
-                            {% if df['jednotekCviceni'][0] > 0 %}
+                            {% if df['jednotekCviceni'].iloc[0] > 0 %}
                             <th class="px-5">Practical exercises</th>
-                            <td class="px-5">{{ df['jednotekCviceni'][0] }} {{ df['jednotkaCviceni'][0] }}</td>
+                            <td class="px-5">{{ df['jednotekCviceni'].iloc[0] }} {{ df['jednotkaCviceni'].iloc[0] }}</td>
                             {% endif %}
                         </tr>
                         <tr>
-                            {% if df['jednotekSeminare'][0] > 0 %}
+                            {% if df['jednotekSeminare'].iloc[0] > 0 %}
                             <th class="px-5">Seminars</th>
-                            <td class="px-5">{{ df['jednotekSeminare'][0] }} {{ df['jednotkaSeminare'][0] }}</td>
+                            <td class="px-5">{{ df['jednotekSeminare'].iloc[0] }} {{ df['jednotkaSeminare'].iloc[0] }}</td>
                             {% endif %}
                         </tr>
                         <tr>
                             <th class="px-5">Type of completion</th>
-                            <td class="px-5">{{ df['typZkousky'][0] }}</td>
+                            <td class="px-5">{{ df['typZkousky'].iloc[0] }}</td>
                         </tr>
                         <tr>
                             <td colspan="2" class="px-5">
                                 <h2 class="subtitle has-text-black mb-2 has-text-weight-bold has-text-dark">Anotation:
                                 </h2>
-                                {{ df['anotace'][0] | replace("\n", "<br />" | safe )}}
+                                {{ df['anotace'].iloc[0] | replace("\n", "<br />" | safe )}}
                             </td>
                         </tr>
                         <tr>
                             <td colspan="2" class="px-5">
                                 <h2 class="subtitle has-text-black mb-2 has-text-weight-bold has-text-dark">Overview:
                                 </h2>
-                                {{ df['prehledLatky'][0] | replace("\n", "<br />" | safe ) }}
+                                {{ df['prehledLatky'].iloc[0] | replace("\n", "<br />" | safe ) }}
                             </td>
                         </tr>
                         <tr>
                             <td colspan="2" class="px-5">
                                 <h2 class="subtitle has-text-black mb-2 has-text-weight-bold has-text-dark">
                                     Requirements:</h2>
-                                {{ df['pozadavky'][0] | replace("\n", "<br />" | safe ) }}
+                                {{ df['pozadavky'].iloc[0] | replace("\n", "<br />" | safe ) }}
                             </td>
                         </tr>
                     </tbody>

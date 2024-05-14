@@ -10,9 +10,12 @@ RUN poetry install --verbose
 
 COPY . .
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80", "--workers", "6"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]
 
 FROM python:3.10 AS updater
+
+# set the time for Prague
+RUN ln -fs /usr/share/zoneinfo/Europe/Prague /etc/localtime
 
 # Set the working directory in the container
 WORKDIR /app

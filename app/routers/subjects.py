@@ -195,10 +195,10 @@ def get_predmet(request: Request, predmet_zkr: str, faculty: str, year: str):
 
             redis_client.setex(f"predmet:{predmet_zkr}:{year}", 60, df.to_json())
 
-        df = df.loc[df["zkratka"] == predmet_zkr]
+        df_predmet = df.loc[df["zkratka"] == predmet_zkr]
         
         return templates.TemplateResponse(
-            "components/modal.html", {"request": request, "df": df}
+            "components/modal.html", {"request": request, "df": df_predmet}
         )
     except Exception as e:
         modal = """

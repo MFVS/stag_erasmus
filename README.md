@@ -33,8 +33,6 @@ sass --watch --sourcemap=none sass/mystyles.scss:css/mystyles.css
 
 ## TODO
 
-- [x] Uzivatel do .env
-
 ## Schůze 27.2.2024
 
 přídat filtry:
@@ -56,10 +54,5 @@ přídat filtry:
 ## Test
 
 ```bash
-~/go/bin/go-wrk -d 30 -c 6 http://127.00.1:80/subjects/?faculty=fsi\&year=2024
+~/go/bin/go-wrk -d 30 -c 6 http://127.00.1:8000/subjects/?faculty=fsi\&year=2024
 ```
-
-## TODO
-
-- Roky - zjistit jestli uz jsou predmety z aktualniho roku:
-  - davaji se vse najednou?
