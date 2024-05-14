@@ -64,7 +64,6 @@ def get_subjects(faculty: str, year: str, request: Request):
             unique_languages = []
         else:
             df_facult = process_df(df)
-            df_facult.fillna("–", inplace=True)
             unique_languages = (
                 df_facult["Languages"].str.split(", ").explode().unique().tolist()
             )
@@ -154,8 +153,6 @@ def filter_df(
             ]
         if level:
             df_filter = df_filter[df_filter["Level"] == level]
-
-        df_filter.fillna("–", inplace=True)
 
         return templates.TemplateResponse(
             "components/table.html",

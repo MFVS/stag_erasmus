@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "bulma": "^0.9.4",
+    "sass": "^1.77.1"
+  },
+  "scripts": {
+    "bulma-build": "sass --sourcemap=none --style=compressed sass/mystyles.scss:css/mystyles.css"
+  }
+}

@@ -54,5 +54,5 @@ přídat filtry:
 ## Test
 
 ```bash
-~/go/bin/go-wrk -d 30 -c 6 http://127.00.1:8000/subjects/?faculty=fsi\&year=2024
+~/go/bin/go-wrk -d 30 -c 6 http://127.00.1:8000/subjects/fsi/2024
 ```

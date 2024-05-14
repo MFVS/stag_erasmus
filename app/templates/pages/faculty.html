@@ -74,9 +74,14 @@ Erasmus • {{ faculty | upper }}
 {% block body %}
 
 {% if df.empty %}
-<div class="container has-text-centered">
-    <h1 class="title is-1">No data available</h1>
-</div>
+
+<section class="section">
+    <div class="container has-text-centered">
+        <div class="notification is-warning is-light">
+            No subjects found for this year.
+        </div>
+    </div>
+</section>
 {% else %}
 <progress id="progress" class="progress htmx-indicator is-{{ faculty }}"></progress>
 

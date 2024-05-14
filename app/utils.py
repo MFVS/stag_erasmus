@@ -1,4 +1,5 @@
 import pandas as pd
+from loguru import logger
 
 
 def process_df(df: pd.DataFrame) -> pd.DataFrame:
@@ -24,8 +25,8 @@ def process_df(df: pd.DataFrame) -> pd.DataFrame:
         "Languages",
         "Level",
     ]
-    df.fillna("–", inplace=True)
-
+    df.fillna("—", inplace=True)
+    
     return df
 
 
