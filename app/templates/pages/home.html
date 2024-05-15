@@ -8,7 +8,7 @@ UJEP • Erasmus
 
 <style>
     html {
-        background-image: url("/static/images/home_bg.svg");
+        background-image: url("/static/images/home_bg2.svg");
         background-size: cover;
         background-repeat: no-repeat;
         background-position: center;
@@ -17,8 +17,8 @@ UJEP • Erasmus
 </style>
   
 <div class="container" style="padding-top: 7em;">
-    <h1 class="title is-1 has-text-centered" style="font-size: 4em;">Erasmus</h1>
-    <h2 class="subtitle is-1 has-text-centered" style="font-size: 4em;">UJEP</h2>   
+    <h1 class="title is-1 has-text-centered has-text-white" style="font-size: 4em;">Erasmus</h1>
+    <h2 class="subtitle is-1 has-text-centered has-text-light " style="font-size: 4em;">UJEP</h2>   
 </div>
 
 {% endblock head %}
@@ -29,28 +29,28 @@ UJEP • Erasmus
     <div class="modal-background"></div>
     <div class="modal-content">
         <div id="loading" class="sk-cube-grid">
-            <div class="sk-cube sk-cube1"></div>
-            <div class="sk-cube sk-cube2"></div>
-            <div class="sk-cube sk-cube3"></div>
-            <div class="sk-cube sk-cube4"></div>
-            <div class="sk-cube sk-cube5"></div>
-            <div class="sk-cube sk-cube6"></div>
-            <div class="sk-cube sk-cube7"></div>
-            <div class="sk-cube sk-cube8"></div>
-            <div class="sk-cube sk-cube9"></div>
+            <div class="sk-cube sk-cube1 has-background-grey-light"></div>
+            <div class="sk-cube sk-cube2 has-background-grey-light"></div>
+            <div class="sk-cube sk-cube3 has-background-grey-light"></div>
+            <div class="sk-cube sk-cube4 has-background-grey-light"></div>
+            <div class="sk-cube sk-cube5 has-background-grey-light"></div>
+            <div class="sk-cube sk-cube6 has-background-grey-light"></div>
+            <div class="sk-cube sk-cube7 has-background-grey-light"></div>
+            <div class="sk-cube sk-cube8 has-background-grey-light"></div>
+            <div class="sk-cube sk-cube9 has-background-grey-light"></div>
         </div>
     </div>
 </div>
 
 <div class="container p-5">
-    <div class="box mx-auto has-background-light" style="max-width: 600px;">
-        <form hx-get="/subjects/">
+    <div class="box mx-auto has-background-light" style="max-width:max-content;">
+        <form hx-get="/subjects/" class="p-5">
             <div class="columns is-centered">
-                <div class="column is-half">
+                <div class="column">
                     <div class="field">
                         <label class="label">Faculty</label>
                         <div class="control">
-                            <div class="select is-fullwidth mx-auto is-purple is-rounded">
+                            <div class="select is-fullwidth is-blue is-rounded">
                                 <select name="faculty">
                                     <option value="fsi">Faculty of Mechanical Engineering</option>
                                     <option value="fžp">Faculty of Environment</option>
@@ -67,11 +67,11 @@ UJEP • Erasmus
                 </div>
             </div>
             <div class="columns is-centered">
-                <div class="column is-half">
+                <div class="column">
                     <div class="field">
                         <label class="label">Year</label>
                         <div class="control">
-                            <div class="select is-fullwidth mx-auto is-purple is-rounded">
+                            <div class="select is-fullwidth is-blue is-rounded">
                                 <select name="year">
                                     {% for year in years %}
                                     <option value="{{ year }}">{{ year }}/{{ year + 1 }}</option>
@@ -86,7 +86,7 @@ UJEP • Erasmus
                 <div class="column is-half">
                     <div class="field has-text-centered">
                         <div class="control">
-                            <button type="submit" class="button is-purple is-rounded is-medium" _="on click add .is-active to #loading">
+                            <button class="button is-blue is-rounded is-medium" _="on click add .is-active to #loading">
                                 <i class="mdi mdi-magnify pr-2"></i> Search
                             </button>
                         </div>

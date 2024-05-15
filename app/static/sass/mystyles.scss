@@ -1,7 +1,7 @@
 @charset "utf-8";
 
 // Import a Google Font
-@import url('https://fonts.googleapis.com/css?family=Nunito:400,700');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 
 // Set your brand colors
 $fsi: #584e4b;
@@ -12,7 +12,7 @@ $fzs: #d91920;
 $prf: #007582;
 $pf: #ee1c99;
 $fse: #4097d9;
-$purple: #8A4D76;
+$blue: #004080;
 
 
 $custom-colors: (
@@ -24,10 +24,10 @@ $custom-colors: (
     "fud": ($fud),
     "ff": ($ff),
     "fzs": ($fzs),
-    "purple": ($purple)
+    "blue": ($blue)
 );
 
-// Import only what you need from Bulma
+// TODO: Import only what you need from Bulma 
 @import "../node_modules/bulma/sass/base/_all.sass";
 @import "../node_modules/bulma/sass/elements/_all.sass";
 @import "../node_modules/bulma/sass/form/_all.sass";

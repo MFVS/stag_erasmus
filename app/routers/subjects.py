@@ -35,11 +35,6 @@ faculties = {
 
 @router.get("/")
 def get_subjects(faculty: str, year: str, request: Request):
-    return Response(headers={"hx-redirect": f"/subjects/{faculty}/{year}"}, status_code=303)
-
-
-@router.get("/{faculty}/{year}")
-def get_subjects(faculty: str, year: str, request: Request):
     params = {
         "fakulta": faculty.upper(),
         "lang": "en",
@@ -78,6 +73,7 @@ def get_subjects(faculty: str, year: str, request: Request):
                 "unique_languages": unique_languages,
                 "faculty_name": faculties[faculty],
             },
+            headers={"hx-redirect": f"/subjects/?faculty={faculty}&year={year}"},
         )
     except Exception as e:
         logger.error(e)

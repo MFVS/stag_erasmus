@@ -3,6 +3,10 @@
 Digitalizace katalogu kurzů pro incomingové studenty.
 Seznam předmětů nabízených pro zahraniční studenty.
 
+## Bulma tooltips
+
+<https://bulma-tooltip.netlify.app/>
+
 ## Customize bulma
 
 ```bash
@@ -24,7 +28,8 @@ sass --watch --sourcemap=none sass/mystyles.scss:css/mystyles.css
 
 ## SVG
 
-<https://www.svgbackgrounds.com/set/free-svg-backgrounds-and-patterns/>
+<https://bgjar.com/colored-shapes>
+<https://app.haikei.app/>
 
 ## Použité WS STAG služby
 
