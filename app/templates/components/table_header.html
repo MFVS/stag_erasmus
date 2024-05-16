@@ -1,0 +1,103 @@
+<thead>
+    <tr>
+        {% for column in df.columns %}
+        <th class="has-text-centered">
+            {{ column }}
+        </th>
+        {% endfor %}
+    </tr>
+</thead>
+<thead>
+    <tr>
+        <th>
+            <div class="select is-{{ faculty }} is-rounded is-fullwidth">
+                <select name="Department" hx-post="/subjects/{{ faculty }}/{{ year }}"
+                    hx-trigger="change" hx-target="#table" hx-swap="innerHTML">
+                    <option>All</option>
+                    {% for value in df["Department"].unique() %}
+                    <option>{{ value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </th>
+        <th style="width: 10%;">
+            <div class="field">
+                <p class="control has-icons-left">
+                    <input class="input is-{{ faculty }} is-rounded" type="text" name="Code" value=""
+                        hx-post="/subjects/{{ faculty }}/{{ year }}" hx-target="#table"
+                        hx-swap="innerHTML">
+                    <span class="icon is-medium is-left">
+                        <i class="mdi mdi-magnify"></i>
+                    </span>
+                </p>
+            </div>
+        </th>
+        <th>
+            <div class="field">
+                <p class="control has-icons-left">
+                    <input class="input is-{{ faculty }} is-rounded" type="text" name="Name" value=""
+                        hx-post="/subjects/{{ faculty }}/{{ year }}" hx-trigger="change"
+                        hx-target="#table" hx-swap="innerHTML">
+                    <span class="icon is-medium is-left">
+                        <i class="mdi mdi-magnify"></i>
+                    </span>
+                </p>
+            </div>
+        </th>
+        <th>
+            <div class="field">
+                <div class="control">
+                    <label class="checkbox">
+                        <input type="checkbox" type="checkbox" name="Winter term" value="True"
+                            hx-post="/subjects/{{ faculty }}/{{ year }}" hx-trigger="change"
+                            hx-target="#table" hx-swap="innerHTML">
+                    </label>
+                </div>
+            </div>
+        </th>
+        <th>
+            <div class="field">
+                <div class="control">
+                    <label class="checkbox">
+                        <input type="checkbox" type="checkbox" name="Summer term" value="True"
+                            hx-post="/subjects/{{ faculty }}/{{ year }}" hx-trigger="change"
+                            hx-target="#table" hx-swap="innerHTML">
+                    </label>
+                </div>
+            </div>
+        </th>
+        <th>
+            <div class="select is-{{ faculty }} is-rounded is-fullwidth">
+                <select name="Credits" hx-post="/subjects/{{ faculty }}/{{ year }}"
+                    hx-trigger="change" hx-target="#table" hx-swap="innerHTML">
+                    <option>All</option>
+                    {% for value in df["Credits"].unique()|sort %}
+                    <option>{{ value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </th>
+        <th>
+            <div class="select is-{{ faculty }} is-rounded is-fullwidth">
+                <select name="Languages" hx-post="/subjects/{{ faculty }}/{{ year }}"
+                    hx-trigger="change" hx-target="#table" hx-swap="innerHTML">
+                    <option>All</option>
+                    {% for value in unique_languages|sort %}
+                    <option>{{ value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </th>
+        <th>
+            <div class="select is-{{ faculty }} is-rounded is-fullwidth">
+                <select name="Level" hx-post="/subjects/{{ faculty }}/{{ year }}" hx-trigger="change"
+                    hx-target="#table" hx-swap="innerHTML">
+                    <option>All</option>
+                    {% for value in df["Level"].unique()|sort %}
+                    <option>{{ value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </th>
+    </tr>
+</thead>

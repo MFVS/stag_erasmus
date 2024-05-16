@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Form
+from fastapi import APIRouter, Request, Form, Query, Path
 from fastapi.responses import HTMLResponse, Response
 from fastapi.templating import Jinja2Templates
 import pandas as pd
@@ -10,6 +10,7 @@ import redis
 import os
 
 from ..utils import process_df, filter_df
+from ..validators import Faculty
 
 router = APIRouter(prefix="/subjects", tags=["Subjects"])
 
@@ -32,11 +33,25 @@ faculties = {
     "fud": "Faculty of Art and Design",
 }
 
-
 @router.get("/")
-def get_subjects(faculty: str, year: str, request: Request):
+def get_faculties(
+    request: Request,
+    faculty: Faculty = Query(None, title="Faculty", description="Faculty code"),
+    year: int = Query(None, title="Year", description="Academic year"),
+    ):
+    return Response(headers={"hx-redirect": f"/subjects/{faculty}/{year}"}, status_code=303, content="Redirecting...")
+
+@router.get("/{faculty}/{year}")
+def get_subjects(
+    request: Request,
+    faculty: Faculty = Path(title="Faculty", description="Faculty code"),
+    year: str = Path(title="Year", description="Academic year"),
+    ):
+    """
+    Stránka fakulty s předměty.
+    """
     params = {
-        "fakulta": faculty.upper(),
+        "fakulta": faculty.value.upper(),
         "lang": "en",
         "jenNabizeneECTSPrijezdy": "true",
         "rok": year,
@@ -44,14 +59,14 @@ def get_subjects(faculty: str, year: str, request: Request):
         "outputFormatEncoding": "utf-8",
     }
     try:
-        if redis_client.exists(f"predmety:{faculty}:{year}"):
-            predmety_faculty = redis_client.get(f"predmety:{faculty}:{year}")
+        if redis_client.exists(f"predmety:{faculty.value}:{year}"):
+            predmety_faculty = redis_client.get(f"predmety:{faculty.value}:{year}")
             df = pd.read_json(BytesIO(predmety_faculty), orient="records")
         else:
             response = requests.get(url, params=params, auth=auth)
             df = pd.read_csv(StringIO(response.text), sep=";")
             redis_client.setex(
-                f"predmety:{faculty}:{year}", 86400, df.to_json()
+                f"predmety:{faculty.value}:{year}", 86400, df.to_json()
             )  # 24 hours
 
         if df.empty:
@@ -59,6 +74,7 @@ def get_subjects(faculty: str, year: str, request: Request):
             unique_languages = []
         else:
             df_facult = process_df(df)
+            
             unique_languages = (
                 df_facult["Languages"].str.split(", ").explode().unique().tolist()
             )
@@ -67,24 +83,25 @@ def get_subjects(faculty: str, year: str, request: Request):
             "pages/faculty.html",
             {
                 "request": request,
-                "faculty": faculty,
-                "year": year,
-                "df": df_facult,
-                "unique_languages": unique_languages,
-                "faculty_name": faculties[faculty],
-            },
-            headers={"hx-redirect": f"/subjects/?faculty={faculty}&year={year}"},
-        )
+                    "faculty": faculty.value,
+                    "year": year,
+                    "df": df_facult,
+                    "unique_languages": unique_languages,
+                    "faculty_name": faculties[faculty.value],
+                },
+            )
+        
+            
     except Exception as e:
         logger.error(e)
         return HTMLResponse(content=f"<h1>Error on our side</h1>", status_code=500)
 
 
-@router.post("/filter/{faculty}/{year}")
+@router.post("/{faculty}/{year}")
 def filter_df(
     request: Request,
-    faculty: str,
-    year: str,
+    faculty: Faculty = Path(title="Faculty", description="Faculty code"),
+    year: str = Path(title="Year", description="Academic year"),
     department: str = Form(None, alias="Department"),
     shortcut: str = Form(None, alias="Code"),
     name: str = Form(None, alias="Name"),
@@ -94,8 +111,11 @@ def filter_df(
     languages: str = Form(None, alias="Languages"),
     level: str = Form(None, alias="Level"),
 ):
+    """
+    Slouží k filtrování tabulky s předměty podle zadaných parametrů.
+    """
     params = {
-        "fakulta": faculty.upper(),
+        "fakulta": faculty.value.upper(),
         "lang": "en",
         "jenNabizeneECTSPrijezdy": "true",
         "rok": year,
@@ -103,14 +123,14 @@ def filter_df(
         "outputFormatEncoding": "utf-8",
     }
     try:
-        if redis_client.exists(f"predmety:{faculty}:{year}"):
-            predmety_faculty = redis_client.get(f"predmety:{faculty}:{year}")
+        if redis_client.exists(f"predmety:{faculty.value}:{year}"):
+            predmety_faculty = redis_client.get(f"predmety:{faculty.value}:{year}")
             df = pd.read_json(BytesIO(predmety_faculty), orient="records")
         else:
             response = requests.get(url, params=params, auth=auth)
             df = pd.read_csv(StringIO(response.text), sep=";")
             redis_client.setex(
-                f"predmety:{faculty}:{year}", 86400, df.to_json()
+                f"predmety:{faculty.value}:{year}", 86400, df.to_json()
             )  # 24 hours
 
         df_filter = process_df(df)
