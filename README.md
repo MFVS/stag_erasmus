@@ -36,8 +36,6 @@ sass --watch --sourcemap=none sass/mystyles.scss:css/mystyles.css
 - [/predmety/getPredmetyByFakulta](https://ws.ujep.cz/ws/services/rest2/predmety/getPredmetyByFakulta)
   - parametr `jenNabizeneECTSPrijezdy` se nastaví na `true`
 
-## TODO
-
 ## Schůze 27.2.2024
 
 přídat filtry:
@@ -61,3 +59,10 @@ přídat filtry:
 ```bash
 ~/go/bin/go-wrk -d 30 -c 6 http://127.00.1:8000/subjects/fsi/2024
 ```
+
+## TODO
+
+- prelozit hodiny/tyd atd.
+- ve vyhledavani vyhledavat i v nazvech
+- vyhledavani seradit podle abecedy (nazev)
+- v tabulce radky klikatelne znazornit

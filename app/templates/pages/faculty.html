@@ -95,7 +95,7 @@ Erasmus • {{ faculty | upper }}
                 {% include 'components/table.html' %}
                 <!-- <tr>
                     <td colspan="8" class="pt-3 has-text-centered is-rounded">
-                        <button class="button is-{{ faculty }} is-medium">
+                        <button class="button is-{{ faculty }} is-medium is-rounded" hx-post="/subjects/{{ faculty }}/{{ year }}?rows={{ rows + 10 }}" hx-indicator="#progress" hx-target="#table" hx-swap="innerHTML">
                             <i class="mdi mdi-24px mdi-plus"></i>
                         </button>
                     </td>

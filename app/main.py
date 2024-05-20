@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from datetime import datetime
+import warnings
 
 from .routers import subjects
 
@@ -12,6 +13,7 @@ app = FastAPI(
     title="STAG ERASMUS",
     version="0.1.0",
 )
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 

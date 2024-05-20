@@ -33,19 +33,11 @@ faculties = {
     "fud": "Faculty of Art and Design",
 }
 
-@router.get("/")
-def get_faculties(
-    request: Request,
-    faculty: Faculty = Query(None, title="Faculty", description="Faculty code"),
-    year: int = Query(None, title="Year", description="Academic year"),
-    ):
-    return Response(headers={"hx-redirect": f"/subjects/{faculty}/{year}"}, status_code=303, content="Redirecting...")
-
-@router.get("/{faculty}/{year}")
+@router.get("")
 def get_subjects(
     request: Request,
-    faculty: Faculty = Path(title="Faculty", description="Faculty code"),
-    year: str = Path(title="Year", description="Academic year"),
+    faculty: Faculty = Query(title="Faculty", description="Faculty code"),
+    year: str = Query(title="Year", description="Academic year"),
     ):
     """
     Stránka fakulty s předměty.
@@ -175,6 +167,7 @@ def filter_df(
                 "request": request,
                 "df": df_filter,
                 "year": year,
+                "faculty": faculty.value,
             },
         )
     except Exception as e:
@@ -183,7 +176,7 @@ def filter_df(
 
 
 @router.get("/{predmet_zkr}/{faculty}/{year}")
-def get_predmet(request: Request, predmet_zkr: str, faculty: str, year: str):
+def get_predmet(request: Request, predmet_zkr: str, faculty: Faculty, year: str):
     try:
         if redis_client.exists(f"predmety:{faculty}:{year}"):
             predmet = redis_client.get(f"predmety:{faculty}:{year}")
@@ -192,11 +185,10 @@ def get_predmet(request: Request, predmet_zkr: str, faculty: str, year: str):
 
         else:
             params = {
-                "fakulta": faculty.upper(),
+                "fakulta": faculty.value.upper(),
                 "lang": "en",
                 "jenNabizeneECTSPrijezdy": "true",
                 "rok": year,
-                "predmetZkr": predmet_zkr,
                 "outputFormat": "CSV",
                 "outputFormatEncoding": "utf-8",
             }

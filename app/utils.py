@@ -7,7 +7,7 @@ def process_df(df: pd.DataFrame) -> pd.DataFrame:
         [
             "katedra",
             "zkratka",
-            "nazev",
+            "nazevDlouhy",
             "vyukaZS",
             "vyukaLS",
             "kreditu",

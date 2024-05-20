@@ -8,9 +8,8 @@ UJEP • Erasmus
 
 <style>
     html {
-        background-image: url("/static/images/home_bg2.svg");
+        background-image: url("/static/images/home_bg.png");
         background-size: cover;
-        background-repeat: no-repeat;
         background-position: center;
         height: 100vh;
     }
@@ -44,7 +43,7 @@ UJEP • Erasmus
 
 <div class="container p-5">
     <div class="box mx-auto has-background-light" style="max-width:max-content;">
-        <form hx-get="/subjects/" class="p-5">
+        <form class="p-5" action="/subjects" method="get">
             <div class="columns is-centered">
                 <div class="column">
                     <div class="field">
@@ -52,14 +51,14 @@ UJEP • Erasmus
                         <div class="control">
                             <div class="select is-fullwidth is-blue is-rounded">
                                 <select name="faculty">
-                                    <option value="fsi">Faculty of Mechanical Engineering</option>
-                                    <option value="fžp">Faculty of Environment</option>
                                     <option value="fud">Faculty of Art and Design</option>
                                     <option value="ff">Faculty of Arts</option>
-                                    <option value="fzs">Faculty of Health Studies</option>
-                                    <option value="prf">Faculty of Science</option>
-                                    <option value="pf">Faculty of Education</option>
                                     <option value="fse">Faculty of Social and Economic Studies</option>
+                                    <option value="fžp">Faculty of Environment</option>
+                                    <option value="fzs">Faculty of Health Studies</option>
+                                    <option value="pf">Faculty of Education</option>
+                                    <option value="prf">Faculty of Science</option>
+                                    <option value="fsi">Faculty of Mechanical Engineering</option>
                                 </select>
                             </div>
                         </div>
@@ -96,5 +95,20 @@ UJEP • Erasmus
         </form>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Remove .is-active class from #loading when the page is loaded
+        document.getElementById("loading").classList.remove("is-active");
+    });
+
+    window.addEventListener("pageshow", function(event) {
+        // Remove .is-active class from #loading when navigating back to the page
+        if (event.persisted) {
+            document.getElementById("loading").classList.remove("is-active");
+        }
+    });
+</script>
+
 
 {% endblock body %}
