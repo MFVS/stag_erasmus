@@ -43,7 +43,7 @@ def get_subjects(
     Stránka fakulty s předměty.
     """
     params = {
-        "fakulta": faculty.value.upper(),
+        "fakulta": faculty.name.upper(),
         "lang": "en",
         "jenNabizeneECTSPrijezdy": "true",
         "rok": year,
@@ -79,7 +79,7 @@ def get_subjects(
                     "year": year,
                     "df": df_facult,
                     "unique_languages": unique_languages,
-                    "faculty_name": faculties[faculty.value],
+                    "faculty_name": faculties[faculty.name],
                 },
             )
         
@@ -107,7 +107,7 @@ def filter_df(
     Slouží k filtrování tabulky s předměty podle zadaných parametrů.
     """
     params = {
-        "fakulta": faculty.value.upper(),
+        "fakulta": faculty.name.upper(),
         "lang": "en",
         "jenNabizeneECTSPrijezdy": "true",
         "rok": year,
@@ -185,7 +185,7 @@ def get_predmet(request: Request, predmet_zkr: str, faculty: Faculty, year: str)
 
         else:
             params = {
-                "fakulta": faculty.value.upper(),
+                "fakulta": faculty.name.upper(),
                 "lang": "en",
                 "jenNabizeneECTSPrijezdy": "true",
                 "rok": year,
@@ -223,12 +223,12 @@ def get_cards(
     request: Request, faculty: str, search: str | None = None, year: str = None
 ):
     if search:
-        if redis_client.exists(f"predmety:{faculty}:{year}"):
+        if redis_client.exists(f"predmety:{faculty.value}:{year}"):
             predmety_faculty = redis_client.get(f"predmety:{faculty}:{year}")
             df = pd.read_json(BytesIO(predmety_faculty), orient="records")
         else:
             params = {
-                "fakulta": faculty.upper(),
+                "fakulta": faculty.name.upper(),
                 "lang": "en",
                 "jenNabizeneECTSPrijezdy": "true",
                 "rok": year,
@@ -237,7 +237,7 @@ def get_cards(
             }
             response = requests.get(url, params=params, auth=auth)
             df = pd.read_csv(StringIO(response.text), sep=";")
-            redis_client.setex(f"predmety:{faculty}", 86400, df.to_json())  # 24 hours
+            redis_client.setex(f"predmety:{faculty.value}:{year}", 86400, df.to_json())  # 24 hours
 
         df_facult = df.loc[
             (df["anotace"].str.contains(search, case=False, na=False))
@@ -256,7 +256,7 @@ def get_cards(
 
         return templates.TemplateResponse(
             "components/cards.html",
-            {"request": request, "df": df_facult, "search": search, "faculty": faculty},
+            {"request": request, "df": df_facult, "search": search, "faculty": faculty.value},
         )
     else:
         return HTMLResponse(content='<div id="cards_content"></div>', status_code=200)

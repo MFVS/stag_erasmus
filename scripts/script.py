@@ -21,8 +21,8 @@ params = {
     "outputFormatEncoding": "utf-8",
 }
 
-faculties = ["FSI", "FF", "PRF", "FŽP", "FZS", "PF", "FSE", "FUD"]
-years = [year for year in range(2021, NOW.year + 1)]
+faculties = ["FSI", "FF", "PRF", "FZP", "FZS", "PF", "FSE", "FUD"]
+years = [year for year in range(NOW.year - 1, NOW.year + 2)]
 
 def download_data():
     logger.info("DOWNLOADING DATA...")
@@ -40,8 +40,10 @@ def download_data():
             )  # 84600s = 23.5h
     logger.info("DATA CACHED SUCCESSFULLY!")
 
-schedule.every().day.at("00:30").do(download_data)
+download_data()
 
-while True:
-    schedule.run_pending()
-    time.sleep(1)
+# schedule.every().day.at("00:30").do(download_data)
+
+# while True:
+#     schedule.run_pending()
+#     time.sleep(1)
