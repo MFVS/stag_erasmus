@@ -242,6 +242,7 @@ def get_cards(
         df_facult = df.loc[
             (df["anotace"].str.contains(search, case=False, na=False))
             | (df["prehledLatky"].str.contains(search, case=False, na=False))
+            | (df["nazevDlouhy"].str.contains(search, case=False, na=False))
         ]
 
         if df_facult.empty:
