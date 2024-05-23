@@ -40,10 +40,8 @@ def download_data():
             )  # 84600s = 23.5h
     logger.info("DATA CACHED SUCCESSFULLY!")
 
-download_data()
+schedule.every().day.at("00:30").do(download_data)
 
-# schedule.every().day.at("00:30").do(download_data)
-
-# while True:
-#     schedule.run_pending()
-#     time.sleep(1)
+while True:
+    schedule.run_pending()
+    time.sleep(1)
