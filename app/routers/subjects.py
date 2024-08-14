@@ -1,15 +1,16 @@
-from fastapi import APIRouter, Request, Form, Query, Path
-from fastapi.responses import HTMLResponse, Response
-from fastapi.templating import Jinja2Templates
-import pandas as pd
-from loguru import logger
-from io import StringIO, BytesIO
-from dotenv import load_dotenv
-import requests
-import redis
 import os
+from io import BytesIO, StringIO
 
-from ..utils import process_df, filter_df
+import pandas as pd
+import redis
+import requests
+from dotenv import load_dotenv
+from fastapi import APIRouter, Form, Path, Query, Request
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
+from loguru import logger
+
+from ..utils import filter_df, process_df
 from ..validators import Faculty
 
 router = APIRouter(prefix="/subjects", tags=["Subjects"])
@@ -33,15 +34,14 @@ faculties = {
     "fud": "Faculty of Art and Design",
 }
 
+
 @router.get("")
 def get_subjects(
     request: Request,
     faculty: Faculty = Query(title="Faculty", description="Faculty code"),
     year: str = Query(title="Year", description="Academic year"),
-    ):
-    """
-    Stránka fakulty s předměty.
-    """
+):
+    """Stránka fakulty s předměty."""
     params = {
         "fakulta": faculty.name.upper(),
         "lang": "en",
@@ -57,36 +57,31 @@ def get_subjects(
         else:
             response = requests.get(url, params=params, auth=auth)
             df = pd.read_csv(StringIO(response.text), sep=";")
-            redis_client.setex(
-                f"predmety:{faculty.value}:{year}", 86400, df.to_json()
-            )  # 24 hours
+            redis_client.setex(f"predmety:{faculty.value}:{year}", 86400, df.to_json())  # 24 hours
 
         if df.empty:
             df_facult = pd.DataFrame()
             unique_languages = []
         else:
             df_facult = process_df(df)
-            
-            unique_languages = (
-                df_facult["Languages"].str.split(", ").explode().unique().tolist()
-            )
+
+            unique_languages = df_facult["Languages"].str.split(", ").explode().unique().tolist()
 
         return templates.TemplateResponse(
             "pages/faculty.html",
             {
                 "request": request,
-                    "faculty": faculty.value,
-                    "year": year,
-                    "df": df_facult,
-                    "unique_languages": unique_languages,
-                    "faculty_name": faculties[faculty.name],
-                },
-            )
-        
-            
+                "faculty": faculty.value,
+                "year": year,
+                "df": df_facult,
+                "unique_languages": unique_languages,
+                "faculty_name": faculties[faculty.name],
+            },
+        )
+
     except Exception as e:
         logger.error(e)
-        return HTMLResponse(content=f"<h1>Error on our side</h1>", status_code=500)
+        return HTMLResponse(content="<h1>Error on our side</h1>", status_code=500)
 
 
 @router.post("/{faculty}/{year}")
@@ -103,9 +98,7 @@ def filter_df(
     languages: str = Form(None, alias="Languages"),
     level: str = Form(None, alias="Level"),
 ):
-    """
-    Slouží k filtrování tabulky s předměty podle zadaných parametrů.
-    """
+    """Slouží k filtrování tabulky s předměty podle zadaných parametrů."""
     params = {
         "fakulta": faculty.name.upper(),
         "lang": "en",
@@ -121,9 +114,7 @@ def filter_df(
         else:
             response = requests.get(url, params=params, auth=auth)
             df = pd.read_csv(StringIO(response.text), sep=";")
-            redis_client.setex(
-                f"predmety:{faculty.value}:{year}", 86400, df.to_json()
-            )  # 24 hours
+            redis_client.setex(f"predmety:{faculty.value}:{year}", 86400, df.to_json())  # 24 hours
 
         df_filter = process_df(df)
 
@@ -141,13 +132,9 @@ def filter_df(
         if department:
             df_filter = df_filter.loc[df_filter["Department"] == department]
         if shortcut:
-            df_filter = df_filter[
-                df_filter["Code"].str.contains(shortcut, case=False, na=False)
-            ]
+            df_filter = df_filter[df_filter["Code"].str.contains(shortcut, case=False, na=False)]
         if name:
-            df_filter = df_filter[
-                df_filter["Name"].str.contains(name, case=False, na=False)
-            ]
+            df_filter = df_filter[df_filter["Name"].str.contains(name, case=False, na=False)]
         if winter:
             df_filter = df_filter[df_filter["Winter term"] == "A"]
         if summer:
@@ -172,7 +159,7 @@ def filter_df(
         )
     except Exception as e:
         logger.error(e)
-        return HTMLResponse(content=f"<h1>Error on our side</h1>", status_code=500)
+        return HTMLResponse(content="<h1>Error on our side</h1>", status_code=500)
 
 
 @router.get("/{predmet_zkr}/{faculty}/{year}")
@@ -200,9 +187,10 @@ def get_predmet(request: Request, predmet_zkr: str, faculty: Faculty, year: str)
             redis_client.setex(f"predmet:{predmet_zkr}:{year}", 60, df.to_json())
 
         df_predmet = df.loc[df["zkratka"] == predmet_zkr]
-        
+
         return templates.TemplateResponse(
-            "components/modal.html", {"request": request, "df": df_predmet}
+            "components/modal.html",
+            {"request": request, "df": df_predmet},
         )
     except Exception as e:
         modal = """
@@ -219,11 +207,9 @@ def get_predmet(request: Request, predmet_zkr: str, faculty: Faculty, year: str)
 
 
 @router.get("/search/cards/{faculty}/{year}")
-def get_cards(
-    request: Request, faculty: str, search: str | None = None, year: str = None
-):
+def get_cards(request: Request, faculty: str, search: str | None = None, year: str = None):
     if search:
-        if redis_client.exists(f"predmety:{faculty.value}:{year}"):
+        if redis_client.exists(f"predmety:{faculty}:{year}"):
             predmety_faculty = redis_client.get(f"predmety:{faculty}:{year}")
             df = pd.read_json(BytesIO(predmety_faculty), orient="records")
         else:
@@ -256,7 +242,7 @@ def get_cards(
 
         return templates.TemplateResponse(
             "components/cards.html",
-            {"request": request, "df": df_facult, "search": search, "faculty": faculty.value},
+            {"request": request, "df": df_facult, "search": search, "faculty": faculty},
         )
     else:
         return HTMLResponse(content='<div id="cards_content"></div>', status_code=200)

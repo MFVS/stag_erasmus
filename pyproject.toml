@@ -28,3 +28,12 @@ schedule = "^1.2.1"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["ALL"]
+exclude = ["*.ipynb", "__init__.py"]
+ignore = ["FA102", "D211","D213", "COM812", "ISC001", "BLE001", "D203", "B008", "PLR0913", "FBT001", "N805", "TD002", "TD003", "FIX002", "DTZ005"]

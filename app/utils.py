@@ -1,5 +1,4 @@
 import pandas as pd
-from loguru import logger
 
 
 def process_df(df: pd.DataFrame) -> pd.DataFrame:
@@ -30,7 +29,7 @@ def process_df(df: pd.DataFrame) -> pd.DataFrame:
     # FIXME: pokud ma sloupec Level jen nan tak tak se logguje incompatible dtype chyba
     df.loc[:, "Languages"] = df.loc[:, "Languages"].fillna("—")
     df.loc[:, "Level"] = df.loc[:, "Level"].fillna("—")
-    
+
     return df
 
 
@@ -45,16 +44,13 @@ def filter_df(
     languages: str = None,
     level: str = None,
 ) -> pd.DataFrame:
+    df_filter = df.copy()
     if department:
         df_filter = df_filter.loc[df_filter["Department"] == department]
     if shortcut:
-        df_filter = df_filter[
-            df_filter["Code"].str.contains(shortcut, case=False, na=False)
-        ]
+        df_filter = df_filter[df_filter["Code"].str.contains(shortcut, case=False, na=False)]
     if name:
-        df_filter = df_filter[
-            df_filter["Name"].str.contains(name, case=False, na=False)
-        ]
+        df_filter = df_filter[df_filter["Name"].str.contains(name, case=False, na=False)]
     if winter:
         df_filter = df_filter[df_filter["Winter term"] == "A"]
     if summer:
@@ -62,9 +58,7 @@ def filter_df(
     if credits:
         df_filter = df_filter[df_filter["Credits"] == credits]
     if languages:
-        df_filter = df_filter[
-            df_filter["Languages"].str.contains(languages, case=False, na=False)
-        ]
+        df_filter = df_filter[df_filter["Languages"].str.contains(languages, case=False, na=False)]
     if level:
         df_filter = df_filter[df_filter["Level"] == level]
 
