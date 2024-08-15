@@ -85,7 +85,7 @@ Erasmus • {{ faculty | upper }}
 {% else %}
 <progress id="progress" class="progress htmx-indicator is-{{ faculty }}"></progress>
 
-<section id="section" class="section desktop-component">
+<section id="section" class="section">
     <form id="form" hx-post="/subjects/{{ faculty }}/{{ year }}" hx-indicator="#progress" hx-target="#table">
         <table class="table is-hoverable mx-auto is-fullwidth">
  
@@ -110,7 +110,7 @@ Erasmus • {{ faculty | upper }}
             <p class="control has-icons-left pb-5">
                 <input class="input is-{{ faculty }} is-rounded" type="text"
                     placeholder="e.g. math, german, physiology, ..."
-                    hx-get="/subjects/search/cards/{{ faculty }}/{{ year }}" hx-trigger="change"
+                    hx-get="/subjects/search/cards/{{ faculty }}/{{ year }}" hx-trigger="keyup changed delay:300ms"
                     hx-indicator="#progress" hx-target="#cards_content" hx-swap="outer" name="search">
                 <span class="icon is-medium is-left">
                     <i class="mdi mdi-magnify"></i>
@@ -122,127 +122,6 @@ Erasmus • {{ faculty | upper }}
     </div>
 
 </section>
-
-<section class="section mobile-component">
-    <div id="form" class="columns is-centered">
-        <div class="column is-half">
-            <form id="form" hx-get="/subjects/{{ faculty }}/{{ year }}" hx-indicator="#progress"
-                hx-target="#table">
-                <div class="field">
-                    <label class="label has-text-centered">Department</label>
-                    <div class="control">
-                        <div class="select is-fullwidth is-{{ faculty }} is-rounded">
-                            <select name="Department" hx-get="/subjects/{{ faculty }}/{{ year }}"
-                                hx-trigger="change" hx-target="#table" hx-swap="innerHTML">
-                                <option>All</option>
-                                {% for value in df["Department"].unique() %}
-                                <option>{{ value }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="field">
-                    <label class="label has-text-centered">Code</label>
-                    <div class="control has-icons-left">
-                        <input class="input is-fullwidth is-{{ faculty }} is-rounded" type="text" name="Code" value=""
-                            hx-get="/subjects/{{ faculty }}/{{ year }}" hx-target="#table" hx-swap="innerHTML">
-                        <span class="icon is-left">
-                            <i class="mdi mdi-magnify"></i>
-                        </span>
-                    </div>
-                </div>
-
-                <div class="field">
-                    <label class="label has-text-centered">Name</label>
-                    <div class="control has-icons-left">
-                        <input class="input is-fullwidth is-{{ faculty }} is-rounded" type="text" name="Name" value=""
-                            hx-get="/subjects/{{ faculty }}/{{ year }}" hx-trigger="change" hx-target="#table"
-                            hx-swap="innerHTML">
-                        <span class="icon is-left">
-                            <i class="mdi mdi-magnify"></i>
-                        </span>
-                    </div>
-                </div>
-                <div class=" columns is-mobile">
-                    <div class="column">
-                        <div class="field">
-                            <label class="checkbox">
-                                <input type="checkbox" name="Winter term" value="True"
-                                    hx-get="/subjects/{{ faculty }}/{{ year }}" hx-trigger="change"
-                                    hx-target="#table" hx-swap="innerHTML">
-                                Winter term
-                            </label>
-                        </div>
-                    </div>
-                    <div class="column">
-                        <div class="field">
-                            <label class="checkbox">
-                                <input type="checkbox" name="Summer term" value="True"
-                                    hx-get="/subjects/{{ faculty }}/{{ year }}" hx-trigger="change"
-                                    hx-target="#table" hx-swap="innerHTML">
-                                Summer term
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="field">
-                    <label class="label has-text-centered">Credits</label>
-                    <div class="control">
-                        <div class="select is-fullwidth is-{{ faculty }} is-rounded">
-                            <select name="Credits" hx-get="/subjects/{{ faculty }}/{{ year }}"
-                                hx-trigger="change" hx-target="#table" hx-swap="innerHTML">
-                                <option>All</option>
-                                {% for value in df["Credits"].unique()|sort %}
-                                <option>{{ value }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="field">
-                    <label class="label has-text-centered">Languages</label>
-                    <div class="control">
-                        <div class="select is-fullwidth is-{{ faculty }} is-rounded">
-                            <select name="Languages" hx-get="/subjects/{{ faculty }}/{{ year }}"
-                                hx-trigger="change" hx-target="#table" hx-swap="innerHTML">
-                                <option>All</option>
-                                {% for value in unique_languages|sort %}
-                                <option>{{ value }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="field">
-                    <label class="label has-text-centered">Level</label>
-                    <div class="control">
-                        <div class="select is-fullwidth is-{{ faculty }} is-rounded">
-                            <select name="Level" hx-get="/subjects/{{ faculty }}/{{ year }}" hx-trigger="change"
-                                hx-target="#table" hx-swap="innerHTML">
-                                <option>All</option>
-                                {% for value in df["Level"].unique()|sort %}
-                                <option>{{ value }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="field">
-                    <div class="control">
-                        <button type="submit" class="button is-{{ faculty }} is-fullwidth is-rounded">Search</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-
-
     <table class="table is-hoverable mx-auto is-fullwidth">
         <thead>
             <tr>

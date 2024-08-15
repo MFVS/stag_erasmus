@@ -40,7 +40,7 @@ def filter_df(
     name: str = None,
     winter: bool = None,
     summer: bool = None,
-    credits: int = None,
+    credit: int = None,
     languages: str = None,
     level: str = None,
 ) -> pd.DataFrame:
@@ -55,12 +55,11 @@ def filter_df(
         df_filter = df_filter[df_filter["Winter term"] == "A"]
     if summer:
         df_filter = df_filter[df_filter["Summer term"] == "A"]
-    if credits:
-        df_filter = df_filter[df_filter["Credits"] == credits]
+    if credit:
+        df_filter = df_filter[df_filter["Credits"] == credit]
     if languages:
         df_filter = df_filter[df_filter["Languages"].str.contains(languages, case=False, na=False)]
     if level:
         df_filter = df_filter[df_filter["Level"] == level]
 
-    df_filter.fillna("—", inplace=True)
-    return df_filter
+    return df_filter.fillna("—")

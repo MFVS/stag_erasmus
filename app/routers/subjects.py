@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from io import BytesIO, StringIO
 
 import pandas as pd
@@ -6,7 +7,8 @@ import redis
 import requests
 from dotenv import load_dotenv
 from fastapi import APIRouter, Form, Path, Query, Request
-from fastapi.responses import HTMLResponse
+from fastapi.exceptions import HTTPException
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from loguru import logger
 
@@ -38,10 +40,19 @@ faculties = {
 @router.get("")
 def get_subjects(
     request: Request,
-    faculty: Faculty = Query(title="Faculty", description="Faculty code"),
+    faculty: Faculty | None = Query(default=None, title="Faculty", description="Faculty code"),
     year: str = Query(title="Year", description="Academic year"),
-):
+) -> HTMLResponse:
     """Stránka fakulty s předměty."""
+    if faculty is None:
+        return templates.TemplateResponse(
+            "pages/home.html",
+            {
+                "request": request,
+                "years": list(range(datetime.now().year - 1, datetime.now().year + 2)),
+                "modal_active": True,
+            },
+        )
     params = {
         "fakulta": faculty.name.upper(),
         "lang": "en",
@@ -94,7 +105,7 @@ def filter_df(
     name: str = Form(None, alias="Name"),
     winter: bool = Form(None, alias="Winter term"),
     summer: bool = Form(None, alias="Summer term"),
-    credits: str = Form(None, alias="Credits"),
+    credit: str = Form(None, alias="Credits"),
     languages: str = Form(None, alias="Languages"),
     level: str = Form(None, alias="Level"),
 ):
@@ -120,10 +131,7 @@ def filter_df(
 
         if department == "All":
             department = None
-        if credits == "All":
-            credits = None
-        else:
-            credits = int(credits)
+        credit = None if credit == "All" else int(credit)
         if languages == "All":
             languages = None
         if level == "All":
@@ -139,8 +147,8 @@ def filter_df(
             df_filter = df_filter[df_filter["Winter term"] == "A"]
         if summer:
             df_filter = df_filter[df_filter["Summer term"] == "A"]
-        if credits:
-            df_filter = df_filter[df_filter["Credits"] == credits]
+        if credit:
+            df_filter = df_filter[df_filter["Credits"] == credit]
         if languages:
             df_filter = df_filter[
                 df_filter["Languages"].str.contains(languages, case=False, na=False)
@@ -163,12 +171,13 @@ def filter_df(
 
 
 @router.get("/{predmet_zkr}/{faculty}/{year}")
-def get_predmet(request: Request, predmet_zkr: str, faculty: Faculty, year: str):
+def get_predmet(request: Request, predmet_zkr: str, faculty: Faculty, year: str) -> HTMLResponse:
+    """Detail předmětu."""
     try:
         if redis_client.exists(f"predmety:{faculty}:{year}"):
             predmet = redis_client.get(f"predmety:{faculty}:{year}")
             df = pd.read_json(BytesIO(predmet), orient="records")
-            df.fillna("–", inplace=True)
+            df = df.fillna("–")
 
         else:
             params = {
@@ -182,7 +191,7 @@ def get_predmet(request: Request, predmet_zkr: str, faculty: Faculty, year: str)
             response = requests.get(url, params=params, auth=auth)
 
             df = pd.read_csv(StringIO(response.text), sep=";")
-            df.fillna("–", inplace=True)
+            df = df.fillna("–")
 
             redis_client.setex(f"predmet:{predmet_zkr}:{year}", 60, df.to_json())
 
@@ -200,7 +209,7 @@ def get_predmet(request: Request, predmet_zkr: str, faculty: Faculty, year: str)
             <div class="modal-content has-text-white">
             <h1>Error on our side</h1>
             </div>
-        </div>    
+        </div>
         """
         logger.error(e)
         return HTMLResponse(content=modal, status_code=500)

@@ -29,7 +29,9 @@ async def root(request: Request) -> HTMLResponse:
     year_now = datetime.now().year
     years = list(range(year_now - 1, year_now + 2))
 
-    return templates.TemplateResponse("pages/home.html", {"request": request, "years": years})
+    return templates.TemplateResponse(
+        "pages/home.html", {"request": request, "years": years, "modal_active": False}
+    )
 
 
 app.include_router(subjects.router)
