@@ -122,46 +122,6 @@ Erasmus • {{ faculty | upper }}
     </div>
 
 </section>
-    <table class="table is-hoverable mx-auto is-fullwidth">
-        <thead>
-            <tr>
-                {% for column in df.columns %}
-                <th class="has-text-centered">
-                    {{ column }}
-                </th>
-                {% endfor %}
-            </tr>
-        </thead>
-        <tbody id="table">
-            {% for index, row in df.iterrows() %}
-            <tr
-                _="on click fetch /subjects/{{ row['Code'] }}/{{ faculty }}/{{ year }} then put the result after #section">
-                {% for column in df.columns %}
-                {% if column in ['Department', 'Code', 'Credits', 'Level'] %}
-                <td class="has-text-centered">{{ row[column] }}</td>
-                {% elif column in ['Winter term', 'Summer term'] %}
-                {% if row[column] == 'A' %}
-                <td class="has-text-centered"><span class="icon is-medium has-text-success">
-                        <i class="mdi mdi-24px mdi-check"></i>
-                    </span></td>
-                {% else %}
-                <td class="has-text-centered">
-                    <span class="icon is-medium has-text-danger">
-                        <i class="mdi mdi-24px mdi-close"></i>
-                    </span>
-                </td>
-                {% endif %}
-                {% else %}
-                <td class="pl-5">{{ row[column] }}</td>
-                {% endif %}
-                {% endfor %}
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-</section>
-
 
 {% endif %}
 
