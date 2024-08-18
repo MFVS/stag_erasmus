@@ -33,7 +33,7 @@ sass --watch --sourcemap=none sass/mystyles.scss:css/mystyles.css
 
 ## Použité WS STAG služby
 
-- [/predmety/getPredmetyByFakulta](https://ws.ujep.cz/ws/services/rest2/predmety/getPredmetyByFakulta)
+- [/predmety/getPredmetyByFakulta](https://ws.ujep.cz/ws/services/rest2/predmety/getPredmetyByFakultaFullInfo)
   - parametr `jenNabizeneECTSPrijezdy` se nastaví na `true`
 
 ## Schůze 27.2.2024

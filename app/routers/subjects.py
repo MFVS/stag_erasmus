@@ -177,7 +177,7 @@ def get_predmet(request: Request, predmet_zkr: str, faculty: Faculty, year: str)
         if redis_client.exists(f"predmety:{faculty}:{year}"):
             predmet = redis_client.get(f"predmety:{faculty}:{year}")
             df = pd.read_json(BytesIO(predmet), orient="records")
-            df = df.fillna("–")
+            df = df.fillna("N/D")
 
         else:
             params = {
@@ -191,7 +191,7 @@ def get_predmet(request: Request, predmet_zkr: str, faculty: Faculty, year: str)
             response = requests.get(url, params=params, auth=auth)
 
             df = pd.read_csv(StringIO(response.text), sep=";")
-            df = df.fillna("–")
+            df = df.fillna("N/D")
 
             redis_client.setex(f"predmet:{predmet_zkr}:{year}", 60, df.to_json())
 

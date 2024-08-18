@@ -27,8 +27,8 @@ def process_df(df: pd.DataFrame) -> pd.DataFrame:
     df.is_copy = False
 
     # FIXME: pokud ma sloupec Level jen nan tak tak se logguje incompatible dtype chyba
-    df.loc[:, "Languages"] = df.loc[:, "Languages"].fillna("—")
-    df.loc[:, "Level"] = df.loc[:, "Level"].fillna("—")
+    df.loc[:, "Languages"] = df.loc[:, "Languages"].fillna("N/D")
+    df.loc[:, "Level"] = df.loc[:, "Level"].fillna("N/D")
 
     return df
 
@@ -62,4 +62,4 @@ def filter_df(
     if level:
         df_filter = df_filter[df_filter["Level"] == level]
 
-    return df_filter.fillna("—")
+    return df_filter.fillna("N/D")
