@@ -1,8 +1,24 @@
+"""Modul obsahující funkce pro předzpracování a filtrování DataFrame."""
+
 import pandas as pd
+from loguru import logger
 
 
-def process_df(df: pd.DataFrame) -> pd.DataFrame:
-    df = df[
+def process_df(subjects_df: pd.DataFrame) -> pd.DataFrame:
+    """Předzpracování DataFramu. Vybrání sloupců, přejmenování a doplnění chybějících hodnot.
+
+    Args:
+    ----
+        subjects_df (pd.DataFrame): Původní DataFrame.
+
+    Returns:
+    -------
+        pd.DataFrame: Předzpracovaný DataFrame.
+
+    """
+    logger.info(subjects_df.columns)
+
+    processed_df = subjects_df[
         [
             "katedra",
             "zkratka",
@@ -14,7 +30,7 @@ def process_df(df: pd.DataFrame) -> pd.DataFrame:
             "urovenNastavena",
         ]
     ]
-    df.columns = [
+    processed_df.columns = [
         "Department",
         "Code",
         "Name",
@@ -24,17 +40,15 @@ def process_df(df: pd.DataFrame) -> pd.DataFrame:
         "Languages",
         "Level",
     ]
-    df.is_copy = False
 
-    # FIXME: pokud ma sloupec Level jen nan tak tak se logguje incompatible dtype chyba
-    df.loc[:, "Languages"] = df.loc[:, "Languages"].fillna("N/D")
-    df.loc[:, "Level"] = df.loc[:, "Level"].fillna("N/D")
+    processed_df.loc[:, "Languages"] = processed_df.loc[:, "Languages"].fillna("N/D")
+    processed_df.loc[:, "Level"] = processed_df.loc[:, "Level"].fillna("N/D")
 
-    return df
+    return processed_df
 
 
 def filter_df(
-    df: pd.DataFrame,
+    df_filter: pd.DataFrame,
     department: str = None,
     shortcut: str = None,
     name: str = None,
@@ -44,7 +58,33 @@ def filter_df(
     languages: str = None,
     level: str = None,
 ) -> pd.DataFrame:
-    df_filter = df.copy()
+    """Filtrace jednotlivých sloupců podle zadaných parametrů.
+
+    Args:
+    ----
+        df_filer (pd.DataFrame): Původní DataFrame.
+        department (str, optional): Katedra. Defaults to None.
+        shortcut (str, optional): Zkratka předmětu. Defaults to None.
+        name (str, optional): Název předmětu. Defaults to None.
+        winter (bool, optional): Je vypisován v zimním semestru. Defaults to None.
+        summer (bool, optional): Je vypisován v letním semestru. Defaults to None.
+        credit (int, optional): Počet kreditů. Defaults to None.
+        languages (str, optional): Jazyk výuky. Defaults to None.
+        level (str, optional): Nastavená úroveň předmětu. Defaults to None.
+
+    Returns:
+    -------
+        pd.DataFrame: Vyfiltrovaný DataFrame.
+
+    """
+    if department == "All":
+        department = None
+    credit = None if credit == "All" else int(credit)
+    if languages == "All":
+        languages = None
+    if level == "All":
+        level = None
+
     if department:
         df_filter = df_filter.loc[df_filter["Department"] == department]
     if shortcut:

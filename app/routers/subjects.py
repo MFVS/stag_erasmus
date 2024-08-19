@@ -1,3 +1,6 @@
+"""Routy pro jednotlivé stránky a komponenty."""
+
+import json
 import os
 from datetime import datetime
 from io import BytesIO, StringIO
@@ -7,13 +10,12 @@ import redis
 import requests
 from dotenv import load_dotenv
 from fastapi import APIRouter, Form, Path, Query, Request
-from fastapi.exceptions import HTTPException
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from loguru import logger
 
-from ..utils import filter_df, process_df
-from ..validators import Faculty
+from app.utils import filter_df, process_df
+from app.validators import Faculty
 
 router = APIRouter(prefix="/subjects", tags=["Subjects"])
 
@@ -63,9 +65,11 @@ def get_subjects(
     }
     try:
         if redis_client.exists(f"predmety:{faculty.value}:{year}"):
+            logger.info(f"Data from Redis | {faculty.value} | {year}")
             predmety_faculty = redis_client.get(f"predmety:{faculty.value}:{year}")
             df = pd.read_json(BytesIO(predmety_faculty), orient="records")
         else:
+            logger.info(f"Data from WS | {faculty.value} | {year}")
             response = requests.get(url, params=params, auth=auth)
             df = pd.read_csv(StringIO(response.text), sep=";")
             redis_client.setex(f"predmety:{faculty.value}:{year}", 86400, df.to_json())  # 24 hours
@@ -108,7 +112,7 @@ def filter_df(
     credit: str = Form(None, alias="Credits"),
     languages: str = Form(None, alias="Languages"),
     level: str = Form(None, alias="Level"),
-):
+) -> HTMLResponse:
     """Slouží k filtrování tabulky s předměty podle zadaných parametrů."""
     params = {
         "fakulta": faculty.name.upper(),
@@ -121,40 +125,27 @@ def filter_df(
     try:
         if redis_client.exists(f"predmety:{faculty.value}:{year}"):
             predmety_faculty = redis_client.get(f"predmety:{faculty.value}:{year}")
-            df = pd.read_json(BytesIO(predmety_faculty), orient="records")
+            predmety_df = pd.read_json(BytesIO(predmety_faculty), orient="records")
         else:
             response = requests.get(url, params=params, auth=auth)
-            df = pd.read_csv(StringIO(response.text), sep=";")
-            redis_client.setex(f"predmety:{faculty.value}:{year}", 86400, df.to_json())  # 24 hours
+            predmety_df = pd.read_csv(StringIO(response.text), sep=";")
+            redis_client.setex(
+                f"predmety:{faculty.value}:{year}", 86400, predmety_df.to_json()
+            )  # 24 hours
 
-        df_filter = process_df(df)
+        df_filter = process_df(predmety_df)
 
-        if department == "All":
-            department = None
-        credit = None if credit == "All" else int(credit)
-        if languages == "All":
-            languages = None
-        if level == "All":
-            level = None
-
-        if department:
-            df_filter = df_filter.loc[df_filter["Department"] == department]
-        if shortcut:
-            df_filter = df_filter[df_filter["Code"].str.contains(shortcut, case=False, na=False)]
-        if name:
-            df_filter = df_filter[df_filter["Name"].str.contains(name, case=False, na=False)]
-        if winter:
-            df_filter = df_filter[df_filter["Winter term"] == "A"]
-        if summer:
-            df_filter = df_filter[df_filter["Summer term"] == "A"]
-        if credit:
-            df_filter = df_filter[df_filter["Credits"] == credit]
-        if languages:
-            df_filter = df_filter[
-                df_filter["Languages"].str.contains(languages, case=False, na=False)
-            ]
-        if level:
-            df_filter = df_filter[df_filter["Level"] == level]
+        df_filter = filter_df(
+            df_filter,
+            department=department,
+            shortcut=shortcut,
+            name=name,
+            winter=winter,
+            summer=summer,
+            credit=credit,
+            languages=languages,
+            level=level,
+        )
 
         return templates.TemplateResponse(
             "components/table.html",
@@ -216,7 +207,10 @@ def get_predmet(request: Request, predmet_zkr: str, faculty: Faculty, year: str)
 
 
 @router.get("/search/cards/{faculty}/{year}")
-def get_cards(request: Request, faculty: str, search: str | None = None, year: str = None):
+def get_cards(
+    request: Request, faculty: str, search: str | None = None, year: str = None
+) -> HTMLResponse:
+    """Vyhledávání předmětů."""
     if search:
         if redis_client.exists(f"predmety:{faculty}:{year}"):
             predmety_faculty = redis_client.get(f"predmety:{faculty}:{year}")
@@ -253,5 +247,5 @@ def get_cards(request: Request, faculty: str, search: str | None = None, year: s
             "components/cards.html",
             {"request": request, "df": df_facult, "search": search, "faculty": faculty},
         )
-    else:
-        return HTMLResponse(content='<div id="cards_content"></div>', status_code=200)
+
+    return HTMLResponse(content='<div id="cards_content"></div>', status_code=200)

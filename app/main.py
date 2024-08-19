@@ -1,20 +1,32 @@
 """Hlavní modul aplikace."""
 
 import warnings
+from contextlib import asynccontextmanager
 from datetime import datetime
 
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from loguru import logger
 
-from .routers import subjects
+from app.routers import subjects
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> None:
+    """Stahování dat při spuštění aplikace a jejich smazání při ukončení."""
+    yield
+    logger.info("DELETING DATA...")
+    subjects.redis_client.flushdb()
+
 
 app = FastAPI(
     docs_url="/docs",
     redoc_url=None,
     title="STAG ERASMUS",
-    version="0.1.0",
+    # version=importlib.metadata.version("stag-erasmus"),
+    lifespan=lifespan,
 )
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
