@@ -58,18 +58,17 @@ def get_df(
         logger.info(f"Data from WS | {faculty.value} | {year}")
         response = requests.get(url, params=params, auth=auth)
         predmety_df = pd.read_csv(StringIO(response.text), sep=";")
-        predmety_df = predmety_df.replace(
-            {
-                "DNU/SEM": "D/T",
-                "HOD/SEM": "H/T",
-                "HOD/TYD": "H/W",
-                "TYD/SEM": "W/T",
-            }
-        )
         redis_client.setex(f"predmety:{faculty.value}:{year}", 86400, predmety_df.to_json())
         # 24 hours
 
-    return predmety_df
+    return predmety_df.replace(
+        {
+            "DNU/SEM": "D/T",
+            "HOD/SEM": "H/T",
+            "HOD/TYD": "H/W",
+            "TYD/SEM": "W/T",
+        }
+    )
 
 
 def process_df(subjects_df: pd.DataFrame) -> pd.DataFrame:

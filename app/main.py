@@ -22,7 +22,7 @@ async def lifespan(app: FastAPI) -> None:  # noqa: ARG001
 
 
 app = FastAPI(
-    docs_url="/docs",
+    docs_url=None,
     redoc_url=None,
     title="STAG ERASMUS",
     lifespan=lifespan,
