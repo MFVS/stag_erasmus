@@ -1,7 +1,75 @@
 """Modul obsahující funkce pro předzpracování a filtrování DataFrame."""
 
+import os
+from io import BytesIO, StringIO
+
 import pandas as pd
+import requests
+from dotenv import load_dotenv
 from loguru import logger
+from redis import Redis
+
+from app.validators import Faculty
+
+load_dotenv()
+
+params = {
+    "lang": "en",
+    "jenNabizeneECTSPrijezdy": "true",
+    "outputFormat": "CSV",
+    "outputFormatEncoding": "utf-8",
+}
+url = "https://ws.ujep.cz/ws/services/rest2/predmety/getPredmetyByFakultaFullInfo"
+auth = (os.getenv("STAG_USER"), os.getenv("STAG_PASSWORD"))
+
+
+def get_df(
+    faculty: Faculty,
+    year: int,
+    redis_client: Redis,
+) -> pd.DataFrame:
+    """Pokud jsou data v Redisu, načtou se odtud. Jinak se stáhnou z API STAGu a uloží do Redisu.
+
+    Args:
+    ----
+        faculty (Faculty): Enum fakulty.
+        year (int): Rok.
+        redis_client (Redis): Redis klient.
+
+    """
+    if faculty == Faculty.all:
+        all_df = pd.DataFrame()
+        for fac in Faculty:
+            if fac == Faculty.all:
+                continue
+            predmety_df = get_df(fac, year, redis_client)
+
+            all_df = pd.concat([all_df, predmety_df], ignore_index=True)
+
+        return all_df
+
+    params["fakulta"] = faculty.name.upper()
+    params["rok"] = year
+    if redis_client.exists(f"predmety:{faculty.value}:{year}"):
+        logger.info(f"Data from Redis | {faculty.value} | {year}")
+        predmety_faculty = redis_client.get(f"predmety:{faculty.value}:{year}")
+        predmety_df = pd.read_json(BytesIO(predmety_faculty), orient="records")
+    else:
+        logger.info(f"Data from WS | {faculty.value} | {year}")
+        response = requests.get(url, params=params, auth=auth)
+        predmety_df = pd.read_csv(StringIO(response.text), sep=";")
+        predmety_df = predmety_df.replace(
+            {
+                "DNU/SEM": "D/T",
+                "HOD/SEM": "H/T",
+                "HOD/TYD": "H/W",
+                "TYD/SEM": "W/T",
+            }
+        )
+        redis_client.setex(f"predmety:{faculty.value}:{year}", 86400, predmety_df.to_json())
+        # 24 hours
+
+    return predmety_df
 
 
 def process_df(subjects_df: pd.DataFrame) -> pd.DataFrame:
@@ -16,8 +84,6 @@ def process_df(subjects_df: pd.DataFrame) -> pd.DataFrame:
         pd.DataFrame: Předzpracovaný DataFrame.
 
     """
-    logger.info(subjects_df.columns)
-
     processed_df = subjects_df[
         [
             "katedra",
@@ -40,6 +106,7 @@ def process_df(subjects_df: pd.DataFrame) -> pd.DataFrame:
         "Languages",
         "Level",
     ]
+    process_df.is_copy = False
 
     processed_df.loc[:, "Languages"] = processed_df.loc[:, "Languages"].fillna("N/D")
     processed_df.loc[:, "Level"] = processed_df.loc[:, "Level"].fillna("N/D")
@@ -47,7 +114,7 @@ def process_df(subjects_df: pd.DataFrame) -> pd.DataFrame:
     return processed_df
 
 
-def filter_df(
+def filter_df(  # noqa: C901
     df_filter: pd.DataFrame,
     department: str = None,
     shortcut: str = None,
@@ -62,7 +129,7 @@ def filter_df(
 
     Args:
     ----
-        df_filer (pd.DataFrame): Původní DataFrame.
+        df_filter (pd.DataFrame): Původní DataFrame.
         department (str, optional): Katedra. Defaults to None.
         shortcut (str, optional): Zkratka předmětu. Defaults to None.
         name (str, optional): Název předmětu. Defaults to None.

@@ -35,6 +35,9 @@ sass --watch --sourcemap=none sass/mystyles.scss:css/mystyles.css
 
 - [/predmety/getPredmetyByFakulta](https://ws.ujep.cz/ws/services/rest2/predmety/getPredmetyByFakultaFullInfo)
   - parametr `jenNabizeneECTSPrijezdy` se nastaví na `true`
+- [/ciselniky/getCiselnik](https://ws.ujep.cz/ws/services/rest2/ciselniky/getCiselnik)
+  - parametr `domena` = JEDNOTKA_VYUKY
+  - tento číselník byl přeložen do angličtiny
 
 ## Schůze 27.2.2024
 

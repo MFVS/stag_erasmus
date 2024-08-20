@@ -6,6 +6,7 @@ from enum import Enum
 class Faculty(str, Enum):
     """Enum pro fakulty."""
 
+    all = "all"
     fsi = "fsi"
     ff = "ff"
     prf = "prf"

@@ -2,16 +2,16 @@
 
 import datetime
 import os
-from io import StringIO
 import time
+from io import StringIO
 
+import pandas as pd
 import redis
 import requests
 import schedule
 from dotenv import load_dotenv
 from loguru import logger
 from tqdm import tqdm
-import pandas as pd
 
 load_dotenv()
 
@@ -29,8 +29,8 @@ faculties = ["FSI", "FF", "PRF", "FZP", "FZS", "PF", "FSE", "FUD"]
 
 def download_data() -> None:
     """Download data from STAG API and cache them in Redis."""
-    NOW = datetime.datetime.now()
-    years = list(range(NOW.year - 1, NOW.year + 2))
+    now = datetime.datetime.now()
+    years = list(range(now.year - 1, now.year + 2))
 
     logger.info("DOWNLOADING DATA...")
     for faculty in tqdm(faculties):

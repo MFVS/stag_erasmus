@@ -31,10 +31,15 @@ UJEP • Erasmus
     <div class="modal-background" _="on click remove .is-active from #modal"></div>
     <div class="modal-content">
         <div class="container px-2">
-              <article class="message is-blue" style="width: 60%; margin: 0 auto;">
-                <div class="title is-3 message-body">
-                Please select a faculty.
+              <article class="message is-warning" style="width: 60%; margin: 0 auto;">
+                <div class="message-header">
+                    <span class="icon is-medium">
+                        <i class="mdi mdi-36px mdi-alert"></i>
+                    </span>
                   <button class="delete" style="float: right;" _="on click remove .is-active from #modal"></button>
+                </div>
+                <div class="title is-3 message-body has-text-centered" style="font-size: 1.5em;">
+                Please select a faculty.
                 </div>
               </article>
         </div>
@@ -54,6 +59,7 @@ UJEP • Erasmus
                             <div class="select is-fullwidth is-blue is-rounded">
                                 <select id="faculty" name="faculty">
                                     <option selected disabled>Select faculty</option>
+                                    <option value="all">All faculties</option>
                                     <option value="fud">Faculty of Art and Design</option>
                                     <option value="ff">Faculty of Arts</option>
                                     <option value="fse">Faculty of Social and Economic Studies</option>
@@ -76,7 +82,7 @@ UJEP • Erasmus
                             <div class="select is-fullwidth is-blue is-rounded">
                                 <select name="year">
                                     {% for year in years %}
-                                    <option value="{{ year }}">{{ year }}/{{ year + 1 }}</option>
+                                    <option value="{{ year }}" {% if year == current_year %}selected{% endif %}>{{ year }}/{{ year + 1 }}</option>
                                     {% endfor %}
                                 </select>
                             </div>

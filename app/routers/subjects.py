@@ -1,20 +1,16 @@
 """Routy pro jednotlivé stránky a komponenty."""
 
-import json
 import os
-from datetime import datetime
-from io import BytesIO, StringIO
 
 import pandas as pd
 import redis
-import requests
 from dotenv import load_dotenv
 from fastapi import APIRouter, Form, Path, Query, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from loguru import logger
 
-from app.utils import filter_df, process_df
+from app.utils import filter_df, get_df, process_df
 from app.validators import Faculty
 
 router = APIRouter(prefix="/subjects", tags=["Subjects"])
@@ -40,46 +36,22 @@ faculties = {
 
 
 @router.get("")
-def get_subjects(
+def endpoint_get_subjects(
     request: Request,
-    faculty: Faculty | None = Query(default=None, title="Faculty", description="Faculty code"),
+    faculty: Faculty | None = Query(default=None, title="Faculty", description="Faculty code/All"),
     year: str = Query(title="Year", description="Academic year"),
 ) -> HTMLResponse:
     """Stránka fakulty s předměty."""
     if faculty is None:
-        return templates.TemplateResponse(
-            "pages/home.html",
-            {
-                "request": request,
-                "years": list(range(datetime.now().year - 1, datetime.now().year + 2)),
-                "modal_active": True,
-            },
-        )
-    params = {
-        "fakulta": faculty.name.upper(),
-        "lang": "en",
-        "jenNabizeneECTSPrijezdy": "true",
-        "rok": year,
-        "outputFormat": "CSV",
-        "outputFormatEncoding": "utf-8",
-    }
+        return RedirectResponse(url="/?selected=false", status_code=302)
     try:
-        if redis_client.exists(f"predmety:{faculty.value}:{year}"):
-            logger.info(f"Data from Redis | {faculty.value} | {year}")
-            predmety_faculty = redis_client.get(f"predmety:{faculty.value}:{year}")
-            df = pd.read_json(BytesIO(predmety_faculty), orient="records")
-        else:
-            logger.info(f"Data from WS | {faculty.value} | {year}")
-            response = requests.get(url, params=params, auth=auth)
-            df = pd.read_csv(StringIO(response.text), sep=";")
-            redis_client.setex(f"predmety:{faculty.value}:{year}", 86400, df.to_json())  # 24 hours
+        predmety_df = get_df(faculty, year, redis_client)
 
-        if df.empty:
+        if predmety_df.empty:
             df_facult = pd.DataFrame()
             unique_languages = []
         else:
-            df_facult = process_df(df)
-
+            df_facult = process_df(predmety_df)
             unique_languages = df_facult["Languages"].str.split(", ").explode().unique().tolist()
 
         return templates.TemplateResponse(
@@ -90,7 +62,9 @@ def get_subjects(
                 "year": year,
                 "df": df_facult,
                 "unique_languages": unique_languages,
-                "faculty_name": faculties[faculty.name],
+                "faculty_name": faculties[faculty.name]
+                if faculty != Faculty.all
+                else "All faculties",
             },
         )
 
@@ -100,9 +74,9 @@ def get_subjects(
 
 
 @router.post("/{faculty}/{year}")
-def filter_df(
+def endpoint_filter_df(
     request: Request,
-    faculty: Faculty = Path(title="Faculty", description="Faculty code"),
+    faculty: Faculty,
     year: str = Path(title="Year", description="Academic year"),
     department: str = Form(None, alias="Department"),
     shortcut: str = Form(None, alias="Code"),
@@ -114,25 +88,8 @@ def filter_df(
     level: str = Form(None, alias="Level"),
 ) -> HTMLResponse:
     """Slouží k filtrování tabulky s předměty podle zadaných parametrů."""
-    params = {
-        "fakulta": faculty.name.upper(),
-        "lang": "en",
-        "jenNabizeneECTSPrijezdy": "true",
-        "rok": year,
-        "outputFormat": "CSV",
-        "outputFormatEncoding": "utf-8",
-    }
     try:
-        if redis_client.exists(f"predmety:{faculty.value}:{year}"):
-            predmety_faculty = redis_client.get(f"predmety:{faculty.value}:{year}")
-            predmety_df = pd.read_json(BytesIO(predmety_faculty), orient="records")
-        else:
-            response = requests.get(url, params=params, auth=auth)
-            predmety_df = pd.read_csv(StringIO(response.text), sep=";")
-            redis_client.setex(
-                f"predmety:{faculty.value}:{year}", 86400, predmety_df.to_json()
-            )  # 24 hours
-
+        predmety_df = get_df(faculty, year, redis_client)
         df_filter = process_df(predmety_df)
 
         df_filter = filter_df(
@@ -161,32 +118,17 @@ def filter_df(
         return HTMLResponse(content="<h1>Error on our side</h1>", status_code=500)
 
 
-@router.get("/{predmet_zkr}/{faculty}/{year}")
-def get_predmet(request: Request, predmet_zkr: str, faculty: Faculty, year: str) -> HTMLResponse:
+@router.get("/predmet/{department}/{predmet_zkr}/{faculty}/{year}")
+def endpoint_get_predmet(
+    request: Request, department: str, predmet_zkr: str, faculty: Faculty, year: str
+) -> HTMLResponse:
     """Detail předmětu."""
     try:
-        if redis_client.exists(f"predmety:{faculty}:{year}"):
-            predmet = redis_client.get(f"predmety:{faculty}:{year}")
-            df = pd.read_json(BytesIO(predmet), orient="records")
-            df = df.fillna("N/D")
+        predmety_df = get_df(faculty, year, redis_client)
 
-        else:
-            params = {
-                "fakulta": faculty.name.upper(),
-                "lang": "en",
-                "jenNabizeneECTSPrijezdy": "true",
-                "rok": year,
-                "outputFormat": "CSV",
-                "outputFormatEncoding": "utf-8",
-            }
-            response = requests.get(url, params=params, auth=auth)
-
-            df = pd.read_csv(StringIO(response.text), sep=";")
-            df = df.fillna("N/D")
-
-            redis_client.setex(f"predmet:{predmet_zkr}:{year}", 60, df.to_json())
-
-        df_predmet = df.loc[df["zkratka"] == predmet_zkr]
+        df_predmet = predmety_df.loc[
+            (predmety_df["zkratka"] == predmet_zkr) & (predmety_df["katedra"] == department)
+        ]
 
         return templates.TemplateResponse(
             "components/modal.html",
@@ -207,38 +149,24 @@ def get_predmet(request: Request, predmet_zkr: str, faculty: Faculty, year: str)
 
 
 @router.get("/search/cards/{faculty}/{year}")
-def get_cards(
-    request: Request, faculty: str, search: str | None = None, year: str = None
+def endpoint_get_cards(
+    request: Request, faculty: Faculty, search: str | None = None, year: str = None
 ) -> HTMLResponse:
     """Vyhledávání předmětů."""
     if search:
-        if redis_client.exists(f"predmety:{faculty}:{year}"):
-            predmety_faculty = redis_client.get(f"predmety:{faculty}:{year}")
-            df = pd.read_json(BytesIO(predmety_faculty), orient="records")
-        else:
-            params = {
-                "fakulta": faculty.name.upper(),
-                "lang": "en",
-                "jenNabizeneECTSPrijezdy": "true",
-                "rok": year,
-                "outputFormat": "CSV",
-                "outputFormatEncoding": "utf-8",
-            }
-            response = requests.get(url, params=params, auth=auth)
-            df = pd.read_csv(StringIO(response.text), sep=";")
-            redis_client.setex(f"predmety:{faculty.value}:{year}", 86400, df.to_json())  # 24 hours
+        predmety_df = get_df(faculty, year, redis_client)
 
-        df_facult = df.loc[
-            (df["anotace"].str.contains(search, case=False, na=False))
-            | (df["prehledLatky"].str.contains(search, case=False, na=False))
-            | (df["nazevDlouhy"].str.contains(search, case=False, na=False))
+        df_facult = predmety_df.loc[
+            (predmety_df["anotace"].str.contains(search, case=False, na=False))
+            | (predmety_df["prehledLatky"].str.contains(search, case=False, na=False))
+            | (predmety_df["nazevDlouhy"].str.contains(search, case=False, na=False))
         ]
 
         if df_facult.empty:
             message = f"""
             <article id="cards_content" class="message is-warning is-medium">
                 <div class="message-body">
-                    No subjects found for <strong>{search}</strong>. Try searching for something else.
+                No subjects found for <strong>{search}</strong>. Try searching for something else.
                 </div>
             </article>"""
             return HTMLResponse(content=message, status_code=200)

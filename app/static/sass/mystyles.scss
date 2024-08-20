@@ -13,6 +13,7 @@ $prf: #007582;
 $pf: #ee1c99;
 $fse: #4097d9;
 $blue: #004080;
+$all: #5A2A5B;
 
 
 $custom-colors: (
@@ -24,7 +25,8 @@ $custom-colors: (
     "fud": ($fud),
     "ff": ($ff),
     "fzs": ($fzs),
-    "blue": ($blue)
+    "blue": ($blue),
+    "all": ($all)
 );
 
 // TODO: Import only what you need from Bulma 
