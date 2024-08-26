@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "stag-erasmus"
-version = "1.0.0"
+version = "1.0.1"
 description = ""
 authors = ["yoptohlejepeta <peta.kotlan@seznam.cz>"]
 readme = "README.md"
