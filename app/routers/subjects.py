@@ -3,13 +3,14 @@
 import os
 
 import pandas as pd
-import redis
 from dotenv import load_dotenv
-from fastapi import APIRouter, Form, Path, Query, Request
+from fastapi import APIRouter, Depends, Form, Path, Query, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from loguru import logger
+from redis import Redis
 
+from app.redis_conn import get_redis
 from app.utils import filter_df, get_df, process_df
 from app.validators import Faculty
 
@@ -19,19 +20,19 @@ templates = Jinja2Templates(directory="app/templates")
 
 load_dotenv()
 
-redis_client = redis.Redis(host="redis", port=6379, db=0)
 url = "https://ws.ujep.cz/ws/services/rest2/predmety/getPredmetyByFakultaFullInfo"
 auth = (os.getenv("STAG_USER"), os.getenv("STAG_PASSWORD"))
 
 faculties = {
-    "fsi": "Faculty of Mechanical Engineering",
+    "all": "All faculties",
+    "fud": "Faculty of Art and Design",
     "ff": "Faculty of Arts",
-    "prf": "Faculty of Science",
-    "fžp": "Faculty of Environment",
+    "fse": "Faculty of Social and Economic Studies",
+    "fzp": "Faculty of Environment",
     "fzs": "Faculty of Health Studies",
     "pf": "Faculty of Education",
-    "fse": "Faculty of Social and Economic Studies",
-    "fud": "Faculty of Art and Design",
+    "prf": "Faculty of Science",
+    "fsi": "Faculty of Mechanical Engineering",
 }
 
 
@@ -40,6 +41,7 @@ def endpoint_get_subjects(
     request: Request,
     faculty: Faculty | None = Query(default=None, title="Faculty", description="Faculty code/All"),
     year: str = Query(title="Year", description="Academic year"),
+    redis_client: Redis = Depends(get_redis),
 ) -> HTMLResponse:
     """Stránka fakulty s předměty."""
     if faculty is None:
@@ -62,9 +64,7 @@ def endpoint_get_subjects(
                 "year": year,
                 "df": df_facult,
                 "unique_languages": unique_languages,
-                "faculty_name": faculties[faculty.name]
-                if faculty != Faculty.all
-                else "All faculties",
+                "faculties": faculties,
             },
         )
 
@@ -78,6 +78,7 @@ def endpoint_filter_df(
     request: Request,
     faculty: Faculty,
     year: str = Path(title="Year", description="Academic year"),
+    faculty_short: str | None = Form(None, alias="Faculty"),
     department: str = Form(None, alias="Department"),
     shortcut: str = Form(None, alias="Code"),
     name: str = Form(None, alias="Name"),
@@ -86,6 +87,7 @@ def endpoint_filter_df(
     credit: str = Form(None, alias="Credits"),
     languages: str = Form(None, alias="Languages"),
     level: str = Form(None, alias="Level"),
+    redis_client: Redis = Depends(get_redis),
 ) -> HTMLResponse:
     """Slouží k filtrování tabulky s předměty podle zadaných parametrů."""
     try:
@@ -94,6 +96,7 @@ def endpoint_filter_df(
 
         df_filter = filter_df(
             df_filter,
+            faculty_short=faculty_short,
             department=department,
             shortcut=shortcut,
             name=name,
@@ -120,7 +123,12 @@ def endpoint_filter_df(
 
 @router.get("/predmet/{department}/{predmet_zkr}/{faculty}/{year}")
 def endpoint_get_predmet(
-    request: Request, department: str, predmet_zkr: str, faculty: Faculty, year: str
+    request: Request,
+    department: str,
+    predmet_zkr: str,
+    faculty: Faculty,
+    year: str,
+    redis_client: Redis = Depends(get_redis),
 ) -> HTMLResponse:
     """Detail předmětu."""
     try:
@@ -132,7 +140,7 @@ def endpoint_get_predmet(
 
         return templates.TemplateResponse(
             "components/modal.html",
-            {"request": request, "df": df_predmet},
+            {"request": request, "df": df_predmet, "faculties": faculties},
         )
     except Exception as e:
         modal = """
@@ -150,7 +158,11 @@ def endpoint_get_predmet(
 
 @router.get("/search/cards/{faculty}/{year}")
 def endpoint_get_cards(
-    request: Request, faculty: Faculty, search: str | None = None, year: str = None
+    request: Request,
+    faculty: Faculty,
+    search: str | None = None,
+    year: str = None,
+    redis_client: Redis = Depends(get_redis),
 ) -> HTMLResponse:
     """Vyhledávání předmětů."""
     if search:
@@ -173,7 +185,7 @@ def endpoint_get_cards(
 
         return templates.TemplateResponse(
             "components/cards.html",
-            {"request": request, "df": df_facult, "search": search, "faculty": faculty},
+            {"request": request, "df": df_facult, "search": search, "faculty": faculty, "faculties": faculties},
         )
 
     return HTMLResponse(content='<div id="cards_content"></div>', status_code=200)

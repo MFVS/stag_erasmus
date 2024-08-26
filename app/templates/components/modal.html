@@ -4,6 +4,11 @@
         <div class="container px-2">
             <div class="box">
                 <h1 class="title is-1 has-text-centered p-3">{{df['nazevDlouhy'].iloc[0]}}</h1>
+                <h2 class="subtitle is-3 has-text-centered">
+                    <span class="tag is-{{ df['fakulta'].iloc[0] | lower }} is-large is-rounded">
+                        {{ faculties[df['fakulta'].iloc[0] | lower] }}
+                    </span>
+                </h2>
                 <table class="table mx-auto p-5">
                     <tbody>
                         <tr>

@@ -1,7 +1,7 @@
 """Modul obsahující funkce pro předzpracování a filtrování DataFrame."""
 
 import os
-from io import BytesIO, StringIO
+from io import StringIO
 
 import pandas as pd
 import requests
@@ -48,12 +48,12 @@ def get_df(
 
         return all_df
 
-    params["fakulta"] = faculty.name.upper()
+    params["fakulta"] = "FŽP" if faculty == Faculty.fzp else faculty.value.upper()
     params["rok"] = year
     if redis_client.exists(f"predmety:{faculty.value}:{year}"):
         logger.info(f"Data from Redis | {faculty.value} | {year}")
         predmety_faculty = redis_client.get(f"predmety:{faculty.value}:{year}")
-        predmety_df = pd.read_json(BytesIO(predmety_faculty), orient="records")
+        predmety_df = pd.read_json(StringIO(predmety_faculty), orient="records")
     else:
         logger.info(f"Data from WS | {faculty.value} | {year}")
         response = requests.get(url, params=params, auth=auth)
@@ -85,6 +85,7 @@ def process_df(subjects_df: pd.DataFrame) -> pd.DataFrame:
     """
     processed_df = subjects_df[
         [
+            "fakulta",
             "katedra",
             "zkratka",
             "nazevDlouhy",
@@ -96,6 +97,7 @@ def process_df(subjects_df: pd.DataFrame) -> pd.DataFrame:
         ]
     ]
     processed_df.columns = [
+        "Faculty",
         "Department",
         "Code",
         "Name",
@@ -113,8 +115,9 @@ def process_df(subjects_df: pd.DataFrame) -> pd.DataFrame:
     return processed_df
 
 
-def filter_df(  # noqa: C901
+def filter_df(  # noqa: C901, PLR0912
     df_filter: pd.DataFrame,
+    faculty_short: str | None = None,
     department: str = None,
     shortcut: str = None,
     name: str = None,
@@ -129,6 +132,7 @@ def filter_df(  # noqa: C901
     Args:
     ----
         df_filter (pd.DataFrame): Původní DataFrame.
+        faculty_short (str, optional): Zkratka fakulty. Defaults to None.
         department (str, optional): Katedra. Defaults to None.
         shortcut (str, optional): Zkratka předmětu. Defaults to None.
         name (str, optional): Název předmětu. Defaults to None.
@@ -143,6 +147,8 @@ def filter_df(  # noqa: C901
         pd.DataFrame: Vyfiltrovaný DataFrame.
 
     """
+    if faculty_short == "All":
+        faculty_short = None
     if department == "All":
         department = None
     credit = None if credit == "All" else int(credit)
@@ -151,6 +157,8 @@ def filter_df(  # noqa: C901
     if level == "All":
         level = None
 
+    if faculty_short:
+        df_filter = df_filter.loc[df_filter["Faculty"] == faculty_short]
     if department:
         df_filter = df_filter.loc[df_filter["Department"] == department]
     if shortcut:
@@ -168,4 +176,5 @@ def filter_df(  # noqa: C901
     if level:
         df_filter = df_filter[df_filter["Level"] == level]
 
+    logger.info(df_filter)
     return df_filter.fillna("N/D")

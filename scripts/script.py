@@ -34,7 +34,8 @@ def download_data() -> None:
 
     logger.info("DOWNLOADING DATA...")
     for faculty in tqdm(faculties):
-        params["fakulta"] = faculty
+        # na webove sluzby je potreba posilat FŽP
+        params["fakulta"] = "FŽP" if faculty == "FZP" else faculty
         logger.info(f"{faculty}")
         for year in years:
             params["rok"] = year
@@ -43,6 +44,7 @@ def download_data() -> None:
                 logger.error(f"Error downloading data for {faculty} - {year}")
                 continue
             data = pd.read_csv(StringIO(response.text), sep=";")
+            data["fakulta"] = faculty
             redis_client.setex(f"predmety:{faculty.lower()}:{year}", 84600, data.to_json())
             # 84600s = 23.5h
     logger.info("DATA CACHED SUCCESSFULLY!")

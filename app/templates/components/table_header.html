@@ -1,14 +1,35 @@
 <thead>
     <tr>
         {% for column in df.columns %}
-        <th class="has-text-centered">
-            {{ column }}
-        </th>
+            {% if column == "Faculty" %}
+                {% if faculty == "all" %}
+                <th class="has-text-centered">
+                    {{ column }}
+                </th>
+                {% endif %}
+            {% else %}
+                <th class="has-text-centered">
+                    {{ column }}
+                </th>
+            {% endif %}
         {% endfor %}
     </tr>
 </thead>
 <thead>
     <tr>
+        {% if faculty == "all" %}
+            <th>
+                <div class="select is-{{ faculty }} is-rounded is-fullwidth">
+                    <select name="Faculty" hx-post="/subjects/{{ faculty }}/{{ year }}"
+                        hx-trigger="change" hx-target="#table" hx-swap="innerHTML">
+                        <option>All</option>
+                        {% for value in df["Faculty"].unique() %}
+                        <option>{{ value }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </th>
+        {% endif %}
         <th>
             <div class="select is-{{ faculty }} is-rounded is-fullwidth">
                 <select name="Department" hx-post="/subjects/{{ faculty }}/{{ year }}"

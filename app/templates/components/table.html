@@ -3,6 +3,14 @@
         {% for column in df.columns %}
             {% if column in ['Department', 'Code', 'Credits'] %}
             <td class="has-text-centered">{{ row[column] }}</td>
+            {% elif column == "Faculty" %}
+                {% if faculty == "all" %}
+                    <td class="pl-5">
+                        <span class="tag is-{{ row[column] | lower }} is-medium is-rounded">
+                            {{ row[column] }}
+                        </span>
+                    </td>
+                {% endif %}
             {% elif column in ['Winter term', 'Summer term'] %}
                 {% if row[column] == 'A' %}
                 <td class="has-text-centered"><span class="icon is-medium has-text-success">

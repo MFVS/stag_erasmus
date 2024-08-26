@@ -23,6 +23,7 @@ logger = "^1.4"
 loguru = "^0.7.2"
 tqdm = "^4.66.4"
 schedule = "^1.2.1"
+pydantic-settings = "^2.4.0"
 
 
 [build-system]

@@ -8,6 +8,13 @@
                       <h1 class="title is-1 p-3">
                         {{ row['nazevDlouhy'] }}
                       </h1>
+                      {% if faculty == "all" %}
+                        <h2 class="subtitle is-3 has-text-centered">
+                            <span class="tag is-{{ row['fakulta'] | lower }} is-large is-rounded">
+                                {{ faculties[row["fakulta"] | lower] }}
+                            </span>
+                        </h2>
+                      {% endif %} 
                     </div>
                   </div>
                   <div class="hero-foot">

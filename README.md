@@ -3,6 +3,9 @@
 Digitalizace katalogu kurzů pro incomingové studenty.
 Seznam předmětů nabízených pro zahraniční studenty.
 
+
+![Fastapi](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)![Pandas](https://img.shields.io/badge/pandas-150458?style=for-the-badge&logo=pandas&logoColor=white)![Pydantic](https://img.shields.io/badge/Pydantic-E92063?style=for-the-badge&logo=pydantic&logoColor=white)![Ruff](https://img.shields.io/badge/ruff-%23D7FF64.svg?style=for-the-badge&logo=ruff&logoColor=black)![Redis](https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white)![HTMX](https://img.shields.io/badge/%3C/%3E%20htmx-3366CC?style=for-the-badge&logo=mysl&logoColor=white)![Bulma](https://img.shields.io/badge/Bulma-00D1B2?style=for-the-badge&logo=bulma&logoColor=white)
+
 ## Customize bulma
 
 ```bash
@@ -57,10 +60,3 @@ přídat filtry:
 ```bash
 ~/go/bin/go-wrk -d 30 -c 6 http://localhost:8000/subjects/fsi/2024
 ```
-
-## TODO
-
-- prelozit hodiny/tyd atd.
-- ve vyhledavani vyhledavat i v nazvech
-- vyhledavani seradit podle abecedy (nazev)
-- v tabulce radky klikatelne znazornit
