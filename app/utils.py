@@ -63,10 +63,10 @@ def get_df(
 
     return predmety_df.replace(
         {
-            "DNU/SEM": "D/T",
-            "HOD/SEM": "H/T",
-            "HOD/TYD": "H/W",
-            "TYD/SEM": "W/T",
+            "DNU/SEM": "DAYS/TERM",
+            "HOD/SEM": "HOURS/TERM",
+            "HOD/TYD": "HOURS/WEEK",
+            "TYD/SEM": "WEEKS/TERM",
         }
     )
 
