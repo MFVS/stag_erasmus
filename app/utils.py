@@ -176,5 +176,4 @@ def filter_df(  # noqa: C901, PLR0912
     if level:
         df_filter = df_filter[df_filter["Level"] == level]
 
-    logger.info(df_filter)
     return df_filter.fillna("N/D")
