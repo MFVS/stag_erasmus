@@ -1,9 +1,6 @@
 """Routy pro jednotlivé stránky a komponenty."""
 
-import os
-
 import pandas as pd
-from dotenv import load_dotenv
 from fastapi import APIRouter, Depends, Form, Path, Query, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
@@ -11,6 +8,7 @@ from loguru import logger
 from redis import Redis
 
 from app.redis_conn import get_redis
+from app.settings import settings
 from app.utils import filter_df, get_df, process_df
 from app.validators import Faculty
 
@@ -18,10 +16,8 @@ router = APIRouter(prefix="/subjects", tags=["Subjects"])
 
 templates = Jinja2Templates(directory="app/templates")
 
-load_dotenv()
-
 url = "https://ws.ujep.cz/ws/services/rest2/predmety/getPredmetyByFakultaFullInfo"
-auth = (os.getenv("STAG_USER"), os.getenv("STAG_PASSWORD"))
+auth = settings.get_auth()
 
 faculties = {
     "all": "All faculties",
@@ -172,6 +168,7 @@ def endpoint_get_cards(
             (predmety_df["anotace"].str.contains(search, case=False, na=False))
             | (predmety_df["prehledLatky"].str.contains(search, case=False, na=False))
             | (predmety_df["nazevDlouhy"].str.contains(search, case=False, na=False))
+            | (predmety_df["nazev"].str.contains(search, case=False, na=False))
         ]
 
         if df_facult.empty:
@@ -185,7 +182,13 @@ def endpoint_get_cards(
 
         return templates.TemplateResponse(
             "components/cards.html",
-            {"request": request, "df": df_facult, "search": search, "faculty": faculty, "faculties": faculties},
+            {
+                "request": request,
+                "df": df_facult,
+                "search": search,
+                "faculty": faculty,
+                "faculties": faculties,
+            },
         )
 
     return HTMLResponse(content='<div id="cards_content"></div>', status_code=200)

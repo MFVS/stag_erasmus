@@ -1,17 +1,14 @@
 """Modul obsahující funkce pro předzpracování a filtrování DataFrame."""
 
-import os
 from io import StringIO
 
 import pandas as pd
 import requests
-from dotenv import load_dotenv
 from loguru import logger
 from redis import Redis
 
+from app.settings import settings
 from app.validators import Faculty
-
-load_dotenv()
 
 params = {
     "lang": "en",
@@ -20,7 +17,7 @@ params = {
     "outputFormatEncoding": "utf-8",
 }
 url = "https://ws.ujep.cz/ws/services/rest2/predmety/getPredmetyByFakultaFullInfo"
-auth = (os.getenv("STAG_USER"), os.getenv("STAG_PASSWORD"))
+auth = settings.get_auth()
 
 
 def get_df(

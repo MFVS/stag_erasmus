@@ -16,5 +16,10 @@ class Settings(BaseSettings):
         case_sensitive=False,
     )
 
+    # retrun auth tuple
+    def get_auth(self) -> tuple:
+        """Return auth tuple."""
+        return (self.stag_user, self.stag_password.get_secret_value())
+
 
 settings = Settings()

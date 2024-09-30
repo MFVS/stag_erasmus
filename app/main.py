@@ -15,7 +15,7 @@ from app.routers import subjects
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> None:  # noqa: ARG001
-    """Stahování dat při spuštění aplikace a jejich smazání při ukončení."""
+    """Smazání dat při ukončení aplikace."""
     yield
     logger.info("DELETING DATA...")
     subjects.redis_client.flushdb()
