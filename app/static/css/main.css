@@ -134,3 +134,58 @@ body {
             transform: scale3D(0, 0, 1);
   } 
 }
+
+.faculty-tag {
+  padding-left: 1.5rem;
+}
+
+
+/* Mobile specific styles for the specific table */
+@media (max-width: 768px) {
+  table.faculty-table thead {
+      display: none; /* Hide headers on mobile */
+  }
+
+  /* Display each row as a block on mobile */
+  table.faculty-table tr {
+      display: block;
+      margin-bottom: 1em;
+      border: 1px solid;
+      border-radius: 0.75em; /* Rounded corners for rows */
+      border-color: #d9d9d9;
+  }
+
+  /* Display each cell as a block with label */
+  table.faculty-table td {
+      display: block;
+      text-align: right;
+      position: relative;
+      padding-left: 50%;
+  }
+
+  table.faculty-table td::before {
+      /* Use the data-label attribute for cell labels */
+      content: attr(data-label);
+      position: absolute;
+      left: 0;
+      width: 50%;
+      padding-left: 0.75em;
+      font-weight: bold;
+      text-align: left;
+  }
+
+  /* Adjust padding and alignment for the icons on small screens */
+  table.faculty-table td.has-text-centered .icon {
+      padding: 0;
+      margin: 0;
+      display: inline-block;
+  }
+
+  /* disable all inputs selects and checkboxes in */
+  .form-header select,
+  .form-header input[type="text"],
+  .form-header input[type="checkbox"] {
+      pointer-events: none; /* Disable interaction */
+      opacity: 0.5; /* Visual cue to indicate the fields are disabled */
+  }
+}

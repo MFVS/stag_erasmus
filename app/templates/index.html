@@ -26,4 +26,43 @@
 {% block footer %}
 {% endblock %}
 
+<script>
+    function toggleFormInputs() {
+        // Get the window width
+        var windowWidth = window.innerWidth;
+
+        // Select the inputs in the table header and nav
+        var tableInputs = document.querySelectorAll("table.faculty-table thead input, table.faculty-table thead select, table.faculty-table thead checkbox");
+        var navInputs = document.querySelectorAll("nav.level input, nav.level select, nav.level checkbox");
+
+        if (windowWidth <= 768) {
+            // Disable table header inputs for mobile
+            tableInputs.forEach(function(input) {
+                input.setAttribute("disabled", "true");
+            });
+
+            // Enable nav inputs for mobile
+            navInputs.forEach(function(input) {
+                input.removeAttribute("disabled");
+            });
+        } else {
+            // Enable table header inputs for larger screens
+            tableInputs.forEach(function(input) {
+                input.removeAttribute("disabled");
+            });
+
+            // Disable nav inputs for larger screens
+            navInputs.forEach(function(input) {
+                input.setAttribute("disabled", "true");
+            });
+        }
+    }
+
+    // Run the function on page load
+    window.onload = toggleFormInputs;
+
+    // Run the function when the window is resized
+    window.onresize = toggleFormInputs;
+</script>
+
 </html>

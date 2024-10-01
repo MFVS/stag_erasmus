@@ -87,8 +87,11 @@ Erasmus • {{ faculty | upper }}
 
 <section id="section" class="section">
     <form id="form" hx-post="/subjects/{{ faculty }}/{{ year }}" hx-indicator="#progress" hx-target="#table">
+
+        {% include 'components/nav_form.html' %}
+
         <div class="table-container">
-            <table class="table is-hoverable mx-auto is-fullwidth">
+            <table class="table is-hoverable mx-auto is-fullwidth faculty-table">
     
                 {% include 'components/table_header.html' %}
                 

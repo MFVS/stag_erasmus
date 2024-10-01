@@ -86,6 +86,7 @@ def endpoint_filter_df(
     redis_client: Redis = Depends(get_redis),
 ) -> HTMLResponse:
     """Slouží k filtrování tabulky s předměty podle zadaných parametrů."""
+    logger.info(f"Filtering {faculty} {year} {faculty_short} {department} {shortcut} {name}")
     try:
         predmety_df = get_df(faculty, year, redis_client)
         df_filter = process_df(predmety_df)

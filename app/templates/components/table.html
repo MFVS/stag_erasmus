@@ -1,31 +1,40 @@
 {% for index, row in df.iterrows() %}
-    <tr _="on click fetch /subjects/predmet/{{ row['Department'] }}/{{ row['Code'] }}/{{ faculty }}/{{ year }} then put the result after #section" style="cursor: pointer;">
-        {% for column in df.columns %}
-            {% if column in ['Department', 'Code', 'Credits'] %}
-            <td class="has-text-centered">{{ row[column] }}</td>
-            {% elif column == "Faculty" %}
-                {% if faculty == "all" %}
-                    <td class="pl-5">
-                        <span class="tag is-{{ row[column] | lower }} is-medium is-rounded">
-                            {{ row[column] }}
-                        </span>
-                    </td>
-                {% endif %}
-            {% elif column in ['Winter term', 'Summer term'] %}
-                {% if row[column] == 'A' %}
-                <td class="has-text-centered"><span class="icon is-medium has-text-success">
-                        <i class="mdi mdi-24px mdi-check"></i>
-                    </span></td>
-                {% else %}
-                <td class="has-text-centered">
-                    <span class="icon is-medium has-text-danger">
-                        <i class="mdi mdi-24px mdi-close"></i>
+<tr _="on click fetch /subjects/predmet/{{ row['Department'] }}/{{ row['Code'] }}/{{ faculty }}/{{ year }} then put the result after #section" style="cursor: pointer;">
+    {% for column in df.columns %}
+        {% if column in ['Department', 'Code', 'Credits', 'Languages', 'Level'] %}
+        <td class="has-text-centered" data-label="{{ column }}">{{ row[column] }}</td>
+        {% elif column == "Faculty" %}
+            {% if faculty == "all" %}
+                <td class="has-text-centered-mobile" data-label="{{ column }}">
+                    <span class="tag is-{{ row[column] | lower }} is-medium is-rounded">
+                        {{ row[column] }}
                     </span>
                 </td>
-                {% endif %}
-            {% else %}
-            <td class="pl-5">{{ row[column] }}</td>
             {% endif %}
-        {% endfor %}
-    </tr>
+        {% elif column in ['Winter term', 'Summer term'] %}
+            <td class="has-text-centered" data-label="{{ column }}">
+                {% if row[column] == 'A' %}
+                <span class="icon is-medium has-text-success">
+                    <i class="mdi mdi-24px mdi-check"></i>
+                </span>
+                {% else %}
+                <span class="icon is-medium has-text-danger">
+                    <i class="mdi mdi-24px mdi-close"></i>
+                </span>
+                {% endif %}
+            </td>
+        {% else %}
+        <td class="has-text-centered-mobile" data-label="{{ column }}">
+            {{ row[column] }}
+        </td>
+        {% endif %}
+    {% endfor %}
+    <!-- <td class="is-hidden-tablet" style="aligne">
+        <button class="button is-medium is-{{faculty}}">
+            <span class="icon is-small">
+                <i class="mdi mdi-24px mdi-information"></i>
+            </span>
+        </button>
+    </td> -->
+</tr>
 {% endfor %}
