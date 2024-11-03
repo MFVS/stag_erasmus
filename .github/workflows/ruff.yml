@@ -7,5 +7,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/ruff-action@v1
-        args: check
-        src:  "."
+        with:
+          args: check
+          src:  "."
