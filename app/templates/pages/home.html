@@ -31,14 +31,15 @@ UJEP • Erasmus
     <div class="modal-background" _="on click remove .is-active from #modal"></div>
     <div class="modal-content">
         <div class="container px-2">
-              <article class="message is-warning" style="width: 60%; margin: 0 auto;">
+              <article class="message is-warning warning-content" style="margin: 0 auto;">
                 <div class="message-header">
                     <span class="icon is-medium">
                         <i class="mdi mdi-36px mdi-alert"></i>
                     </span>
+                    No faculty selected!
                   <button class="delete" style="float: right;" _="on click remove .is-active from #modal"></button>
                 </div>
-                <div class="title is-3 message-body has-text-centered" style="font-size: 1.5em;">
+                <div class="warning-title is-3 message-body has-text-centered" style="font-size: 1.5em;">
                 Please select a faculty.
                 </div>
               </article>
@@ -130,11 +131,11 @@ UJEP • Erasmus
 {% block footer %}
 <footer class="footer has-background-white">
 
-    <nav class="level">
+    <nav class="level has-background-white">
         <p class="level-item has-text-centered pb-5">
             <img src="/static/logos/EN_Co.png" alt="Cofounded by EU" style="width: 250px;">
         </p>
-        <p class="level-item has-text-centered title is-5 p-3">
+        <p class="level-item has-text-centered footer-title p-3">
             Course catalogue for Erasmus+ incoming students
         </p>
         <p class="level-item has-text-centered pb-5">

@@ -15,10 +15,21 @@ Jedná se o webovou aplikaci, která nabízí přehled předmětů pro zahranič
 
 #### Backend
 
+Backend je napsán v jazyce Python. Dependencies jsou spravovány pomocí nástroje **Poetry**.
+
+- **FastAPI** - moderní framework pro tvorbu API
+
+##### Použité WS STAG služby
+
+- [/predmety/getPredmetyByFakulta](https://ws.ujep.cz/ws/services/rest2/predmety/getPredmetyByFakultaFullInfo)
+  - parametr `jenNabizeneECTSPrijezdy` = `true`
+- [/ciselniky/getCiselnik](https://ws.ujep.cz/ws/services/rest2/ciselniky/getCiselnik)
+  - parametr `domena` = `JEDNOTKA_VYUKY`
+  - tento číselník byl přeložen do angličtiny
 
 #### Frontend
 
-## Customize bulma
+##### Customize bulma
 
 ```bash
 cd app/static
@@ -29,42 +40,14 @@ sass --sourcemap=none --style=compressed sass/mystyles.scss:css/mystyles.css
 sass --watch --sourcemap=none sass/mystyles.scss:css/mystyles.css
 ```
 
-## SpinKit
+##### SpinKit
 
 <https://github.com/tobiasahlin/SpinKit>
 
-## MDI icons
+##### MDI icons
 
 <https://pictogrammers.com/library/mdi/>
 
-## SVG
+##### SVG
 
 <https://app.haikei.app/>
-
-## Použité WS STAG služby
-
-- [/predmety/getPredmetyByFakulta](https://ws.ujep.cz/ws/services/rest2/predmety/getPredmetyByFakultaFullInfo)
-  - parametr `jenNabizeneECTSPrijezdy` se nastaví na `true`
-- [/ciselniky/getCiselnik](https://ws.ujep.cz/ws/services/rest2/ciselniky/getCiselnik)
-  - parametr `domena` = JEDNOTKA_VYUKY
-  - tento číselník byl přeložen do angličtiny
-
-## Schůze 27.2.2024
-
-přídat filtry:
-úvodní stránka kde si uživatel bude muset zvolit následujícíc parametry
-
-- [x] fakulta (povinný filtr)
-- [x] akademický rok (povinný filtr)
-
-- [x] jazyk vyuky
-- [x] kredity
-- [x] typ studia
-
-[ ] předpoklady
-
-## Test
-
-```bash
-~/go/bin/go-wrk -d 30 -c 6 http://localhost:8000/subjects/fsi/2024
-```
