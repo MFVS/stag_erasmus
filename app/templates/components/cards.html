@@ -116,13 +116,13 @@
                     </table>
                 </div>
                 <div class="p-5" id="tab-annotation-content-{{ row['zkratka'] }}" style="display: none;">
-                        {{ row['anotace'] }}
+                        {{ row['anotace'] | safe }}
                 </div>
                 <div class="p-5" id="tab-overview-content-{{ row['zkratka'] }}" style="display: none;">
-                        {{ row['prehledLatky'] | replace("\n", "<br />" | safe ) }}
+                        {{ row['prehledLatky'] | safe }}
                 </div>
                 <div class="p-5" id="tab-requirements-content-{{ row['zkratka'] }}" style="display: none;">
-                        {{ row['pozadavky'] | replace("\n", "<br />" | safe ) }}
+                        {{ row['pozadavky'] | safe }}
                 </div>
             </section>
         </div>

@@ -174,3 +174,13 @@ def filter_df(  # noqa: C901, PLR0912
         df_filter = df_filter[df_filter["Level"] == level]
 
     return df_filter.fillna("N/D")
+
+
+def process_breaks(string: str) -> str:
+    """Převede znaky pro nový řádek na HTML tag <br>.
+
+    Pouze pokuď se nejedná o HTML tagy.
+    """
+    if not pd.Series(string).str.contains("<[^<]+?>", regex=True).any() and string:
+        return string.replace("\n", "<br>")
+    return string

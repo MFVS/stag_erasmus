@@ -1,5 +1,7 @@
 """Routy pro jednotlivé stránky a komponenty."""
 
+from typing import Annotated
+
 import pandas as pd
 from fastapi import APIRouter, Depends, Form, Path, Query, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
@@ -9,7 +11,7 @@ from redis import Redis
 
 from app.redis_conn import get_redis
 from app.settings import settings
-from app.utils import filter_df, get_df, process_df
+from app.utils import filter_df, get_df, process_breaks, process_df
 from app.validators import Faculty
 
 router = APIRouter(prefix="/subjects", tags=["Subjects"])
@@ -35,9 +37,11 @@ faculties = {
 @router.get("")
 def endpoint_get_subjects(
     request: Request,
-    faculty: Faculty | None = Query(default=None, title="Faculty", description="Faculty code/All"),
-    year: str = Query(title="Year", description="Academic year"),
-    redis_client: Redis = Depends(get_redis),
+    redis_client: Annotated[Redis, Depends(get_redis)],
+    year: Annotated[str, Query(title="Year", description="Academic year")],
+    faculty: Annotated[
+        Faculty | None, Query(title="Faculty", description="Faculty code/All")
+    ] = None,
 ) -> HTMLResponse:
     """Stránka fakulty s předměty."""
     if faculty is None:
@@ -73,17 +77,17 @@ def endpoint_get_subjects(
 def endpoint_filter_df(
     request: Request,
     faculty: Faculty,
-    year: str = Path(title="Year", description="Academic year"),
-    faculty_short: str | None = Form(None, alias="Faculty"),
-    department: str = Form(None, alias="Department"),
-    shortcut: str = Form(None, alias="Code"),
-    name: str = Form(None, alias="Name"),
-    winter: bool = Form(None, alias="Winter term"),
-    summer: bool = Form(None, alias="Summer term"),
-    credit: str = Form(None, alias="Credits"),
-    languages: str = Form(None, alias="Languages"),
-    level: str = Form(None, alias="Level"),
-    redis_client: Redis = Depends(get_redis),
+    redis_client: Annotated[Redis, Depends(get_redis)],
+    year: Annotated[str, Path(title="Year", description="Academic year")],
+    faculty_short: Annotated[str | None, Form(alias="Faculty")] = None,
+    department: Annotated[str, Form(alias="Department")] = None,
+    shortcut: Annotated[str, Form(alias="Code")] = None,
+    name: Annotated[str, Form(alias="Name")] = None,
+    winter: Annotated[bool, Form(alias="Winter term")] = None,
+    summer: Annotated[bool, Form(alias="Summer term")] = None,
+    credit: Annotated[str, Form(alias="Credits")] = None,
+    languages: Annotated[str, Form(alias="Languages")] = None,
+    level: Annotated[str, Form(alias="Level")] = None,
 ) -> HTMLResponse:
     """Slouží k filtrování tabulky s předměty podle zadaných parametrů."""
     logger.info(f"Filtering {faculty} {year} {faculty_short} {department} {shortcut} {name}")
@@ -125,7 +129,7 @@ def endpoint_get_predmet(
     predmet_zkr: str,
     faculty: Faculty,
     year: str,
-    redis_client: Redis = Depends(get_redis),
+    redis_client: Annotated[Redis, Depends(get_redis)],
 ) -> HTMLResponse:
     """Detail předmětu."""
     try:
@@ -134,6 +138,10 @@ def endpoint_get_predmet(
         df_predmet = predmety_df.loc[
             (predmety_df["zkratka"] == predmet_zkr) & (predmety_df["katedra"] == department)
         ]
+
+        df_predmet["anotace"] = df_predmet["anotace"].apply(process_breaks)
+        df_predmet["prehledLatky"] = df_predmet["prehledLatky"].apply(process_breaks)
+        df_predmet["pozadavky"] = df_predmet["pozadavky"].apply(process_breaks)
 
         return templates.TemplateResponse(
             "components/modal.html",
@@ -155,11 +163,11 @@ def endpoint_get_predmet(
 
 @router.get("/search/cards/{faculty}/{year}")
 def endpoint_get_cards(
+    redis_client: Annotated[Redis, Depends(get_redis)],
     request: Request,
     faculty: Faculty,
     search: str | None = None,
     year: str = None,
-    redis_client: Redis = Depends(get_redis),
 ) -> HTMLResponse:
     """Vyhledávání předmětů."""
     if search:
@@ -171,6 +179,10 @@ def endpoint_get_cards(
             | (predmety_df["nazevDlouhy"].str.contains(search, case=False, na=False))
             | (predmety_df["nazev"].str.contains(search, case=False, na=False))
         ]
+
+        df_facult["anotace"] = df_facult["anotace"].apply(process_breaks)
+        df_facult["prehledLatky"] = df_facult["prehledLatky"].apply(process_breaks)
+        df_facult["pozadavky"] = df_facult["pozadavky"].apply(process_breaks)
 
         if df_facult.empty:
             message = f"""

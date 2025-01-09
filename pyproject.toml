@@ -5,6 +5,7 @@ description = ""
 authors = ["yoptohlejepeta <peta.kotlan@seznam.cz>"]
 readme = "README.md"
 packages = [{include = "stag_erasmus"}]
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.10"

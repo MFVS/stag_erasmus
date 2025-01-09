@@ -85,21 +85,21 @@
                             <td colspan="2" class="px-5">
                                 <h2 class="subtitle has-text-black mb-2 has-text-weight-bold has-text-dark">Anotation:
                                 </h2>
-                                {{ df['anotace'].iloc[0] | replace("\n", "<br />" | safe )}}
+                                {{ df['anotace'].iloc[0] | safe }}
                             </td>
                         </tr>
                         <tr>
                             <td colspan="2" class="px-5">
                                 <h2 class="subtitle has-text-black mb-2 has-text-weight-bold has-text-dark">Overview:
                                 </h2>
-                                {{ df['prehledLatky'].iloc[0] | replace("\n", "<br />" | safe ) }}
+                                {{ df['prehledLatky'].iloc[0] | safe }}
                             </td>
                         </tr>
                         <tr>
                             <td colspan="2" class="px-5">
                                 <h2 class="subtitle has-text-black mb-2 has-text-weight-bold has-text-dark">
                                     Requirements:</h2>
-                                {{ df['pozadavky'].iloc[0] | replace("\n", "<br />" | safe ) }}
+                                {{ df['pozadavky'].iloc[0] | safe }}
                             </td>
                         </tr>
                     </tbody>
